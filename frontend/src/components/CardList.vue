@@ -11,38 +11,38 @@
 </template>
 
 <script>
-import axios from 'axios'
+  import axios from 'axios'
 
-export default {
-  data() {
-    return {
-      cards: []
-    }
-  },
-  methods: {
-    async fetchCards() {
-      const res = await axios.get('http://localhost:8000/cards')
-      this.cards = res.data
-    },
-    async deleteCard(id) {
-      try {
-        await axios.delete(`http://localhost:8000/cards/${id}`)
-        this.fetchCards()
-      } catch (err) {
-        console.error(err)
+  export default {
+    data() {
+      return {
+        cards: []
       }
+    },
+    methods: {
+      async fetchCards() {
+        const res = await axios.get('http://localhost:8000/cards')
+        this.cards = res.data
+      },
+      async deleteCard(id) {
+        try {
+          await axios.delete(`http://localhost:8000/cards/${id}`)
+          this.fetchCards()
+        } catch (err) {
+          console.error(err)
+        }
+      }
+    },
+    mounted() {
+      this.fetchCards()
     }
-  },
-  mounted() {
-    this.fetchCards()
   }
-}
 </script>
 
 <style scoped>
-.card-item {
-  border: 1px solid #ccc;
-  padding: 10px;
-  margin-bottom: 10px;
-}
+  .card-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
 </style>

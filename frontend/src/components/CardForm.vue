@@ -16,40 +16,40 @@
 </template>
 
 <script>
-import axios from 'axios'
+  import axios from 'axios'
 
-export default {
-  data() {
-    return {
-      question: '',
-      answer: ''
-    }
-  },
-  methods: {
-    async submitCard() {
-      try {
-        await axios.post('http://localhost:8000/cards', {
-          question: this.question,
-          answer: this.answer
-        })
-        this.$emit('card-added') // Parent kann Liste neu laden
-        this.question = ''
-        this.answer = ''
-      } catch (err) {
-        console.error(err)
-        alert('Fehler beim Speichern der Karte')
+  export default {
+    data() {
+      return {
+        question: '',
+        answer: ''
+      }
+    },
+    methods: {
+      async submitCard() {
+        try {
+          await axios.post('http://localhost:8000/cards', {
+            question: this.question,
+            answer: this.answer
+          })
+          this.$emit('card-added') // Parent kann Liste neu laden
+          this.question = ''
+          this.answer = ''
+        } catch (err) {
+          console.error(err)
+          alert('Fehler beim Speichern der Karte')
+        }
       }
     }
   }
-}
 </script>
 
 <style scoped>
-.card-form {
-  max-width: 500px;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+  .card-form {
+    max-width: 500px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 </style>

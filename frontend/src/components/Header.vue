@@ -10,21 +10,21 @@
 </template>
 
 <script>
-export default {}
+  export default {}
 </script>
 
 <style scoped>
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #f5f5f5;
-}
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+  }
 
-nav a {
-  margin-left: 10px;
-  text-decoration: none;
-  color: #333;
-}
+  nav a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #333;
+  }
 </style>

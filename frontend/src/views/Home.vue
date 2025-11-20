@@ -16,29 +16,29 @@
 </template>
 
 <script>
-import { useRouter } from "vue-router"
+  import { useRouter } from 'vue-router'
 
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import Card from '../components/Card.vue'
-import ButtonPrimary from '../components/ButtonPrimary.vue'
+  import Header from '../components/Header.vue'
+  import Footer from '../components/Footer.vue'
+  import Card from '../components/Card.vue'
+  import ButtonPrimary from '../components/ButtonPrimary.vue'
 
-export default {
-  components: { Header, Footer, Card, ButtonPrimary },
-  setup() {
-    const router = useRouter()
+  export default {
+    components: { Header, Footer, Card, ButtonPrimary },
+    setup() {
+      const router = useRouter()
 
-    const previewCards = [
-      { id: 1, question: 'Was ist Vue?', answer: 'Ein progressives JS-Framework.' },
-      { id: 2, question: 'SCSS oder CSS?', answer: 'SCSS für bessere Struktur.' },
-      { id: 3, question: 'Docker nutzen?', answer: 'Ja, für lokales Setup.' }
-    ]
+      const previewCards = [
+        { id: 1, question: 'Was ist Vue?', answer: 'Ein progressives JS-Framework.' },
+        { id: 2, question: 'SCSS oder CSS?', answer: 'SCSS für bessere Struktur.' },
+        { id: 3, question: 'Docker nutzen?', answer: 'Ja, für lokales Setup.' }
+      ]
 
-    const goToLernbereich = () => {
-      router.push('/lernen')
+      const goToLernbereich = () => {
+        router.push('/lernen')
+      }
+
+      return { previewCards, goToLernbereich }
     }
-
-    return { previewCards, goToLernbereich }
   }
-}
 </script>
