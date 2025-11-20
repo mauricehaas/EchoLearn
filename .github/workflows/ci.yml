@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Linter
         run: |
-          ruff backend --fix
+          ruff --fix backend
 
       - name: Run Formatter Check
         run: |
