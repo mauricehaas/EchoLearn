@@ -13,7 +13,6 @@
 
 # IDEs
 /.idea
-/.vscode
 
 # Docker
 docker-data/
