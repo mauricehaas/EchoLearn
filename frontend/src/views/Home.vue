@@ -18,13 +18,11 @@
 <script>
   import { useRouter } from 'vue-router'
 
-  import Header from '../components/Header.vue'
-  import Footer from '../components/Footer.vue'
   import Card from '../components/Card.vue'
   import ButtonPrimary from '../components/ButtonPrimary.vue'
 
   export default {
-    components: { Header, Footer, Card, ButtonPrimary },
+    components: { Card, ButtonPrimary },
     setup() {
       const router = useRouter()
 
