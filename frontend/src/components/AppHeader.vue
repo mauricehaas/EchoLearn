@@ -4,6 +4,8 @@
     <nav>
       <router-link to="/">Home</router-link>
       <router-link to="/lernen">Lernbereich</router-link>
+      <router-link to="/pruefung">Prüfungsbereich</router-link>
+      <router-link to="/verwaltung">Verwaltung</router-link>
       <router-link to="/statistik">Statistik</router-link>
     </nav>
   </header>
