@@ -20,14 +20,14 @@ EchoLearn ist eine interaktive Lernplattform, die ...
 
 ### Schnellstart
 
-make build-frontend # Frontend wird installiert
-make build # Backend wird installiert
-make up          # startet alle Services  
+- make build-frontend # Frontend wird installiert
+- make build # Backend wird installiert
+- make up          # startet alle Services  
 
-make down        # stoppt alle Services  
+- make down        # stoppt alle Services  
 
-Backend: http://localhost:8000  
-Frontend: http://localhost:5173  
+- Backend: http://localhost:8000  
+- Frontend: http://localhost:5173  
 
 ---
 
