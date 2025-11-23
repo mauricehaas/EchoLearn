@@ -24,3 +24,6 @@ logs-frontend:
 # Entfernt alle gestoppten Container (Volumes bleiben erhalten)
 clean:
 	docker compose rm -f
+
+seed:
+	docker compose exec backend python -m app.seed.seed_data

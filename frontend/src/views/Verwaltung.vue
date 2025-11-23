@@ -1,23 +1,16 @@
 <template>
   <div class="verwaltung-page">
-    <h1>Karteikarten-Verwaltung</h1>
-    <CardForm @card-added="reloadCards" />
-    <CardList ref="cardList" />
+    <h1>Verwaltung</h1>
+    <QuestionsTable />
   </div>
 </template>
 
 <script>
-  import CardForm from '../components/CardForm.vue'
-  import CardList from '../components/CardList.vue'
+  import QuestionsTable from '../components/QuestionsTable.vue'
 
   export default {
     name: 'Verwaltung',
-    components: { CardForm, CardList },
-    methods: {
-      reloadCards() {
-        this.$refs.cardList.fetchCards()
-      }
-    }
+    components: { QuestionsTable }
   }
 </script>
 
