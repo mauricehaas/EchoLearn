@@ -25,5 +25,12 @@ logs-frontend:
 clean:
 	docker compose rm -f
 
+# Datenbank erstellen
 seed:
 	docker compose exec backend python -m app.seed.seed_data
+
+# Datenbank leeren
+clear-tables:
+	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE users RESTART IDENTITY CASCADE;"
+	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE questions RESTART IDENTITY CASCADE;"
+

@@ -1,0 +1,31 @@
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    background-color: #3b82f6; // Blau
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+
+    &:disabled {
+      background-color: #9ca3af; // Grau für deaktiviert
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: darken(#3b82f6, 10%);
+    }
+  }
+
+  span {
+    font-weight: 500;
+  }
+}

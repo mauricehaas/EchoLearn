@@ -2,22 +2,16 @@
   <div class="verwaltung-page">
     <h1>Verwaltung</h1>
     <QuestionsTable />
+    <UsersTable />
   </div>
 </template>
 
 <script>
   import QuestionsTable from '../components/QuestionsTable.vue'
+  import UsersTable from '../components/UsersTable.vue'
 
   export default {
     name: 'Verwaltung',
-    components: { QuestionsTable }
+    components: { QuestionsTable, UsersTable }
   }
 </script>
-
-<style scoped>
-  .verwaltung-page {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 10px;
-  }
-</style>
