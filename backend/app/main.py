@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.routers import questions, users
 
 app = FastAPI(title="EchoLearn API")
@@ -10,10 +11,7 @@ app = FastAPI(title="EchoLearn API")
 origins = ["http://localhost:5173"]  # Vite Dev Server
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_methods=["*"],
-    allow_headers=["*"]
+    CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
 )
 
 # ---------------------------

@@ -10,7 +10,7 @@
 
   export default {
     name: 'Verwaltung',
-    components: { QuestionsTable, QuestionsTable }
+    components: { QuestionsTable }
   }
 </script>
 
