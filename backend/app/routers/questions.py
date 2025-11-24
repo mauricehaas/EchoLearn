@@ -34,7 +34,28 @@ async def get_question(question_id: int):
         return question
 
 
-# Frage löschen
+# CREATE – neue Frage anlegen
+class QuestionCreate(BaseModel):
+    question: str
+    answer: str
+
+
+@router.post("/")
+async def create_question(data: QuestionCreate):
+    async for session in get_session():
+        new_question = Question(
+            question=data.question,
+            answer=data.answer
+        )
+
+        session.add(new_question)
+        await session.commit()
+        await session.refresh(new_question)
+
+        return new_question
+
+
+# DELETE – Frage löschen
 @router.delete("/{question_id}")
 async def delete_question(question_id: int):
     async for session in get_session():
@@ -52,18 +73,17 @@ async def delete_question(question_id: int):
         return {"message": "Question deleted successfully"}
 
 
-# Update-Schema
+# UPDATE – Schema
 class QuestionUpdate(BaseModel):
     question: Optional[str] = None
     answer: Optional[str] = None
 
 
-# Frage bearbeiten
+# PATCH – Frage bearbeiten
 @router.patch("/{question_id}")
 async def update_question(question_id: int, data: QuestionUpdate):
     async for session in get_session():
 
-        # Frage holen
         result = await session.execute(
             select(Question).where(Question.id == question_id)
         )
@@ -72,7 +92,6 @@ async def update_question(question_id: int, data: QuestionUpdate):
         if not question:
             raise HTTPException(status_code=404, detail="Question not found")
 
-        # Nur geänderte Felder übernehmen
         if data.question is not None:
             question.question = data.question
         if data.answer is not None:
