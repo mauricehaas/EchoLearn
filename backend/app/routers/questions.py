@@ -1,6 +1,8 @@
+import csv
+from io import StringIO
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.future import select
 
@@ -8,6 +10,54 @@ from app.core.db import get_session
 from app.models.question import Question
 
 router = APIRouter(prefix="/questions", tags=["questions"])
+
+
+# IMPORT - CSV Import
+@router.post("/import")
+async def import_questions(file: UploadFile = None):
+    if file is None:
+        raise HTTPException(status_code=400, detail="No file provided")
+    if not file.filename.endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
+
+    content = await file.read()
+    csv_text = content.decode("utf-8")
+    reader = csv.DictReader(StringIO(csv_text))
+
+    created = 0
+    async for session in get_session():
+        for row in reader:
+            question_text = row.get("question")
+            answer_text = row.get("answer")
+            if not question_text:
+                continue
+
+            new_q = Question(question=question_text, answer=answer_text or "")
+            session.add(new_q)
+            created += 1
+        await session.commit()
+
+    return {"imported": created}
+
+
+# EXPORT - CSV Export
+@router.get("/export")
+async def export_questions():
+    async for session in get_session():
+        result = await session.execute(select(Question))
+        questions = result.scalars().all()
+
+    output = "question,answer\n"
+    for q in questions:
+        safe_question = q.question.replace('"', '""')
+        safe_answer = q.answer.replace('"', '""')
+        output += f'"{safe_question}","{safe_answer}"\n'
+
+    return Response(
+        content=output,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": "attachment; filename=questions.csv"},
+    )
 
 
 # Alle Fragen abrufen
@@ -43,10 +93,7 @@ class QuestionCreate(BaseModel):
 @router.post("/")
 async def create_question(data: QuestionCreate):
     async for session in get_session():
-        new_question = Question(
-            question=data.question,
-            answer=data.answer
-        )
+        new_question = Question(question=data.question, answer=data.answer)
 
         session.add(new_question)
         await session.commit()
