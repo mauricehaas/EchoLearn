@@ -28,9 +28,11 @@ async def start_exam() -> Dict[str, str]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 class AnswerEvaluationBody(BaseModel):
     student_answer: str
     correct_answer: str
+
 
 @router.post("/evaluate_answer")
 async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
@@ -49,8 +51,10 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 class EvaluateExamBody(BaseModel):
     unique_exam_id: str
+
 
 @router.post("/evaluate_exam")
 async def evaluate_student_exam(body: EvaluateExamBody) -> Dict[str, str]:
