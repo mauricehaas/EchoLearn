@@ -85,7 +85,7 @@ class ExamSimulator:
         answer = requests.post(self._llm_endpoint, json=payload)
         return self._standardize_answer(answer)
 
-    def _begin_exam(self) -> str:
+    def begin_exam(self) -> str:
         """Generates the prompt to begin the exam simulation.
 
         Returns:
@@ -93,7 +93,7 @@ class ExamSimulator:
         """
         return self._call_llm(self._prompt_begin_exam.format(questions=self._questions))
 
-    def _evaluate_student_answer(self, student_answer: str, correct_answer: str) -> str:
+    def evaluate_student_answer(self, student_answer: str, correct_answer: str) -> str:
         """Generates the prompt to evaluate the student's answer.
 
         Args:
@@ -159,7 +159,7 @@ class ExamSimulator:
             first_answer_evaluation_cleaned["question"],
         )
 
-    def _evaluate_the_exam(self, unique_exam_id: str) -> str:
+    def evaluate_the_exam(self, unique_exam_id: str) -> str:
         """Evaluates the entire exam based on stored feedback and ratings.
 
         Args:
