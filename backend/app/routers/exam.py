@@ -1,6 +1,7 @@
 from typing import Dict
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from app.models.exam_simulator import ExamSimulator
 from app.models.prompts import begin_exam, evaluate_student_answer, evaluate_exam
@@ -27,9 +28,12 @@ async def start_exam() -> Dict[str, str]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class AnswerEvaluationBody(BaseModel):
+    student_answer: str
+    correct_answer: str
 
 @router.post("/evaluate_answer")
-async def evaluate_answer(student_answer: str, correct_answer: str) -> Dict[str, str]:
+async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     """Evaluates the student's answer and provides feedback.
     Args:
       student_answer (str): The answer provided by the student.
@@ -39,15 +43,17 @@ async def evaluate_answer(student_answer: str, correct_answer: str) -> Dict[str,
       Dict[str, str]: The evaluation of the student's answer."""
     try:
         response = exam_simulator.evaluate_student_answer(
-            student_answer, correct_answer
+            body.student_answer, body.correct_answer
         )
         return {"answer_evaluation": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class EvaluateExamBody(BaseModel):
+    unique_exam_id: str
 
 @router.post("/evaluate_exam")
-async def evaluate_student_exam(unique_exam_id: str) -> Dict[str, str]:
+async def evaluate_student_exam(body: EvaluateExamBody) -> Dict[str, str]:
     """Evaluates the entire exam based on stored feedback and ratings.
 
     Args:
@@ -56,7 +62,7 @@ async def evaluate_student_exam(unique_exam_id: str) -> Dict[str, str]:
     Returns:
       Dict[str, str]: The final evaluation of the exam."""
     try:
-        response = exam_simulator.evaluate_the_exam(unique_exam_id)
+        response = exam_simulator.evaluate_the_exam(body.unique_exam_id)
         return {"final_exam_evaluation": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
