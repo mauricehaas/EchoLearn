@@ -26,7 +26,7 @@ async def start_exam() -> Dict[str, str]:
         response = exam_simulator.begin_exam()
         return {"first_question": response}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 class AnswerEvaluationBody(BaseModel):
@@ -49,7 +49,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
         )
         return {"answer_evaluation": response}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 class EvaluateExamBody(BaseModel):
@@ -69,4 +69,4 @@ async def evaluate_student_exam(body: EvaluateExamBody) -> Dict[str, str]:
         response = exam_simulator.evaluate_the_exam(body.unique_exam_id)
         return {"final_exam_evaluation": response}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
