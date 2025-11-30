@@ -1,6 +1,15 @@
 <template>
-  <div>
+  <div class="learn">
     <h1>Lernbereich</h1>
-    <p>Hier werden die Karteikarten angezeigt.</p>
+    <Learn />
   </div>
 </template>
+
+<script>
+  import Learn from '../components/Learn.vue'
+
+  export default {
+    name: 'Lernen',
+    components: { Learn }
+  }
+</script>

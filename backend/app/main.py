@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import questions, users
+from app.routers import questions, users, learn
 
 app = FastAPI(title="EchoLearn API")
 
@@ -19,3 +19,4 @@ app.add_middleware(
 # ---------------------------
 app.include_router(questions.router)
 app.include_router(users.router)
+app.include_router(learn.router)
