@@ -9,35 +9,34 @@ import uuid
 import json
 import requests
 import pandas as pd
-import sqlite3
 
 
 class ExamSimulator:
     def __init__(
-        self, begin_exam: str, evaluate_student_answer: str, evaluate_exam: str
+        self, ds_questions: List[Dict[str, str]], begin_exam: str, evaluate_student_answer: str, evaluate_exam: str
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
         self._llm_endpoint: str = (
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
         self._llm_model: str = "phi4:latest"
-        self._df: DataFrame = pd.read_csv("DataScienceBasics_QandA - Sheet1.csv")
+        self._df: DataFrame = pd.DataFrame(ds_questions)
         self._questions: List[str] = self._df["Question"].tolist()
 
         self._prompt_begin_exam: str = begin_exam
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
         self._prompt_evaluate_exam: str = evaluate_exam
 
-        get_session().execute(
-            text(
-                "CREATE TABLE IF NOT EXISTS exam_simulations (id INTEGER PRIMARY KEY, unique_exam_id VARCHAR, question VARCHAR, answer VARCHAR, feedback VARCHAR, rating VARCHAR)"
-            )
-        )
-        get_session().execute(
-            text(
-                "CREATE TABLE IF NOT EXISTS exam_evaluations (id INTEGER PRIMARY KEY, unique_exam_id VARCHAR, overall_feedback VARCHAR, overall_rating VARCHAR)"
-            )
-        )
+        # get_session().execute(
+        #     text(
+        #         "CREATE TABLE IF NOT EXISTS exam_simulations (id INTEGER PRIMARY KEY, unique_exam_id VARCHAR, question VARCHAR, answer VARCHAR, feedback VARCHAR, rating VARCHAR)"
+        #     )
+        # )
+        # get_session().execute(
+        #     text(
+        #         "CREATE TABLE IF NOT EXISTS exam_evaluations (id INTEGER PRIMARY KEY, unique_exam_id VARCHAR, overall_feedback VARCHAR, overall_rating VARCHAR)"
+        #     )
+        # )
 
     def _standardize_answer(self, answer: str) -> str:
         """Function to extract the answer parts returned as a string of JSONs from the LLM.
