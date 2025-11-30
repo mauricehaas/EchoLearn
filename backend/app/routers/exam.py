@@ -32,6 +32,8 @@ async def start_exam() -> Dict[str, str]:
 
 
 class AnswerEvaluationBody(BaseModel):
+    unique_exam_id: str
+    question: str
     student_answer: str
     correct_answer: str
 
@@ -46,8 +48,8 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     Returns:
       Dict[str, str]: The evaluation of the student's answer."""
     try:
-        response = exam_simulator.evaluate_student_answer(
-            body.student_answer, body.correct_answer
+        response = await exam_simulator.evaluate_student_answer(
+            unique_exam_id=body.unique_exam_id, question=body.question, student_answer=body.student_answer, correct_answer=body.correct_answer
         )
         return {"answer_evaluation": response}
     except Exception as e:
