@@ -49,7 +49,10 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
       Dict[str, str]: The evaluation of the student's answer."""
     try:
         response = await exam_simulator.evaluate_student_answer(
-            unique_exam_id=body.unique_exam_id, question=body.question, student_answer=body.student_answer, correct_answer=body.correct_answer
+            unique_exam_id=body.unique_exam_id,
+            question=body.question,
+            student_answer=body.student_answer,
+            correct_answer=body.correct_answer,
         )
         return {"answer_evaluation": response}
     except Exception as e:

@@ -14,7 +14,11 @@ import pandas as pd
 
 class ExamSimulator:
     def __init__(
-        self, ds_questions: List[Dict[str, str]], begin_exam: str, evaluate_student_answer: str, evaluate_exam: str
+        self,
+        ds_questions: List[Dict[str, str]],
+        begin_exam: str,
+        evaluate_student_answer: str,
+        evaluate_exam: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
         self._llm_endpoint: str = (
@@ -42,7 +46,7 @@ class ExamSimulator:
         texts_json = [json.loads(t) for t in texts if t.strip() != ""]
         text = "".join([t["response"] for t in texts_json])
         return text
-    
+
     def _generate_unique_exam_id(self) -> str:
         """Generates a unique exam ID using UUID4.
 
@@ -94,11 +98,19 @@ class ExamSimulator:
         Returns:
             Dict[str, str]: The prompt string to start the exam.
         """
-        result = self._call_llm(self._prompt_begin_exam.format(questions=self._questions))
+        result = self._call_llm(
+            self._prompt_begin_exam.format(questions=self._questions)
+        )
         result["unique_exam_id"] = self._generate_unique_exam_id()
         return result
 
-    async def evaluate_student_answer(self, unique_exam_id: str, question: str, student_answer: str, correct_answer: str) -> Dict[str, str]:
+    async def evaluate_student_answer(
+        self,
+        unique_exam_id: str,
+        question: str,
+        student_answer: str,
+        correct_answer: str,
+    ) -> Dict[str, str]:
         """Generates the prompt to evaluate the student's answer.
 
         Args:
@@ -119,7 +131,7 @@ class ExamSimulator:
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
             question=question,
-            answer = correct_answer,
+            answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],
             rating=answer_evaluation["overall_rating"],
         )
@@ -137,7 +149,10 @@ class ExamSimulator:
         """
         async with async_session() as session:
             result = await session.scalars(
-                select(ExamEvaluationSingleAnswer.feedback, ExamEvaluationSingleAnswer.rating).where(ExamEvaluationSingleAnswer.unique_exam_id == unique_exam_id)
+                select(
+                    ExamEvaluationSingleAnswer.feedback,
+                    ExamEvaluationSingleAnswer.rating,
+                ).where(ExamEvaluationSingleAnswer.unique_exam_id == unique_exam_id)
             )
         feedbacks = [entry[0] for entry in result]
         ratings = [entry[1] for entry in result]
