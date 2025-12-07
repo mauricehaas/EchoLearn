@@ -3,8 +3,6 @@ import asyncio
 from app.core.db import Base, async_session, engine
 from app.models.question import Question
 from app.models.user import User
-from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
-from app.models.exam_evaluation_final import ExamEvaluationFinal
 
 
 async def seed():
