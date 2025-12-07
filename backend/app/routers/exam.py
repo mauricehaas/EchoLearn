@@ -26,7 +26,7 @@ async def start_exam() -> Dict[str, str]:
     """
     try:
         response = exam_simulator.begin_exam()
-        return {"first_question": response}
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -54,7 +54,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
             student_answer=body.student_answer,
             correct_answer=body.correct_answer,
         )
-        return {"answer_evaluation": response}
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -73,7 +73,7 @@ async def evaluate_student_exam(body: EvaluateExamBody) -> Dict[str, str]:
     Returns:
       Dict[str, str]: The final evaluation of the exam."""
     try:
-        response = exam_simulator.evaluate_the_exam(body.unique_exam_id)
-        return {"final_exam_evaluation": response}
+        response = await exam_simulator.evaluate_the_exam(body.unique_exam_id)
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e

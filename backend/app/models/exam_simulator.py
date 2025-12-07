@@ -92,7 +92,7 @@ class ExamSimulator:
             session.add_all(data_to_add)
             await session.commit()
 
-    def begin_exam(self) -> str:
+    def begin_exam(self) -> Dict[str, str]:
         """Generates the prompt to begin the exam simulation.
 
         Returns:
@@ -131,7 +131,8 @@ class ExamSimulator:
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
             question=question,
-            answer=correct_answer,
+            student_answer=student_answer,
+            correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],
             rating=answer_evaluation["overall_rating"],
         )
@@ -148,27 +149,34 @@ class ExamSimulator:
             Dict[str, str]: The final evaluation statement for the exam.
         """
         async with async_session() as session:
-            result = await session.scalars(
+            result = await session.execute(
                 select(
                     ExamEvaluationSingleAnswer.feedback,
                     ExamEvaluationSingleAnswer.rating,
                 ).where(ExamEvaluationSingleAnswer.unique_exam_id == unique_exam_id)
             )
-        feedbacks = [entry[0] for entry in result]
-        ratings = [entry[1] for entry in result]
-
+            rows = result.all()
+        feedbacks = [entry[0] for entry in rows]
+        ratings = [entry[1] for entry in rows]
         overall_feedback = "\n\n".join(feedbacks)
-        overall_rating = max(set(ratings), key=ratings.count)  # Most common rating
+        overall_rating = "\n\n".join(ratings)  # Most common rating
 
         final_feedback = self._call_llm(
             self._prompt_evaluate_exam.format(
                 overall_feedback=overall_feedback, overall_rating=overall_rating
             )
         )
-        final_evaluation = ExamEvaluationFinal(
-            unique_exam_id=unique_exam_id,
-            overall_feedback=final_feedback["feedback_content"],
-            overall_rating=final_feedback["overall_rating"],
-        )
+        if not isinstance(final_feedback["final_feedback"], str):
+            final_evaluation = ExamEvaluationFinal(
+                unique_exam_id=unique_exam_id,
+                overall_feedback=json.dumps(final_feedback["final_feedback"]),
+                overall_rating=final_feedback["final_rating"],
+            )
+        else:
+            final_evaluation = ExamEvaluationFinal(
+                unique_exam_id=unique_exam_id,
+                overall_feedback=final_feedback["final_feedback"],
+                overall_rating=final_feedback["final_rating"],
+            )
         await self._add_data_to_db([final_evaluation])
         return final_feedback
