@@ -132,7 +132,7 @@ class ExamSimulator:
             unique_exam_id=unique_exam_id,
             question=question,
             student_answer=student_answer,
-            correct_answer = correct_answer,
+            correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],
             rating=answer_evaluation["overall_rating"],
         )
@@ -150,7 +150,10 @@ class ExamSimulator:
         """
         async with async_session() as session:
             result = await session.execute(
-                select(ExamEvaluationSingleAnswer.feedback, ExamEvaluationSingleAnswer.rating).where(ExamEvaluationSingleAnswer.unique_exam_id == unique_exam_id)
+                select(
+                    ExamEvaluationSingleAnswer.feedback,
+                    ExamEvaluationSingleAnswer.rating,
+                ).where(ExamEvaluationSingleAnswer.unique_exam_id == unique_exam_id)
             )
             rows = result.all()
         feedbacks = [entry[0] for entry in rows]
