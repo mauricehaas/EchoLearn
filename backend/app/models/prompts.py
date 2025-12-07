@@ -114,7 +114,7 @@ Bewertungs-String:
 <Antwortformat>
 ```json
 {{
-  "final_feedback": "<Hier gibst du die gesamte Evaluierung der Prüfung wieder, inklusive Zusammenfassung, Stärken, Schwächen, Verbesserungsvorschläge und Gesamtbewertung.>",
-  "final_rating": "<Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
+  "final_feedback": "<string: Hier gibst du die gesamte Evaluierung der Prüfung wieder, inklusive Zusammenfassung, Stärken, Schwächen, Verbesserungsvorschläge und Gesamtbewertung.>",
+  "final_rating": "<string: Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
 }}```
 """
