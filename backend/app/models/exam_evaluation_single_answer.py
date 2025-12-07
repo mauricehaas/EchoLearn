@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Text
 from app.core.db import Base
 
+
 class ExamEvaluationSingleAnswer(Base):
     __tablename__ = "exam_evaluation_single_answer"
     

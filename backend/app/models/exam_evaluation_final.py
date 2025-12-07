@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Text
 from app.core.db import Base
 
+
 class ExamEvaluationFinal(Base):
     __tablename__ = "exam_evaluation_final"
     

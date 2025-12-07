@@ -1,6 +1,15 @@
 <template>
-  <div>
+  <div class="exam">
     <h1>Prüfungsbereich</h1>
-    <p>Hier werden die Karteikarten angezeigt.</p>
+    <Exam />
   </div>
 </template>
+
+<script>
+  import Exam from '../components/Exam.vue'
+
+  export default {
+    name: 'Prüfung',
+    components: { Exam }
+  }
+</script>
