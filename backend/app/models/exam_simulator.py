@@ -88,7 +88,7 @@ class ExamSimulator:
             session.add_all(data_to_add)
             await session.commit()
 
-    def begin_exam(self) -> str:
+    def begin_exam(self) -> Dict[str, str]:
         """Generates the prompt to begin the exam simulation.
 
         Returns:
@@ -119,7 +119,8 @@ class ExamSimulator:
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
             question=question,
-            answer = correct_answer,
+            student_answer=student_answer,
+            correct_answer = correct_answer,
             feedback=answer_evaluation["feedback_content"],
             rating=answer_evaluation["overall_rating"],
         )
