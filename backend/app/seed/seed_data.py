@@ -719,13 +719,28 @@ async def seed():
             ),
         ]
 
+        testquestions = [
+            Question(
+                question="Was ist Data Science?",
+                answer="Data Science ist ein interdisziplinäres Feld, das wissenschaftliche Methoden, Prozesse, Algorithmen und Systeme verwendet, um Wissen und Erkenntnisse aus Daten zu gewinnen.",
+            ),
+            Question(
+                question="Was sind die wichtigsten Schritte im Data-Science-Prozess?",
+                answer="Die wichtigsten Schritte umfassen typischerweise Problemdefinition, Datensammlung, Datenaufbereitung, explorative Datenanalyse, Modellierung, Evaluation und Deployment.",
+            ),
+            Question(
+                question="Was ist der Unterschied zwischen überwachtem und unüberwachtem Lernen?",
+                answer="Überwachtes Lernen beinhaltet das Training eines Modells mit gelabelten Daten, wobei der Algorithmus die Beziehung zwischen Eingabefunktionen und Zielvariablen lernt. Unüberwachtes Lernen arbeitet mit ungelabelten Daten und versucht, verborgene Muster oder Strukturen in den Daten zu erkennen.",
+            ),
+        ]
+
         # Beispiel-User
         users = [
             User(username="admin", password_hash="hashed123", role="admin"),
             User(username="user", password_hash="hashed456", role="user"),
         ]
 
-        session.add_all(questions + users)
+        session.add_all(testquestions + users)
         await session.commit()
 
     print("Seed completed.")

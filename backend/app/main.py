@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import questions, users, learn
-from app.routers import questions, users, exam
+from app.routers import questions, users, learn, exam
 
 app = FastAPI(title="EchoLearn API", docs_url="/docs")
 
