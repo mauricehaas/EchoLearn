@@ -4,36 +4,18 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
-from app.services.data_science_questions import ds_questions
-from app.services.prompts import begin_exam, evaluate_student_answer, evaluate_exam
+from app.services.prompts import evaluate_student_answer, evaluate_exam
 
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 exam_simulator = ExamSimulator(
-    ds_questions=ds_questions,
-    begin_exam=begin_exam,
     evaluate_student_answer=evaluate_student_answer,
     evaluate_exam=evaluate_exam,
 )
 
 
-@router.post("/begin_exam")
-async def start_exam() -> Dict[str, str]:
-    """Starts the exam simulation and returns the first question.
-
-    Returns:
-      Dict[str, str]: The first question of the exam.
-    """
-    try:
-        response = exam_simulator.begin_exam()
-        return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
-
-
 class AnswerEvaluationBody(BaseModel):
     unique_exam_id: str
-    question: str
     student_answer: str
     correct_answer: str
 
@@ -50,7 +32,6 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     try:
         response = await exam_simulator.evaluate_student_answer(
             unique_exam_id=body.unique_exam_id,
-            question=body.question,
             student_answer=body.student_answer,
             correct_answer=body.correct_answer,
         )

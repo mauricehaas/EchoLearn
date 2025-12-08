@@ -88,6 +88,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            unique_exam_id: '1',
             student_answer: transcript.value,
             correct_answer: currentQuestion.value.answer
           })
@@ -115,7 +116,7 @@
        FRAGEN LADEN
     ---------------------------------------- */
       onMounted(async () => {
-        const res = await fetch('http://localhost:8000/questions/')
+        const res = await fetch('http://localhost:8000/questions/random')
         questions.value = await res.json()
       })
 

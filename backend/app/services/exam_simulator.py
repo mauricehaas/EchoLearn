@@ -9,14 +9,11 @@ from sqlalchemy import select
 import uuid
 import json
 import requests
-import pandas as pd
 
 
 class ExamSimulator:
     def __init__(
         self,
-        ds_questions: List[Dict[str, str]],
-        begin_exam: str,
         evaluate_student_answer: str,
         evaluate_exam: str,
     ) -> None:
@@ -25,10 +22,6 @@ class ExamSimulator:
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
         self._llm_model: str = "phi4:latest"
-        self._df: DataFrame = pd.DataFrame(ds_questions)
-        self._questions: List[str] = self._df["Question"].tolist()
-
-        self._prompt_begin_exam: str = begin_exam
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
         self._prompt_evaluate_exam: str = evaluate_exam
 
@@ -92,22 +85,9 @@ class ExamSimulator:
             session.add_all(data_to_add)
             await session.commit()
 
-    def begin_exam(self) -> Dict[str, str]:
-        """Generates the prompt to begin the exam simulation.
-
-        Returns:
-            Dict[str, str]: The prompt string to start the exam.
-        """
-        result = self._call_llm(
-            self._prompt_begin_exam.format(questions=self._questions)
-        )
-        result["unique_exam_id"] = self._generate_unique_exam_id()
-        return result
-
     async def evaluate_student_answer(
         self,
         unique_exam_id: str,
-        question: str,
         student_answer: str,
         correct_answer: str,
     ) -> Dict[str, str]:
@@ -125,12 +105,10 @@ class ExamSimulator:
             self._prompt_evaluate_student_answer.format(
                 student_answer=student_answer,
                 correct_answer=correct_answer,
-                questions=self._questions,
             )
         )
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
-            question=question,
             student_answer=student_answer,
             correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],

@@ -1,4 +1,5 @@
 import csv
+import random
 from io import StringIO
 from typing import Optional
 
@@ -67,6 +68,19 @@ async def get_questions():
         result = await session.execute(select(Question))
         questions = result.scalars().all()
         return questions
+    
+@router.get("/random")
+async def get_random_questions():
+    async for session in get_session():
+        # Alle Fragen abrufen
+        result = await session.execute(select(Question))
+        questions = result.scalars().all()
+        
+        # Zufällig 20 auswählen (oder weniger, falls <20)
+        num_questions = min(20, len(questions))
+        random_questions = random.sample(questions, num_questions)
+        
+        return random_questions
 
 
 # Eine Frage nach ID abrufen

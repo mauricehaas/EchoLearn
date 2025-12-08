@@ -7,7 +7,7 @@ class ExamEvaluationSingleAnswer(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     unique_exam_id = Column(Text, nullable=False)
-    question = Column(Text, nullable=False)
+    question = Column(Text, nullable=True)
     student_answer = Column(Text, nullable=False)
     correct_answer = Column(Text, nullable=False)
     feedback = Column(Text, nullable=False)
