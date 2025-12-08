@@ -84,12 +84,12 @@
        ANTWORT AN BACKEND SENDEN
     ---------------------------------------- */
       const submitAnswer = async () => {
-        const res = await fetch('http://localhost:8000/learn/check', {
+        const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            question_id: currentQuestion.value.id,
-            answer: transcript.value
+            student_answer: transcript.value,
+            correct_answer: currentQuestion.value.answer
           })
         })
         const data = await res.json()
