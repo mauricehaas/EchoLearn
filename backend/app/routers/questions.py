@@ -76,8 +76,8 @@ async def get_random_questions():
         result = await session.execute(select(Question))
         questions = result.scalars().all()
         
-        # Zufällig 20 auswählen (oder weniger, falls <20)
-        num_questions = min(20, len(questions))
+        # Zufällig x auswählen (oder weniger, falls <x)
+        num_questions = min(3, len(questions))
         random_questions = random.sample(questions, num_questions)
         
         return random_questions
