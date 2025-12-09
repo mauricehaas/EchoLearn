@@ -68,18 +68,19 @@ async def get_questions():
         result = await session.execute(select(Question))
         questions = result.scalars().all()
         return questions
-    
+
+
 @router.get("/random")
 async def get_random_questions():
     async for session in get_session():
         # Alle Fragen abrufen
         result = await session.execute(select(Question))
         questions = result.scalars().all()
-        
+
         # Zufällig x auswählen (oder weniger, falls <x)
         num_questions = min(3, len(questions))
         random_questions = random.sample(questions, num_questions)
-        
+
         return random_questions
 
 

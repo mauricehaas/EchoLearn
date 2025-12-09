@@ -1,14 +1,13 @@
-from typing import Dict, List, Tuple, Any
-from pandas import DataFrame
+import json
+import uuid
+from typing import Any, Dict
 
-from app.core.db import async_session
-from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
-from app.models.exam_evaluation_final import ExamEvaluationFinal
+import requests
 from sqlalchemy import select
 
-import uuid
-import json
-import requests
+from app.core.db import async_session
+from app.models.exam_evaluation_final import ExamEvaluationFinal
+from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
 
 class ExamSimulator:

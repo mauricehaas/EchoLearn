@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
-from app.services.prompts import evaluate_student_answer, evaluate_exam
+from app.services.prompts import evaluate_exam, evaluate_student_answer
 
 router = APIRouter(prefix="/exam", tags=["exam"])
 

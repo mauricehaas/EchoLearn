@@ -5,8 +5,7 @@ from app.core.db import get_session
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
 router = APIRouter(
-    prefix="/exam_evaluation_single_answers",
-    tags=["exam_evaluation_single_answers"]
+    prefix="/exam_evaluation_single_answers", tags=["exam_evaluation_single_answers"]
 )
 
 
@@ -30,7 +29,8 @@ async def get_exam_results(exam_id: str):
         rows = result.scalars().all()
 
         if not rows:
-            raise HTTPException(status_code=404, detail="No results found for this exam_id")
+            raise HTTPException(
+                status_code=404, detail="No results found for this exam_id"
+            )
 
         return rows
-
