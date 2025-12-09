@@ -1,7 +1,9 @@
+from difflib import SequenceMatcher
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from difflib import SequenceMatcher
 from sqlalchemy.future import select
+
 from app.core.db import get_session
 from app.models.question import Question
 

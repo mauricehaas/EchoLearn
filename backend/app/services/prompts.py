@@ -55,15 +55,11 @@ Studentenantwort:
 Musterlösung:
 {correct_answer}
 
-Wähle bitte die nächste Frage für den Studenten aus dem folgenden Fragenkatalog aus:
-{questions}
-
 <Antwortformat>
 ```json
 {{
 "feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
-"question": "<Die nächste ausgewählte Frage wortgenau aus dem Fragenkatalog>",
-"statement": "<Hier gehst du kurz auf die Antwort des Studenten ein, anschließend stellst du die nächste Frage, als wärst du im Prüfungsgespräch.>",
+"statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
 "overall_rating": "<Gesamtrating (z. B. sehr gut / gut / ausreichend / mangelhaft)>"
 }}```
 """

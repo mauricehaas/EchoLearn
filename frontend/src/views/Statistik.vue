@@ -1,15 +1,15 @@
 <template>
-  <div class="stats">
+  <div class="statistik">
     <h1>Statistik</h1>
-    <StatsTable />
+    <ExamStats />
   </div>
 </template>
 
 <script>
-  import StatsTable from '../components/StatsTable.vue'
+  import ExamStats from '../components/ExamStats.vue'
 
   export default {
     name: 'Statistik',
-    components: { StatsTable }
+    components: { ExamStats }
   }
 </script>
