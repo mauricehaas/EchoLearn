@@ -17,11 +17,38 @@
           Erkannte Antwort: {{ transcript }}
           <span v-if="interimTranscript">…{{ interimTranscript }}</span>
         </p>
+
         <button @click="submitAnswer" :disabled="!transcript || loading || locked">
           {{ loading ? 'Wird geprüft…' : 'Antwort absenden' }}
         </button>
         <span v-if="loading" class="spinner"></span>
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
+      </div>
+
+      <div style="margin-top: 20px" v-if="currentIndex == 1">
+        <hr></hr>
+        <button @click="speakQuestion" :disabled="loading || locked">Rückfrage anhören</button>
+
+        <div style="margin-top: 20px">
+          <button @click="startListening" :disabled="listening || loading || locked">
+            {{ listening ? 'Höre...' : 'Sprich jetzt' }}
+          </button>
+          <button @click="stopListening" :disabled="!listening || loading || locked">Stopp</button>
+          <button @click="restartListening" :disabled="loading || locked">Neu aufnehmen</button>
+        </div>
+
+        <div style="margin-top: 10px">
+          <p>
+            Erkannte Antwort: {{ transcript }}
+            <span v-if="interimTranscript">…{{ interimTranscript }}</span>
+          </p>
+
+          <button @click="submitAnswer" :disabled="!transcript || loading || locked">
+            {{ loading ? 'Wird geprüft…' : 'Antwort absenden' }}
+          </button>
+          <span v-if="loading" class="spinner"></span>
+          <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
+        </div>
       </div>
 
       <div style="margin-top: 10px">
@@ -141,6 +168,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               unique_exam_id: '1',
+              question: currentQuestion.value.question,
               student_answer: transcript.value,
               correct_answer: currentQuestion.value.answer
             })
