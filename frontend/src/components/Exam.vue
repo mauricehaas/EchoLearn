@@ -26,7 +26,7 @@
       </div>
 
       <div style="margin-top: 20px" v-if="currentIndex == 1">
-        <hr></hr>
+        <hr />
         <button @click="speakQuestion" :disabled="loading || locked">Rückfrage anhören</button>
 
         <div style="margin-top: 20px">
