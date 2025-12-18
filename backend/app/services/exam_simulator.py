@@ -87,6 +87,7 @@ class ExamSimulator:
     async def evaluate_student_answer(
         self,
         unique_exam_id: str,
+        question: str,
         student_answer: str,
         correct_answer: str,
     ) -> Dict[str, str]:
@@ -102,12 +103,14 @@ class ExamSimulator:
         """
         answer_evaluation = self._call_llm(
             self._prompt_evaluate_student_answer.format(
+                question=question,
                 student_answer=student_answer,
                 correct_answer=correct_answer,
             )
         )
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
+            question=question,
             student_answer=student_answer,
             correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],

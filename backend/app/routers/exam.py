@@ -16,6 +16,7 @@ exam_simulator = ExamSimulator(
 
 class AnswerEvaluationBody(BaseModel):
     unique_exam_id: str
+    question: str
     student_answer: str
     correct_answer: str
 
@@ -24,6 +25,7 @@ class AnswerEvaluationBody(BaseModel):
 async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     """Evaluates the student's answer and provides feedback.
     Args:
+      question (str): The question answered by the student.
       student_answer (str): The answer provided by the student.
       correct_answer (str): The correct answer for comparison.
 
@@ -32,6 +34,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     try:
         response = await exam_simulator.evaluate_student_answer(
             unique_exam_id=body.unique_exam_id,
+            question=body.question,
             student_answer=body.student_answer,
             correct_answer=body.correct_answer,
         )

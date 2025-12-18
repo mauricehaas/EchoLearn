@@ -1,5 +1,5 @@
 <template>
-  <div class="exam-results">
+  <div class="table-container">
     <h2>Ergebnisübersicht</h2>
 
     <!-- Loading Indicator -->
@@ -12,16 +12,16 @@
     <table v-if="results.length > 0" class="results-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Antwort (Student)</th>
-          <th>Korrekte Antwort</th>
-          <th>Bewertung</th>
+          <th>Frage</th>
+          <th>Ihre Antwort</th>
+          <th>Musterlösung</th>
+          <th>Bewertung (max. 5)</th>
           <th>Feedback</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in results" :key="row.id">
-          <td>{{ row.id }}</td>
+          <td>{{ row.question }}</td>
           <td>{{ row.student_answer }}</td>
           <td>{{ row.correct_answer }}</td>
           <td>{{ row.rating }}</td>
@@ -71,26 +71,4 @@
   onMounted(loadResults)
 </script>
 
-<style scoped>
-  .results-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
-  }
-
-  .results-table th,
-  .results-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    vertical-align: top;
-  }
-
-  .results-table th {
-    background: #f0f0f0;
-  }
-
-  .error {
-    color: red;
-    margin: 10px 0;
-  }
-</style>
+<style scoped></style>

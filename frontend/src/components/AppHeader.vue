@@ -1,11 +1,12 @@
 <template>
-  <header>
-    <h1>EchoLearn</h1>
-    <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/pruefung">Prüfungsbereich</router-link>
-      <router-link to="/verwaltung">Verwaltung</router-link>
-      <router-link to="/statistik">Statistik</router-link>
+  <header class="header">
+    <h1 class="logo">EchoLearn</h1>
+
+    <nav class="nav">
+      <router-link to="/" class="link">Home</router-link>
+      <router-link to="/pruefung" class="link">Prüfung</router-link>
+      <router-link to="/statistik" class="link">Statistik</router-link>
+      <router-link to="/verwaltung" class="link admin">Verwaltung</router-link>
     </nav>
   </header>
 </template>
@@ -15,18 +16,58 @@
 </script>
 
 <style scoped>
-  header {
+  .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #333;
+    padding: 1rem 2rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
   }
 
-  nav a {
-    margin-left: 10px;
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .nav {
+    display: flex;
+    gap: 1.2rem;
+  }
+
+  .link {
+    position: relative;
     text-decoration: none;
-    color: #333;
+    color: #374151;
+    font-weight: 500;
+    padding: 0.4rem 0.6rem;
+    transition: color 0.2s ease;
+  }
+
+  /* Hover */
+  .link:hover {
+    color: #2563eb;
+  }
+
+  /* Aktiver Router-Link */
+  .router-link-active {
+    color: #2563eb;
+  }
+
+  .router-link-active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 2px;
+    background-color: #2563eb;
+    border-radius: 2px;
+  }
+
+  /* Verwaltung leicht abgesetzt */
+  .admin {
+    font-weight: 600;
   }
 </style>

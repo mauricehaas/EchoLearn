@@ -23,31 +23,24 @@ Wichtige Regeln:
 """
 
 
-evaluate_student_answer = """Bitte vergleiche die folgende Studentenantwort mit der bereitgestellten Musterlösung.
-Analysiere dabei:
+evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
+Vergebe die Punkte folgendermaßen:
 
 Inhaltliche Korrektheit
+- Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
+- Wenn nicht, dann vergebe die erreichten Punkte prozentual 
+
+Gebe zusätzlich Verbesserungsvorschläge
+- Was sollte der Student inhaltlich besser machen?
 - Welche Schlüsselpunkte der Musterlösung wurden getroffen?
-- Welche wichtigen Aspekte fehlen?
 - Welche Aussagen sind falsch oder unvollständig?
 
-Gesamtbewertung der inhaltlichen Qualität.
-- Tiefe und Präzision der Erklärung
-- Wie gut wird das Konzept erklärt?
-- Ist die Antwort oberflächlich, ausreichend detailliert oder sehr präzise?
-
-Sprachliche und formale Qualität
-- Verwenden von Füllwörtern, unsicheren Formulierungen („äh“, „ähm“, „vielleicht“, „glaube“, „eventuell“ etc.).
-- Klarheit, Struktur, Verständlichkeit.
-- Professioneller oder unsicherer Sprachstil.
-
-Verbesserungsvorschläge
-- Was sollte der Student inhaltlich besser machen?
-- Wie könnte die sprachliche Darstellung verbessert werden?
-
-Gib am Ende ein knappes Gesamtrating (z. B. sehr gut / gut / ausreichend / mangelhaft).
+Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
 
 Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+Frage:
+{question}
 
 Studentenantwort:
 {student_answer}
@@ -60,7 +53,7 @@ Musterlösung:
 {{
 "feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
 "statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
-"overall_rating": "<Gesamtrating (z. B. sehr gut / gut / ausreichend / mangelhaft)>"
+"overall_rating": "<Gesamtrating (0-5 Punkte)>"
 }}```
 """
 
