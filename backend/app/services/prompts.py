@@ -23,21 +23,52 @@ Wichtige Regeln:
 """
 
 
-evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
-Vergebe die Punkte folgendermaßen:
+# evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
+# Vergebe die Punkte folgendermaßen:
 
-Inhaltliche Korrektheit
-- Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
-- Wenn nicht, dann vergebe die erreichten Punkte prozentual 
+# Inhaltliche Korrektheit
+# - Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
+# - Wenn nicht, dann vergebe die erreichten Punkte prozentual 
 
-Gebe zusätzlich Verbesserungsvorschläge
-- Was sollte der Student inhaltlich besser machen?
-- Welche Schlüsselpunkte der Musterlösung wurden getroffen?
-- Welche Aussagen sind falsch oder unvollständig?
+# Gebe zusätzlich Verbesserungsvorschläge
+# - Was sollte der Student inhaltlich besser machen?
+# - Welche Schlüsselpunkte der Musterlösung wurden getroffen?
+# - Welche Aussagen sind falsch oder unvollständig?
 
-Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
+# Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
 
-Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+# Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+# Frage:
+# {question}
+
+# Studentenantwort:
+# {student_answer}
+
+# Musterlösung:
+# {correct_answer}
+
+# <Antwortformat>
+# ```json
+# {{
+# "feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
+# "statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
+# "overall_rating": "<Gesamtrating (0-5 Punkte)>"
+# }}```
+# """
+
+evaluate_student_answer = """
+Analysiere die folgende Studentenantwort auf die gegebene Frage mithilfe der Musterlösung und entscheide, um welchen der folgenden Fälle es sich handelt:
+
+Fall 1: Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+Fall 2: Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
+Fall 3: Der Student versteht die Frage nicht oder bittet um eine Umformulierung.
+
+Wichtige Regeln:
+- Wähle **genau einen** der drei Fälle.
+- Gib **keine Begründung**, **keine Bewertung**, **keine Rückfragen** und **keinen zusätzlichen Text** aus.
+- Die gesamte Ausgabe muss **ausschließlich** aus dem unten definierten JSON bestehen.
+- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
 
 Frage:
 {question}
@@ -51,12 +82,9 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-"feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
-"statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
-"overall_rating": "<Gesamtrating (0-5 Punkte)>"
-}}```
+  "case": "Fall 1 | Fall 2 | Fall 3"
+}}
 """
-
 
 evaluate_exam = """
 Bitte erstelle auf Basis der folgenden zwei Informationsquellen eine umfassende Gesamtevaluierung der gesamten Prüfung:
@@ -107,3 +135,50 @@ Bewertungs-String:
   "final_rating": "<string: Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
 }}```
 """
+
+prompt_case_one_answer_correct_next_specific_question = """"""
+
+prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
+
+Deine Aufgabe ist es, die gegebene Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren.
+
+Gehe dabei intern wie folgt vor (ohne dies auszugeben):
+- Prüfe, ob die Studentenantwort zur gestellten Frage passt.
+- Vergleiche die Studentenantwort mit der Musterlösung.
+- Identifiziere gezielt inhaltliche Lücken, fehlende Aspekte, unklare Aussagen oder falsche Annahmen.
+- Wähle die **wichtigste inhaltliche Lücke**, die das Verständnis des Themas am stärksten betrifft.
+
+Auf Basis dieser identifizierten Lücke:
+- Formuliere **eine präzise, fachlich korrekte Folgefrage**, die genau auf diese Lücke abzielt.
+- Erstelle zusätzlich die **erwartete Musterantwort** auf diese neue Frage.
+
+Wichtige Regeln:
+- Stelle **genau eine** neue Frage.
+- Die neue Frage muss sich inhaltlich klar auf das ursprüngliche Themengebiet beziehen.
+- Die erwartete Antwort muss fachlich korrekt, vollständig und verständlich sein.
+- Gib **keine Bewertung**, **kein Feedback** und **keine Erklärungen** aus.
+- Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+<Antwortformat>
+```json
+{{
+  "question": "<Gezielte Folgefrage, die eine identifizierte inhaltliche Lücke prüft>",
+  "expected_answer": "<Fachlich korrekte und vollständige Musterantwort auf diese Folgefrage>"
+}}```
+"""
+
+prompt_case_three_student_does_not_understand_question = """"""
