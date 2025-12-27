@@ -70,9 +70,18 @@ class ExamSimulator:
     def _case_one(self, question: str, student_answer: str, correct_answer: str) -> None:
         """Function for Case one: The student's answer is correct and complete."""
         pass
-    
-    def _case_two(self, question: str, student_answer: str, correct_answer: str) -> None:
-        """Function for Case two: The student's answer is partially correct; identify knowledge gaps."""
+
+    def _case_two(self, question: str, student_answer: str, correct_answer: str) -> Dict[str, str]:
+        """Function for Case two: The student's answer is partially correct; identify knowledge gaps.
+        
+        Args:
+            question (str): The original question asked.
+            student_answer (str): The answer provided by the student.
+            correct_answer (str): The correct answer for comparison.
+            
+        Returns:
+            Dict[str, str]: The follow-up question and expected answer.
+        """
         answer_case_two = self._call_llm(
             self._prompt_case_two.format(
                 question=question,
@@ -82,9 +91,21 @@ class ExamSimulator:
         )
         return answer_case_two
 
-    def _case_three(self, question: str) -> None:
-        """Function for Case three: The student does not understand the question; provide clarifications."""
-        pass
+    def _case_three(self, question: str) -> Dict[str, str]:
+        """Function for Case three: The student does not understand the question; provide clarifications.
+
+        Args:
+            question (str): The original question asked.
+
+        Returns:
+            Dict[str, str]: The clarification and expected answer.
+        """
+        answer_case_three = self._call_llm(
+            self._prompt_case_three.format(
+                question=question,
+            )
+        )
+        return answer_case_three
 
     def _call_llm(self, prompt: str) -> Dict[str, str]:
         """Calls the LLM endpoint with the given prompt.
@@ -137,7 +158,7 @@ class ExamSimulator:
         if answer_evaluation["case"] == "Fall 1" or answer_evaluation["case"].lower() == "fall 1":
             self._case_one()
         elif answer_evaluation["case"] == "Fall 2" or answer_evaluation["case"].lower() == "fall 2":
-            answer_case_two = self._case_two()
+            answer_case_two = self._case_two(question, student_answer, correct_answer)
             evaluation = ExamEvaluationSingleAnswer(
                 unique_exam_id=unique_exam_id,
                 question=question,
@@ -149,7 +170,17 @@ class ExamSimulator:
             await self._add_data_to_db([evaluation])
             return answer_case_two
         elif answer_evaluation["case"] == "Fall 3" or answer_evaluation["case"].lower() == "fall 3":
-            self._case_three()
+            answer_case_three = self._case_three(question)
+            evaluation = ExamEvaluationSingleAnswer(
+                unique_exam_id=unique_exam_id,
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+                feedback="The student does not understand the question. Clarifications provided.",
+                rating="Did Not Understand Question",
+            )
+            await self._add_data_to_db([evaluation])
+            return answer_case_three
         
         # evaluation = ExamEvaluationSingleAnswer(
         #     unique_exam_id=unique_exam_id,
@@ -160,7 +191,7 @@ class ExamSimulator:
         #     rating=answer_evaluation["overall_rating"],
         # )
         # await self._add_data_to_db([evaluation])
-        return {"message": "Functionality for case one and three not yet implemented."}
+        return {"message": "Functionality for case one not yet implemented."}
 
     async def evaluate_the_exam(self, unique_exam_id: str) -> Dict[str, str]:
         """Evaluates the entire exam based on stored feedback and ratings.

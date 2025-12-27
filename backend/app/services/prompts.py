@@ -181,4 +181,34 @@ Musterlösung:
 }}```
 """
 
-prompt_case_three_student_does_not_understand_question = """"""
+prompt_case_three_student_does_not_understand_question = """Der Student hat gezeigt, dass er die ursprüngliche Frage nicht verstanden hat oder bittet um eine Umformulierung.
+
+Deine Aufgabe ist es, die gegebene Frage in **einfachere, klarere und verständlichere Sprache** umzuschreiben, sodass sie für den Studenten leichter zu erfassen ist.
+
+Gehe dabei intern wie folgt vor (ohne dies auszugeben):
+- Erhalte den fachlichen Inhalt und die Lernziele der ursprünglichen Frage.
+- Vereinfache Satzstruktur, Wortwahl und Formulierungen.
+- Vermeide Fachjargon, sofern er nicht zwingend notwendig ist, oder erkläre ihn implizit durch einfachere Begriffe.
+- Zerlege komplexe Fragen ggf. in klar strukturierte Teilsätze, **ohne zusätzliche Inhalte hinzuzufügen**.
+
+Wichtige Regeln:
+- Der fachliche Inhalt der Frage darf **nicht verändert** werden.
+- Es dürfen **keine Hinweise auf die Musterlösung** gegeben werden.
+- Stelle **keine zusätzliche Fragen** und gib **keine Erklärungen oder Kommentare** aus.
+- Gib **nur eine** vereinfachte Version der ursprünglichen Frage zurück.
+- Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+
+---
+
+Ursprüngliche Frage:
+{question}
+
+---
+
+<Antwortformat>
+```json
+{{
+  "question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
+}}```
+"""
