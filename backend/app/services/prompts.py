@@ -23,21 +23,52 @@ Wichtige Regeln:
 """
 
 
-evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
-Vergebe die Punkte folgendermaßen:
+# evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
+# Vergebe die Punkte folgendermaßen:
 
-Inhaltliche Korrektheit
-- Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
-- Wenn nicht, dann vergebe die erreichten Punkte prozentual 
+# Inhaltliche Korrektheit
+# - Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
+# - Wenn nicht, dann vergebe die erreichten Punkte prozentual
 
-Gebe zusätzlich Verbesserungsvorschläge
-- Was sollte der Student inhaltlich besser machen?
-- Welche Schlüsselpunkte der Musterlösung wurden getroffen?
-- Welche Aussagen sind falsch oder unvollständig?
+# Gebe zusätzlich Verbesserungsvorschläge
+# - Was sollte der Student inhaltlich besser machen?
+# - Welche Schlüsselpunkte der Musterlösung wurden getroffen?
+# - Welche Aussagen sind falsch oder unvollständig?
 
-Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
+# Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
 
-Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+# Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+# Frage:
+# {question}
+
+# Studentenantwort:
+# {student_answer}
+
+# Musterlösung:
+# {correct_answer}
+
+# <Antwortformat>
+# ```json
+# {{
+# "feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
+# "statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
+# "overall_rating": "<Gesamtrating (0-5 Punkte)>"
+# }}```
+# """
+
+evaluate_student_answer = """
+Analysiere die folgende Studentenantwort auf die gegebene Frage mithilfe der Musterlösung und entscheide, um welchen der folgenden Fälle es sich handelt:
+
+Fall 1: Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+Fall 2: Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
+Fall 3: Der Student versteht die Frage nicht oder bittet um eine Umformulierung.
+
+Wichtige Regeln:
+- Wähle **genau einen** der drei Fälle.
+- Gib **keine Begründung**, **keine Bewertung**, **keine Rückfragen** und **keinen zusätzlichen Text** aus.
+- Die gesamte Ausgabe muss **ausschließlich** aus dem unten definierten JSON bestehen.
+- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
 
 Frage:
 {question}
@@ -51,12 +82,9 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-"feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
-"statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
-"overall_rating": "<Gesamtrating (0-5 Punkte)>"
+  "case": "Fall 1 | Fall 2 | Fall 3"
 }}```
 """
-
 
 evaluate_exam = """
 Bitte erstelle auf Basis der folgenden zwei Informationsquellen eine umfassende Gesamtevaluierung der gesamten Prüfung:
@@ -105,5 +133,90 @@ Bewertungs-String:
 {{
   "final_feedback": "<string: Hier gibst du die gesamte Evaluierung der Prüfung wieder, inklusive Zusammenfassung, Stärken, Schwächen, Verbesserungsvorschläge und Gesamtbewertung.>",
   "final_rating": "<string: Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
+}}```
+"""
+
+prompt_case_one_answer_correct_next_specific_question = """"""
+
+prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
+
+Deine Aufgabe ist es, die Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren und darauf dialogisch zu reagieren.
+
+Gehe dabei intern wie folgt vor (ohne dies auszugeben):
+- Prüfe, ob die Studentenantwort zur ursprünglichen Frage passt.
+- Vergleiche die Studentenantwort mit der Musterlösung.
+- Identifiziere gezielt inhaltliche Lücken, unklare Stellen oder falsche Aussagen.
+- Wähle die **wichtigste inhaltliche Lücke**, die für das Verständnis zentral ist.
+
+Erstelle anschließend drei Ausgaben:
+
+1) **answer_llm**  
+   - Antworte so, als würdest du mit dem Studenten sprechen.
+   - Gehe kurz wertschätzend auf seine Antwort ein (z. B. was teilweise richtig ist).
+   - Weise indirekt oder vorsichtig auf die inhaltliche Lücke hin.
+   - Integriere fließend die neue Folgefrage in diesen Text.
+   - Keine Bewertung, keine Punktevergabe.
+
+2) **question**  
+   - Formuliere die neue Folgefrage klar und präzise.
+   - Die Frage muss gezielt auf die identifizierte inhaltliche Lücke abzielen.
+
+3) **expected_answer**  
+   - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
+
+Wichtige Regeln:
+- Stelle **genau eine** Folgefrage.
+- Bleibe thematisch beim ursprünglichen Inhalt.
+- Der Ton in `answer_llm` soll unterstützend, sachlich und dialogisch sein.
+- Gib **keine Meta-Erklärungen** über dein Vorgehen aus.
+- Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+<Antwortformat>
+```json
+{{
+  "answer_llm": "<Dialogische Antwort des LLMs, die auf die Studentenantwort eingeht und zur Folgefrage überleitet>",
+  "question": "<Gezielte Folgefrage zur identifizierten Lücke>",
+  "expected_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
+}}```
+"""
+
+prompt_case_three_student_does_not_understand_question = """Der Student hat signalisiert, dass er die Frage nicht verstanden hat oder um eine Umformulierung bittet (z. B. „Wie meinen Sie das?“).
+
+Deine Aufgabe ist es, die ursprüngliche Frage in einfacherer, klarerer Sprache neu zu formulieren und dies in einem natürlichen Gesprächsfluss zu präsentieren.
+
+Wichtige Regeln:
+- Formuliere die Frage verständlicher, einfacher und klarer.
+- Der fachliche Inhalt der ursprünglichen Frage darf nicht verändert werden.
+- Gib keine zusätzlichen Erklärungen, Beispiele oder Hinweise zur Lösung.
+- Antworte so, als würdest du direkt mit dem Studenten sprechen.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+---
+
+Ursprüngliche Frage:
+{question}
+
+---
+
+<Antwortformat>
+```json
+{{
+  "answer_llm": "<Kurze dialogische Antwort, die Verständnis signalisiert und zur umformulierten Frage überleitet>",
+  "question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
 }}```
 """

@@ -14,6 +14,9 @@ class ExamSimulator:
     def __init__(
         self,
         evaluate_student_answer: str,
+        prompt_case_one: str,
+        prompt_case_two: str,
+        prompt_case_three: str,
         evaluate_exam: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
@@ -22,6 +25,9 @@ class ExamSimulator:
         )
         self._llm_model: str = "phi4:latest"
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
+        self._prompt_case_one: str = prompt_case_one
+        self._prompt_case_two: str = prompt_case_two
+        self._prompt_case_three: str = prompt_case_three
         self._prompt_evaluate_exam: str = evaluate_exam
 
     def _standardize_answer(self, answer: str) -> str:
@@ -60,6 +66,50 @@ class ExamSimulator:
         end_idx = response.rfind("```")
 
         return json.loads(response[start_idx + 7 : end_idx].strip())
+
+    def _case_one(
+        self, question: str, student_answer: str, correct_answer: str
+    ) -> None:
+        """Function for Case one: The student's answer is correct and complete."""
+        pass
+
+    def _case_two(
+        self, question: str, student_answer: str, correct_answer: str
+    ) -> Dict[str, str]:
+        """Function for Case two: The student's answer is partially correct; identify knowledge gaps.
+
+        Args:
+            question (str): The original question asked.
+            student_answer (str): The answer provided by the student.
+            correct_answer (str): The correct answer for comparison.
+
+        Returns:
+            Dict[str, str]: The follow-up question and expected answer.
+        """
+        answer_case_two = self._call_llm(
+            self._prompt_case_two.format(
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+            )
+        )
+        return answer_case_two
+
+    def _case_three(self, question: str) -> Dict[str, str]:
+        """Function for Case three: The student does not understand the question; provide clarifications.
+
+        Args:
+            question (str): The original question asked.
+
+        Returns:
+            Dict[str, str]: The clarification and expected answer.
+        """
+        answer_case_three = self._call_llm(
+            self._prompt_case_three.format(
+                question=question,
+            )
+        )
+        return answer_case_three
 
     def _call_llm(self, prompt: str) -> Dict[str, str]:
         """Calls the LLM endpoint with the given prompt.
@@ -108,16 +158,44 @@ class ExamSimulator:
                 correct_answer=correct_answer,
             )
         )
-        evaluation = ExamEvaluationSingleAnswer(
-            unique_exam_id=unique_exam_id,
-            question=question,
-            student_answer=student_answer,
-            correct_answer=correct_answer,
-            feedback=answer_evaluation["feedback_content"],
-            rating=answer_evaluation["overall_rating"],
-        )
-        await self._add_data_to_db([evaluation])
-        return answer_evaluation
+        print("Fall:", answer_evaluation["case"])
+        if "1" in answer_evaluation["case"] or "eins" in answer_evaluation["case"]:
+            self._case_one()
+        elif "2" in answer_evaluation["case"] or "zwei" in answer_evaluation["case"]:
+            answer_case_two = self._case_two(question, student_answer, correct_answer)
+            evaluation = ExamEvaluationSingleAnswer(
+                unique_exam_id=unique_exam_id,
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+                feedback="The student answer is partially correct or incorrect. Identified knowledge gaps, follow-up question provided.",
+                rating="Partially Correct or Incorrect",
+            )
+            await self._add_data_to_db([evaluation])
+            return answer_case_two
+        elif "3" in answer_evaluation["case"] or "drei" in answer_evaluation["case"]:
+            answer_case_three = self._case_three(question)
+            evaluation = ExamEvaluationSingleAnswer(
+                unique_exam_id=unique_exam_id,
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+                feedback="The student does not understand the question. Clarifications provided.",
+                rating="Did Not Understand Question",
+            )
+            await self._add_data_to_db([evaluation])
+            return answer_case_three
+
+        # evaluation = ExamEvaluationSingleAnswer(
+        #     unique_exam_id=unique_exam_id,
+        #     question=question,
+        #     student_answer=student_answer,
+        #     correct_answer=correct_answer,
+        #     feedback=answer_evaluation["feedback_content"],
+        #     rating=answer_evaluation["overall_rating"],
+        # )
+        # await self._add_data_to_db([evaluation])
+        return {"message": "Functionality for case one not yet implemented."}
 
     async def evaluate_the_exam(self, unique_exam_id: str) -> Dict[str, str]:
         """Evaluates the entire exam based on stored feedback and ratings.
