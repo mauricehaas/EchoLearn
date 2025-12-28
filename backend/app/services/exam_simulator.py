@@ -66,19 +66,23 @@ class ExamSimulator:
         end_idx = response.rfind("```")
 
         return json.loads(response[start_idx + 7 : end_idx].strip())
-    
-    def _case_one(self, question: str, student_answer: str, correct_answer: str) -> None:
+
+    def _case_one(
+        self, question: str, student_answer: str, correct_answer: str
+    ) -> None:
         """Function for Case one: The student's answer is correct and complete."""
         pass
 
-    def _case_two(self, question: str, student_answer: str, correct_answer: str) -> Dict[str, str]:
+    def _case_two(
+        self, question: str, student_answer: str, correct_answer: str
+    ) -> Dict[str, str]:
         """Function for Case two: The student's answer is partially correct; identify knowledge gaps.
-        
+
         Args:
             question (str): The original question asked.
             student_answer (str): The answer provided by the student.
             correct_answer (str): The correct answer for comparison.
-            
+
         Returns:
             Dict[str, str]: The follow-up question and expected answer.
         """
@@ -154,10 +158,10 @@ class ExamSimulator:
                 correct_answer=correct_answer,
             )
         )
-        
-        if answer_evaluation["case"] == "Fall 1" or answer_evaluation["case"].lower() == "fall 1":
+        print("Fall:", answer_evaluation["case"])
+        if "1" in answer_evaluation["case"] or "eins" in answer_evaluation["case"]:
             self._case_one()
-        elif answer_evaluation["case"] == "Fall 2" or answer_evaluation["case"].lower() == "fall 2":
+        elif "2" in answer_evaluation["case"] or "zwei" in answer_evaluation["case"]:
             answer_case_two = self._case_two(question, student_answer, correct_answer)
             evaluation = ExamEvaluationSingleAnswer(
                 unique_exam_id=unique_exam_id,
@@ -169,7 +173,7 @@ class ExamSimulator:
             )
             await self._add_data_to_db([evaluation])
             return answer_case_two
-        elif answer_evaluation["case"] == "Fall 3" or answer_evaluation["case"].lower() == "fall 3":
+        elif "3" in answer_evaluation["case"] or "drei" in answer_evaluation["case"]:
             answer_case_three = self._case_three(question)
             evaluation = ExamEvaluationSingleAnswer(
                 unique_exam_id=unique_exam_id,
@@ -181,7 +185,7 @@ class ExamSimulator:
             )
             await self._add_data_to_db([evaluation])
             return answer_case_three
-        
+
         # evaluation = ExamEvaluationSingleAnswer(
         #     unique_exam_id=unique_exam_id,
         #     question=question,

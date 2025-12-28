@@ -28,7 +28,7 @@ Wichtige Regeln:
 
 # Inhaltliche Korrektheit
 # - Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
-# - Wenn nicht, dann vergebe die erreichten Punkte prozentual 
+# - Wenn nicht, dann vergebe die erreichten Punkte prozentual
 
 # Gebe zusätzlich Verbesserungsvorschläge
 # - Was sollte der Student inhaltlich besser machen?
@@ -83,7 +83,7 @@ Musterlösung:
 ```json
 {{
   "case": "Fall 1 | Fall 2 | Fall 3"
-}}
+}}```
 """
 
 evaluate_exam = """
@@ -140,23 +140,35 @@ prompt_case_one_answer_correct_next_specific_question = """"""
 
 prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
 
-Deine Aufgabe ist es, die gegebene Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren.
+Deine Aufgabe ist es, die Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren und darauf dialogisch zu reagieren.
 
 Gehe dabei intern wie folgt vor (ohne dies auszugeben):
-- Prüfe, ob die Studentenantwort zur gestellten Frage passt.
+- Prüfe, ob die Studentenantwort zur ursprünglichen Frage passt.
 - Vergleiche die Studentenantwort mit der Musterlösung.
-- Identifiziere gezielt inhaltliche Lücken, fehlende Aspekte, unklare Aussagen oder falsche Annahmen.
-- Wähle die **wichtigste inhaltliche Lücke**, die das Verständnis des Themas am stärksten betrifft.
+- Identifiziere gezielt inhaltliche Lücken, unklare Stellen oder falsche Aussagen.
+- Wähle die **wichtigste inhaltliche Lücke**, die für das Verständnis zentral ist.
 
-Auf Basis dieser identifizierten Lücke:
-- Formuliere **eine präzise, fachlich korrekte Folgefrage**, die genau auf diese Lücke abzielt.
-- Erstelle zusätzlich die **erwartete Musterantwort** auf diese neue Frage.
+Erstelle anschließend drei Ausgaben:
+
+1) **answer_llm**  
+   - Antworte so, als würdest du mit dem Studenten sprechen.
+   - Gehe kurz wertschätzend auf seine Antwort ein (z. B. was teilweise richtig ist).
+   - Weise indirekt oder vorsichtig auf die inhaltliche Lücke hin.
+   - Integriere fließend die neue Folgefrage in diesen Text.
+   - Keine Bewertung, keine Punktevergabe.
+
+2) **question**  
+   - Formuliere die neue Folgefrage klar und präzise.
+   - Die Frage muss gezielt auf die identifizierte inhaltliche Lücke abzielen.
+
+3) **expected_answer**  
+   - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
 
 Wichtige Regeln:
-- Stelle **genau eine** neue Frage.
-- Die neue Frage muss sich inhaltlich klar auf das ursprüngliche Themengebiet beziehen.
-- Die erwartete Antwort muss fachlich korrekt, vollständig und verständlich sein.
-- Gib **keine Bewertung**, **kein Feedback** und **keine Erklärungen** aus.
+- Stelle **genau eine** Folgefrage.
+- Bleibe thematisch beim ursprünglichen Inhalt.
+- Der Ton in `answer_llm` soll unterstützend, sachlich und dialogisch sein.
+- Gib **keine Meta-Erklärungen** über dein Vorgehen aus.
 - Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
 - Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
 
@@ -176,28 +188,23 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-  "question": "<Gezielte Folgefrage, die eine identifizierte inhaltliche Lücke prüft>",
-  "expected_answer": "<Fachlich korrekte und vollständige Musterantwort auf diese Folgefrage>"
+  "answer_llm": "<Dialogische Antwort des LLMs, die auf die Studentenantwort eingeht und zur Folgefrage überleitet>",
+  "question": "<Gezielte Folgefrage zur identifizierten Lücke>",
+  "expected_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
 }}```
 """
 
-prompt_case_three_student_does_not_understand_question = """Der Student hat gezeigt, dass er die ursprüngliche Frage nicht verstanden hat oder bittet um eine Umformulierung.
+prompt_case_three_student_does_not_understand_question = """Der Student hat signalisiert, dass er die Frage nicht verstanden hat oder um eine Umformulierung bittet (z. B. „Wie meinen Sie das?“).
 
-Deine Aufgabe ist es, die gegebene Frage in **einfachere, klarere und verständlichere Sprache** umzuschreiben, sodass sie für den Studenten leichter zu erfassen ist.
-
-Gehe dabei intern wie folgt vor (ohne dies auszugeben):
-- Erhalte den fachlichen Inhalt und die Lernziele der ursprünglichen Frage.
-- Vereinfache Satzstruktur, Wortwahl und Formulierungen.
-- Vermeide Fachjargon, sofern er nicht zwingend notwendig ist, oder erkläre ihn implizit durch einfachere Begriffe.
-- Zerlege komplexe Fragen ggf. in klar strukturierte Teilsätze, **ohne zusätzliche Inhalte hinzuzufügen**.
+Deine Aufgabe ist es, die ursprüngliche Frage in einfacherer, klarerer Sprache neu zu formulieren und dies in einem natürlichen Gesprächsfluss zu präsentieren.
 
 Wichtige Regeln:
-- Der fachliche Inhalt der Frage darf **nicht verändert** werden.
-- Es dürfen **keine Hinweise auf die Musterlösung** gegeben werden.
-- Stelle **keine zusätzliche Fragen** und gib **keine Erklärungen oder Kommentare** aus.
-- Gib **nur eine** vereinfachte Version der ursprünglichen Frage zurück.
-- Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+- Formuliere die Frage verständlicher, einfacher und klarer.
+- Der fachliche Inhalt der ursprünglichen Frage darf nicht verändert werden.
+- Gib keine zusätzlichen Erklärungen, Beispiele oder Hinweise zur Lösung.
+- Antworte so, als würdest du direkt mit dem Studenten sprechen.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
 
 ---
 
@@ -209,6 +216,7 @@ Ursprüngliche Frage:
 <Antwortformat>
 ```json
 {{
+  "answer_llm": "<Kurze dialogische Antwort, die Verständnis signalisiert und zur umformulierten Frage überleitet>",
   "question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
 }}```
 """
