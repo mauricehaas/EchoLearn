@@ -10,13 +10,13 @@ from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
 
-class LLMHandler():
+class LLMHandler:
     def __init__(self) -> None:
         self._llm_endpoint: str = (
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
         self._llm_model: str = "phi4:latest"
-    
+
     def _standardize_answer(self, answer: str) -> str:
         """Function to extract the answer parts returned as a string of JSONs from the LLM.
 
@@ -31,7 +31,7 @@ class LLMHandler():
         texts_json = [json.loads(t) for t in texts if t.strip() != ""]
         text = "".join([t["response"] for t in texts_json])
         return text
-    
+
     def _cleanup_llm_response(self, response: str) -> Dict[str, str]:
         """Cleans up the LLM response to extract the JSON content.
 
@@ -45,7 +45,7 @@ class LLMHandler():
         end_idx = response.rfind("```")
 
         return json.loads(response[start_idx + 7 : end_idx].strip())
-    
+
     def call_llm(self, prompt: str) -> Dict[str, str]:
         """Calls the LLM endpoint with the given prompt.
 
