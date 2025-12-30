@@ -136,7 +136,60 @@ Bewertungs-String:
 }}```
 """
 
-prompt_case_one_answer_correct_next_specific_question = """"""
+prompt_case_one_answer_correct_next_specific_question = """Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs eine neue Frage zu stellen. Dabei darfst du frei entscheiden, ob:
+- eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
+- eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
+
+Gehe dabei intern wie folgt vor (ohne dies auszugeben):
+- Berücksichtige die ursprüngliche Frage und die Musterlösung.
+- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
+- Stelle sicher, dass die Frage fachlich korrekt, klar formuliert und prüfungsrelevant ist.
+
+Erstelle anschließend drei Ausgaben:
+
+1) **answer_llm**  
+   - Antworte so, als würdest du dich in einem mündlichen Prüfungsgespräch befinden.
+   - Gehe kurz wertschätzend auf die korrekte Antwort des Studenten ein.
+   - Leite fließend zur neuen Prüfungsfrage über.
+   - Keine Bewertung, keine Punktevergabe.
+
+2) **question**  
+   - Formuliere die neue Prüfungsfrage klar und präzise.
+   - Die Frage kann vertiefend oder thematisch weiterführend sein.
+
+3) **correct_answer**  
+   - Gib eine fachlich korrekte und vollständige Musterlösung zur neuen Frage an.
+
+Wichtige Regeln:
+- Stelle genau **eine** neue Frage.
+- Die neue Frage muss fachlich sinnvoll auf dem bisherigen Verlauf aufbauen.
+- Gib keine Meta-Kommentare über dein Vorgehen aus.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+<Antwortformat>
+```json
+{{
+  "answer_llm": "<Dialogische Antwort im Prüfungskontext mit Überleitung zur neuen Frage>",
+  "question": "<Neue Prüfungsfrage>",
+  "correct_answer": "<Fachlich korrekte Musterlösung zur neuen Frage>"
+}}```
+"""
 
 prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
 
