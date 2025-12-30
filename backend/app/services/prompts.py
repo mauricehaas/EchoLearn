@@ -136,35 +136,44 @@ Bewertungs-String:
 }}```
 """
 
-prompt_case_one_answer_correct_next_specific_question = """Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+prompt_case_one_answer_correct_next_specific_question = """
+Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
 
-Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs eine neue Frage zu stellen. Dabei darfst du frei entscheiden, ob:
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend eine neue Prüfungsfrage zu stellen. Dabei darfst du frei entscheiden, ob:
 - eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
 - eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
 
 Gehe dabei intern wie folgt vor (ohne dies auszugeben):
 - Berücksichtige die ursprüngliche Frage und die Musterlösung.
+- Beurteile die Qualität der Studentenantwort.
 - Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
-- Stelle sicher, dass die Frage fachlich korrekt, klar formuliert und prüfungsrelevant ist.
 
-Erstelle anschließend drei Ausgaben:
+Erstelle anschließend fünf Ausgaben:
 
 1) **answer_llm**  
-   - Antworte so, als würdest du dich in einem mündlichen Prüfungsgespräch befinden.
-   - Gehe kurz wertschätzend auf die korrekte Antwort des Studenten ein.
+   - Antworte dialogisch wie in einer mündlichen Prüfung.
+   - Gehe kurz positiv auf die korrekte Antwort des Studenten ein.
    - Leite fließend zur neuen Prüfungsfrage über.
-   - Keine Bewertung, keine Punktevergabe.
+   - Keine detaillierte Bewertung oder Punktevergabe in diesem Feld.
 
-2) **question**  
+2) **feedback**  
+   - Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
+   - Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
+   - Maximal 2–3 Sätze.
+
+3) **rating**  
+   - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
+   - Da es sich um Fall 1 handelt, muss die Bewertung **hoch ausfallen** (z. B. 4,0–5,0).
+   - Gib nur die Zahl aus (z. B. `4.5`).
+
+4) **question**  
    - Formuliere die neue Prüfungsfrage klar und präzise.
-   - Die Frage kann vertiefend oder thematisch weiterführend sein.
 
-3) **correct_answer**  
+5) **correct_answer**  
    - Gib eine fachlich korrekte und vollständige Musterlösung zur neuen Frage an.
 
 Wichtige Regeln:
 - Stelle genau **eine** neue Frage.
-- Die neue Frage muss fachlich sinnvoll auf dem bisherigen Verlauf aufbauen.
 - Gib keine Meta-Kommentare über dein Vorgehen aus.
 - Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
 - Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
@@ -186,44 +195,53 @@ Musterlösung:
 ```json
 {{
   "answer_llm": "<Dialogische Antwort im Prüfungskontext mit Überleitung zur neuen Frage>",
+  "feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
+  "rating": "<Gesamtbewertung (0–5 Punkte)>",
   "question": "<Neue Prüfungsfrage>",
   "correct_answer": "<Fachlich korrekte Musterlösung zur neuen Frage>"
 }}```
 """
 
-prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
+prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """
+Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
 
 Deine Aufgabe ist es, die Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren und darauf dialogisch zu reagieren.
 
 Gehe dabei intern wie folgt vor (ohne dies auszugeben):
 - Prüfe, ob die Studentenantwort zur ursprünglichen Frage passt.
 - Vergleiche die Studentenantwort mit der Musterlösung.
-- Identifiziere gezielt inhaltliche Lücken, unklare Stellen oder falsche Aussagen.
+- Identifiziere inhaltliche Lücken, unklare Stellen oder falsche Aussagen.
 - Wähle die **wichtigste inhaltliche Lücke**, die für das Verständnis zentral ist.
 
-Erstelle anschließend drei Ausgaben:
+Erstelle anschließend fünf Ausgaben:
 
 1) **answer_llm**  
-   - Antworte so, als würdest du mit dem Studenten sprechen.
-   - Gehe kurz wertschätzend auf seine Antwort ein (z. B. was teilweise richtig ist).
-   - Weise indirekt oder vorsichtig auf die inhaltliche Lücke hin.
-   - Integriere fließend die neue Folgefrage in diesen Text.
-   - Keine Bewertung, keine Punktevergabe.
+   - Antworte wie in einem Gespräch oder Prüfungskontext.
+   - Gehe kurz auf richtige Aspekte der Studentenantwort ein.
+   - Weise vorsichtig auf die zentrale inhaltliche Lücke hin.
+   - Integriere fließend die neue Folgefrage.
 
-2) **question**  
-   - Formuliere die neue Folgefrage klar und präzise.
-   - Die Frage muss gezielt auf die identifizierte inhaltliche Lücke abzielen.
+2) **feedback**  
+   - Gib ein kurzes, sachliches Feedback zur Studentenantwort.
+   - Benenne sowohl korrekte Aspekte als auch die wichtigste Schwäche.
+   - Maximal 2–3 Sätze.
 
-3) **expected_answer**  
+3) **rating**  
+   - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
+   - Die Bewertung soll dem inhaltlichen Stand der Antwort entsprechen (typischerweise **1,0–3,9 Punkte**).
+   - Gib nur die Zahl aus (z. B. `2.5`).
+
+4) **question**  
+   - Formuliere **eine** gezielte Folgefrage, die auf die identifizierte Lücke abzielt.
+
+5) **expected_answer**  
    - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
 
 Wichtige Regeln:
-- Stelle **genau eine** Folgefrage.
-- Bleibe thematisch beim ursprünglichen Inhalt.
-- Der Ton in `answer_llm` soll unterstützend, sachlich und dialogisch sein.
-- Gib **keine Meta-Erklärungen** über dein Vorgehen aus.
-- Die gesamte Ausgabe muss **ausschließlich** im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+- Stelle genau **eine** Folgefrage.
+- Gib keine Meta-Erklärungen oder Hinweise auf dein Vorgehen aus.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
 
 ---
 
@@ -241,7 +259,9 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-  "answer_llm": "<Dialogische Antwort des LLMs, die auf die Studentenantwort eingeht und zur Folgefrage überleitet>",
+  "answer_llm": "<Dialogische Antwort mit Überleitung zur Folgefrage>",
+  "feedback": "<Kurzes Feedback zur Studentenantwort>",
+  "rating": "<Gesamtbewertung (0–5 Punkte)>",
   "question": "<Gezielte Folgefrage zur identifizierten Lücke>",
   "expected_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
 }}```

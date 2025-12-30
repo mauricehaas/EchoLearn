@@ -206,8 +206,8 @@ class ExamSimulator:
                 question=question,
                 student_answer=student_answer,
                 correct_answer=correct_answer,
-                feedback="The student answer is correct and complete. Next specific question provided.",
-                rating="Correct and Complete",
+                feedback=answer_case_one["feedback"],
+                rating=answer_case_one["rating"],
             )
             return answer_case_one
         elif "2" in answer_evaluation["case"] or "zwei" in answer_evaluation["case"]:
@@ -217,8 +217,8 @@ class ExamSimulator:
                 question=question,
                 student_answer=student_answer,
                 correct_answer=correct_answer,
-                feedback="The student answer is partially correct or incorrect. Identified knowledge gaps, follow-up question provided.",
-                rating="Partially Correct or Incorrect",
+                feedback=answer_case_two["feedback"],
+                rating=answer_case_two["rating"],
             )
             return answer_case_two
         elif "3" in answer_evaluation["case"] or "drei" in answer_evaluation["case"]:
@@ -232,16 +232,6 @@ class ExamSimulator:
                 rating="Did Not Understand Question",
             )
             return answer_case_three
-
-        # evaluation = ExamEvaluationSingleAnswer(
-        #     unique_exam_id=unique_exam_id,
-        #     question=question,
-        #     student_answer=student_answer,
-        #     correct_answer=correct_answer,
-        #     feedback=answer_evaluation["feedback_content"],
-        #     rating=answer_evaluation["overall_rating"],
-        # )
-        # await self._add_data_to_db([evaluation])
         return {"message": "Functionality for case one not yet implemented."}
 
     async def evaluate_the_exam(self, unique_exam_id: str) -> Dict[str, str]:
