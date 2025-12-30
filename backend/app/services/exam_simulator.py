@@ -94,7 +94,14 @@ class ExamSimulator:
         self, question: str, student_answer: str, correct_answer: str
     ) -> None:
         """Function for Case one: The student's answer is correct and complete."""
-        pass
+        answer_case_one = self._llm_handler.call_llm(
+            self._prompt_case_one.format(
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+            )
+        )
+        return answer_case_one
 
     def _case_two(
         self, question: str, student_answer: str, correct_answer: str
@@ -139,6 +146,35 @@ class ExamSimulator:
             session.add_all(data_to_add)
             await session.commit()
 
+    async def _write_single_evaluation_to_db(
+        self,
+        unique_exam_id: str,
+        question: str,
+        student_answer: str,
+        correct_answer: str,
+        feedback: str,
+        rating: str,
+    ) -> None:
+        """Writes a single evaluation entry to the database.
+
+        Args:
+            unique_exam_id (str): The unique identifier for the exam session.
+            question (str): The original question asked.
+            student_answer (str): The answer provided by the student.
+            correct_answer (str): The correct answer for comparison.
+            feedback (str): The feedback for the student's answer.
+            rating (str): The rating for the student's answer.
+        """
+        evaluation = ExamEvaluationSingleAnswer(
+            unique_exam_id=unique_exam_id,
+            question=question,
+            student_answer=student_answer,
+            correct_answer=correct_answer,
+            feedback=feedback,
+            rating=rating,
+        )
+        await self._add_data_to_db([evaluation])
+
     async def evaluate_student_answer(
         self,
         unique_exam_id: str,
@@ -163,24 +199,31 @@ class ExamSimulator:
                 correct_answer=correct_answer,
             )
         )
-        print("Fall:", answer_evaluation["case"])
         if "1" in answer_evaluation["case"] or "eins" in answer_evaluation["case"]:
-            self._case_one()
-        elif "2" in answer_evaluation["case"] or "zwei" in answer_evaluation["case"]:
-            answer_case_two = self._case_two(question, student_answer, correct_answer)
-            evaluation = ExamEvaluationSingleAnswer(
+            answer_case_one = self._case_one(question, student_answer, correct_answer)
+            await self._write_single_evaluation_to_db(
                 unique_exam_id=unique_exam_id,
                 question=question,
                 student_answer=student_answer,
                 correct_answer=correct_answer,
-                feedback="The student answer is partially correct or incorrect. Identified knowledge gaps, follow-up question provided.",
-                rating="Partially Correct or Incorrect",
+                feedback=answer_case_one["feedback"],
+                rating=answer_case_one["rating"],
             )
-            await self._add_data_to_db([evaluation])
+            return answer_case_one
+        elif "2" in answer_evaluation["case"] or "zwei" in answer_evaluation["case"]:
+            answer_case_two = self._case_two(question, student_answer, correct_answer)
+            await self._write_single_evaluation_to_db(
+                unique_exam_id=unique_exam_id,
+                question=question,
+                student_answer=student_answer,
+                correct_answer=correct_answer,
+                feedback=answer_case_two["feedback"],
+                rating=answer_case_two["rating"],
+            )
             return answer_case_two
         elif "3" in answer_evaluation["case"] or "drei" in answer_evaluation["case"]:
             answer_case_three = self._case_three(question)
-            evaluation = ExamEvaluationSingleAnswer(
+            await self._write_single_evaluation_to_db(
                 unique_exam_id=unique_exam_id,
                 question=question,
                 student_answer=student_answer,
@@ -188,18 +231,7 @@ class ExamSimulator:
                 feedback="The student does not understand the question. Clarifications provided.",
                 rating="Did Not Understand Question",
             )
-            await self._add_data_to_db([evaluation])
             return answer_case_three
-
-        # evaluation = ExamEvaluationSingleAnswer(
-        #     unique_exam_id=unique_exam_id,
-        #     question=question,
-        #     student_answer=student_answer,
-        #     correct_answer=correct_answer,
-        #     feedback=answer_evaluation["feedback_content"],
-        #     rating=answer_evaluation["overall_rating"],
-        # )
-        # await self._add_data_to_db([evaluation])
         return {"message": "Functionality for case one not yet implemented."}
 
     async def evaluate_the_exam(self, unique_exam_id: str) -> Dict[str, str]:
