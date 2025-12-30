@@ -10,25 +10,12 @@ from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
 
-class ExamSimulator:
-    def __init__(
-        self,
-        evaluate_student_answer: str,
-        prompt_case_one: str,
-        prompt_case_two: str,
-        prompt_case_three: str,
-        evaluate_exam: str,
-    ) -> None:
-        """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
+class LLMHandler:
+    def __init__(self) -> None:
         self._llm_endpoint: str = (
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
         self._llm_model: str = "phi4:latest"
-        self._prompt_evaluate_student_answer: str = evaluate_student_answer
-        self._prompt_case_one: str = prompt_case_one
-        self._prompt_case_two: str = prompt_case_two
-        self._prompt_case_three: str = prompt_case_three
-        self._prompt_evaluate_exam: str = evaluate_exam
 
     def _standardize_answer(self, answer: str) -> str:
         """Function to extract the answer parts returned as a string of JSONs from the LLM.
@@ -45,14 +32,6 @@ class ExamSimulator:
         text = "".join([t["response"] for t in texts_json])
         return text
 
-    def _generate_unique_exam_id(self) -> str:
-        """Generates a unique exam ID using UUID4.
-
-        Returns:
-            str: A unique exam identifier.
-        """
-        return str(uuid.uuid4())
-
     def _cleanup_llm_response(self, response: str) -> Dict[str, str]:
         """Cleans up the LLM response to extract the JSON content.
 
@@ -66,6 +45,50 @@ class ExamSimulator:
         end_idx = response.rfind("```")
 
         return json.loads(response[start_idx + 7 : end_idx].strip())
+
+    def call_llm(self, prompt: str) -> Dict[str, str]:
+        """Calls the LLM endpoint with the given prompt.
+
+        Args:
+            prompt (str): The prompt to send to the LLM.
+
+        Returns:
+            str: The standardized answer from the LLM.
+        """
+        payload = {
+            "model": self._llm_model,
+            "prompt": prompt,
+        }
+
+        answer = requests.post(self._llm_endpoint, json=payload)
+        answer_strd = self._standardize_answer(answer)
+        return self._cleanup_llm_response(answer_strd)
+
+
+class ExamSimulator:
+    def __init__(
+        self,
+        evaluate_student_answer: str,
+        prompt_case_one: str,
+        prompt_case_two: str,
+        prompt_case_three: str,
+        evaluate_exam: str,
+    ) -> None:
+        """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
+        self._llm_handler = LLMHandler()
+        self._prompt_evaluate_student_answer: str = evaluate_student_answer
+        self._prompt_case_one: str = prompt_case_one
+        self._prompt_case_two: str = prompt_case_two
+        self._prompt_case_three: str = prompt_case_three
+        self._prompt_evaluate_exam: str = evaluate_exam
+
+    def _generate_unique_exam_id(self) -> str:
+        """Generates a unique exam ID using UUID4.
+
+        Returns:
+            str: A unique exam identifier.
+        """
+        return str(uuid.uuid4())
 
     def _case_one(
         self, question: str, student_answer: str, correct_answer: str
@@ -86,7 +109,7 @@ class ExamSimulator:
         Returns:
             Dict[str, str]: The follow-up question and expected answer.
         """
-        answer_case_two = self._call_llm(
+        answer_case_two = self._llm_handler.call_llm(
             self._prompt_case_two.format(
                 question=question,
                 student_answer=student_answer,
@@ -104,30 +127,12 @@ class ExamSimulator:
         Returns:
             Dict[str, str]: The clarification and expected answer.
         """
-        answer_case_three = self._call_llm(
+        answer_case_three = self._llm_handler.call_llm(
             self._prompt_case_three.format(
                 question=question,
             )
         )
         return answer_case_three
-
-    def _call_llm(self, prompt: str) -> Dict[str, str]:
-        """Calls the LLM endpoint with the given prompt.
-
-        Args:
-            prompt (str): The prompt to send to the LLM.
-
-        Returns:
-            str: The standardized answer from the LLM.
-        """
-        payload = {
-            "model": self._llm_model,
-            "prompt": prompt,
-        }
-
-        answer = requests.post(self._llm_endpoint, json=payload)
-        answer_strd = self._standardize_answer(answer)
-        return self._cleanup_llm_response(answer_strd)
 
     async def _add_data_to_db(self, data_to_add: Any) -> None:
         async with async_session() as session:
@@ -151,7 +156,7 @@ class ExamSimulator:
         Returns:
             Dict[str, str]: The prompt string to evaluate the student's answer.
         """
-        answer_evaluation = self._call_llm(
+        answer_evaluation = self._llm_handler.call_llm(
             self._prompt_evaluate_student_answer.format(
                 question=question,
                 student_answer=student_answer,
@@ -219,7 +224,7 @@ class ExamSimulator:
         overall_feedback = "\n\n".join(feedbacks)
         overall_rating = "\n\n".join(ratings)  # Most common rating
 
-        final_feedback = self._call_llm(
+        final_feedback = self._llm_handler.call_llm(
             self._prompt_evaluate_exam.format(
                 overall_feedback=overall_feedback, overall_rating=overall_rating
             )
