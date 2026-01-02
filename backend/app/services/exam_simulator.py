@@ -16,7 +16,7 @@ class LLMHandler:
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
         self._llm_model: str = model
-    
+
     def _standardize_answer(self, answer: str) -> str:
         """Function to extract the answer parts returned as a string of JSONs from the LLM.
 
