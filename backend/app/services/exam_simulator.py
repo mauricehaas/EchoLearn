@@ -11,12 +11,12 @@ from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
 
 class LLMHandler:
-    def __init__(self) -> None:
+    def __init__(self, model: str = "phi4:latest") -> None:
         self._llm_endpoint: str = (
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
-        self._llm_model: str = "phi4:latest"
-
+        self._llm_model: str = model
+    
     def _standardize_answer(self, answer: str) -> str:
         """Function to extract the answer parts returned as a string of JSONs from the LLM.
 
