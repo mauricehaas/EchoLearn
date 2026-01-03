@@ -1,5 +1,6 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 df = pd.read_csv("data/raw/DataScienceBasics_QandA - Sheet1.csv")
 

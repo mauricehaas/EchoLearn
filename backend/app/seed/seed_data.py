@@ -1,4 +1,5 @@
 import asyncio
+
 import pandas as pd
 
 from app.core.db import Base, async_session, engine
@@ -6,6 +7,7 @@ from app.models.question import Question
 from app.models.user import User
 
 PROCESSED_QUESTIONS_PATH = "data/processed/questions.csv"
+
 
 async def seed():
     print("Creating tables…")
