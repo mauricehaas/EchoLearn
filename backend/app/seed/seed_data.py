@@ -1,42 +1,38 @@
 import asyncio
 
+import pandas as pd
+
 from app.core.db import Base, async_session, engine
 from app.models.question import Question
 from app.models.user import User
+
+PROCESSED_QUESTIONS_PATH = "data/processed/questions.csv"
 
 
 async def seed():
     print("Creating tables…")
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)  # optional, nur für Dev
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-    print("Seeding data…")
+    print("Loading processed questions…")
+    df = pd.read_csv(PROCESSED_QUESTIONS_PATH)
+
     async with async_session() as session:
-        # Fragen + Antworten
         questions = [
             Question(
-                question="Was ist 1+1?",
-                answer="2",
-            ),
-            Question(
-                question="Was sind die wichtigsten Schritte im Data-Science-Prozess?",
-                answer="Die wichtigsten Schritte umfassen typischerweise Problemdefinition, Datensammlung, Datenaufbereitung, explorative Datenanalyse, Modellierung, Evaluation und Deployment.",
-            ),
-            Question(
-                question="Was ist 2+2 und was ist 4+4?",
-                answer="2+2 ist 4 und 4+4 ist 8",
-            ),
+                question=row["question"],
+                answer=row["answer"],
+            )
+            for _, row in df.iterrows()
         ]
 
-        # Beispiel-User
         users = [
             User(username="admin", password_hash="hashed123", role="admin"),
             User(username="user", password_hash="hashed456", role="user"),
         ]
 
         exam_evaluation_final = []
-
         exam_evaluation_single_answer = []
 
         session.add_all(
