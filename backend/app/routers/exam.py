@@ -8,8 +8,8 @@ from app.services.prompts import (
     evaluate_exam,
     evaluate_student_answer,
     prompt_case_one_answer_correct_next_specific_question,
-    prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
     prompt_case_three_student_does_not_understand_question,
+    prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
 )
 
 router = APIRouter(prefix="/exam", tags=["exam"])
