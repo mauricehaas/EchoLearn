@@ -156,17 +156,17 @@ Erstelle anschließend fünf Ausgaben:
    - Leite fließend zur neuen Prüfungsfrage über.
    - Keine detaillierte Bewertung oder Punktevergabe in diesem Feld.
 
-2) **feedback**  
+2) **llm_feedback**  
    - Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
    - Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
    - Maximal 2–3 Sätze.
 
-3) **rating**  
+3) **llm_rating**  
    - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
    - Da es sich um Fall 1 handelt, muss die Bewertung **hoch ausfallen** (z. B. 4,0–5,0).
    - Gib nur die Zahl aus (z. B. `4.5`).
 
-4) **question**  
+4) **next_question**  
    - Formuliere die neue Prüfungsfrage klar und präzise.
 
 5) **correct_answer**  
@@ -195,9 +195,9 @@ Musterlösung:
 ```json
 {{
   "answer_llm": "<Dialogische Antwort im Prüfungskontext mit Überleitung zur neuen Frage>",
-  "feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
-  "rating": "<Gesamtbewertung (0–5 Punkte)>",
-  "question": "<Neue Prüfungsfrage>",
+  "llm_feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
+  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>",
+  "next_question": "<Neue Prüfungsfrage>",
   "correct_answer": "<Fachlich korrekte Musterlösung zur neuen Frage>"
 }}```
 """
@@ -221,20 +221,20 @@ Erstelle anschließend fünf Ausgaben:
    - Weise vorsichtig auf die zentrale inhaltliche Lücke hin.
    - Integriere fließend die neue Folgefrage.
 
-2) **feedback**  
+2) **llm_feedback**  
    - Gib ein kurzes, sachliches Feedback zur Studentenantwort.
    - Benenne sowohl korrekte Aspekte als auch die wichtigste Schwäche.
    - Maximal 2–3 Sätze.
 
-3) **rating**  
+3) **llm_rating**  
    - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
    - Die Bewertung soll dem inhaltlichen Stand der Antwort entsprechen (typischerweise **1,0–3,9 Punkte**).
    - Gib nur die Zahl aus (z. B. `2.5`).
 
-4) **question**  
+4) **next_question**  
    - Formuliere **eine** gezielte Folgefrage, die auf die identifizierte Lücke abzielt.
 
-5) **expected_answer**  
+5) **correct_answer**  
    - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
 
 Wichtige Regeln:
@@ -260,10 +260,10 @@ Musterlösung:
 ```json
 {{
   "answer_llm": "<Dialogische Antwort mit Überleitung zur Folgefrage>",
-  "feedback": "<Kurzes Feedback zur Studentenantwort>",
-  "rating": "<Gesamtbewertung (0–5 Punkte)>",
-  "question": "<Gezielte Folgefrage zur identifizierten Lücke>",
-  "expected_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
+  "llm_feedback": "<Kurzes Feedback zur Studentenantwort>",
+  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>",
+  "next_question": "<Gezielte Folgefrage zur identifizierten Lücke>",
+  "correct_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
 }}```
 """
 
@@ -290,6 +290,6 @@ Ursprüngliche Frage:
 ```json
 {{
   "answer_llm": "<Kurze dialogische Antwort, die Verständnis signalisiert und zur umformulierten Frage überleitet>",
-  "question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
+  "next_question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
 }}```
 """
