@@ -1,6 +1,7 @@
 import json
 import uuid
-from typing import Any, Dict
+from typing import Any, Dict, List
+import pandas as pd
 
 import requests
 from sqlalchemy import select
@@ -69,14 +70,27 @@ class ExamSimulator:
     def __init__(
         self,
         evaluate_student_answer: str,
+        prompt_begin_exam: str,
         prompt_case_one: str,
         prompt_case_two: str,
         prompt_case_three: str,
         evaluate_exam: str,
     ) -> None:
-        """Initializes the ExamSimulator with LLM endpoint, model, and question dataset."""
+        """Initializes the ExamSimulator with LLM endpoint, model, and question dataset.
+        
+        Args:
+            evaluate_student_answer (str): Prompt template for evaluating student answers.
+            prompt_begin_exam (str): Prompt template for beginning the exam.
+            prompt_case_one (str): Prompt template for case one evaluation.
+            prompt_case_two (str): Prompt template for case two evaluation.
+            prompt_case_three (str): Prompt template for case three evaluation.
+            evaluate_exam (str): Prompt template for evaluating the entire exam.
+        """
         self._llm_handler = LLMHandler()
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
+        self._prompt_begin_exam: str = prompt_begin_exam
+        self._df = pd.read_csv("DataScience_Basics_QandA - Sheet1.csv")
+        self._questions: List[str] = self._df["Question"].to_list()
         self._prompt_case_one: str = prompt_case_one
         self._prompt_case_two: str = prompt_case_two
         self._prompt_case_three: str = prompt_case_three
@@ -92,8 +106,17 @@ class ExamSimulator:
 
     def _case_one(
         self, question: str, student_answer: str, correct_answer: str
-    ) -> None:
-        """Function for Case one: The student's answer is correct and complete."""
+    ) -> Dict[str, str]:
+        """Function for Case one: The student's answer is correct and complete.
+        
+        Args:
+            question (str): The original question asked.
+            student_answer (str): The answer provided by the student.
+            correct_answer (str): The correct answer for comparison.
+        
+        Returns:
+            Dict[str, str]: The feedback and rating for the student's answer.
+        """
         answer_case_one = self._llm_handler.call_llm(
             self._prompt_case_one.format(
                 question=question,
@@ -174,6 +197,18 @@ class ExamSimulator:
             rating=rating,
         )
         await self._add_data_to_db([evaluation])
+        
+    def begin_exam(self) -> Dict[str, str]:
+        """Generates the prompt to begin the exam simulation.
+
+        Returns:
+            Dict[str, str]: The prompt string to start the exam.
+        """
+        result = self._llm_handler.call_llm(
+            self._prompt_begin_exam.format(questions=self._questions)
+        )
+        result["unique_exam_id"] = self._generate_unique_exam_id()
+        return result
 
     async def evaluate_student_answer(
         self,
@@ -186,6 +221,7 @@ class ExamSimulator:
 
         Args:
             unique_exam_id (str): The unique identifier for the exam session.
+            question (str): The original question asked.
             student_answer (str): The answer provided by the student.
             correct_answer (str): The correct answer for comparison.
 
