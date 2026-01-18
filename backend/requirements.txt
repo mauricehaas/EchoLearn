@@ -7,7 +7,6 @@ python-multipart
 asyncpg
 pandas
 requests
-sentence-transformers
 scikit-learn
 numpy
 seaborn
