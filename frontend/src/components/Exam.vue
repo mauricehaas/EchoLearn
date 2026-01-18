@@ -2,53 +2,35 @@
   <div class="speech-input">
     <div v-if="currentQuestion && !examFinished">
       <h2>Frage {{ currentIndex + 1 }}</h2>
-      <button @click="speakQuestion" :disabled="loading || locked">Frage anhören</button>
+      <button @click="speakQuestion" :disabled="loading || locked">🔊 Frage anhören</button>
 
       <div style="margin-top: 20px">
         <button @click="startListening" :disabled="listening || loading || locked">
-          {{ listening ? 'Höre...' : 'Sprich jetzt' }}
+          {{ listening ? 'Höre...' : '🎤 Sprich jetzt' }}
         </button>
-        <button @click="stopListening" :disabled="!listening || loading || locked">Stopp</button>
-        <button @click="restartListening" :disabled="loading || locked">Neu aufnehmen</button>
+        <button @click="stopListening" :disabled="!listening || loading || locked">⏹️ Stopp</button>
+        <button @click="restartListening" :disabled="loading || locked">
+          🔄 Antwort verwerfen
+        </button>
       </div>
 
       <div style="margin-top: 10px">
-        <p>
-          Erkannte Antwort: {{ transcript }}
-          <span v-if="interimTranscript">…{{ interimTranscript }}</span>
-        </p>
+        <p class="interim" v-if="interimTranscript">…{{ interimTranscript }}</p>
 
-        <button @click="submitAnswer" :disabled="!transcript || loading || locked">
-          {{ loading ? 'Wird geprüft…' : 'Antwort absenden' }}
-        </button>
+        <div class="answer-box">
+          <textarea
+            v-model="transcript"
+            placeholder="Deine erkannte Antwort"
+            :disabled="locked"
+          ></textarea>
+
+          <button class="submit" @click="submitAnswer" :disabled="!transcript || loading || locked">
+            {{ loading ? 'Wird geprüft…' : '🚀 Antwort absenden' }}
+          </button>
+        </div>
+
         <span v-if="loading" class="spinner"></span>
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
-      </div>
-
-      <div style="margin-top: 20px" v-if="currentIndex == 1">
-        <hr />
-        <button @click="speakQuestion" :disabled="loading || locked">Rückfrage anhören</button>
-
-        <div style="margin-top: 20px">
-          <button @click="startListening" :disabled="listening || loading || locked">
-            {{ listening ? 'Höre...' : 'Sprich jetzt' }}
-          </button>
-          <button @click="stopListening" :disabled="!listening || loading || locked">Stopp</button>
-          <button @click="restartListening" :disabled="loading || locked">Neu aufnehmen</button>
-        </div>
-
-        <div style="margin-top: 10px">
-          <p>
-            Erkannte Antwort: {{ transcript }}
-            <span v-if="interimTranscript">…{{ interimTranscript }}</span>
-          </p>
-
-          <button @click="submitAnswer" :disabled="!transcript || loading || locked">
-            {{ loading ? 'Wird geprüft…' : 'Antwort absenden' }}
-          </button>
-          <span v-if="loading" class="spinner"></span>
-          <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
-        </div>
       </div>
 
       <div style="margin-top: 10px">
@@ -63,7 +45,7 @@
           @click="nextQuestion"
           :disabled="currentIndex >= questions.length - 1 || !submitted || loading"
         >
-          Nächste Frage
+          ➡️ Nächste Frage
         </button>
       </div>
     </div>
@@ -123,7 +105,7 @@
             else interim += event.results[i][0].transcript
           }
 
-          transcript.value += finalTranscript
+          transcript.value = (transcript.value + ' ' + finalTranscript).trim()
           interimTranscript.value = interim
         }
 
@@ -259,5 +241,34 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .answer-box {
+    margin-top: 10px;
+    max-width: 600px;
+  }
+
+  .answer-box textarea {
+    width: 100%;
+    min-height: 90px;
+    resize: vertical;
+
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+
+    box-sizing: border-box;
+  }
+
+  .answer-box textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+  }
+
+  .answer-box .submit {
+    margin-top: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
   }
 </style>

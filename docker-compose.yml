@@ -8,6 +8,8 @@ services:
       - db
     environment:
       DATABASE_URL: postgresql+psycopg2://echolearn:echolearn@db:5432/echolearn
+    volumes:
+      - ./data:/app/data
 
   db:
     image: postgres:15
