@@ -77,7 +77,7 @@ class ExamSimulator:
         evaluate_exam: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset.
-        
+
         Args:
             evaluate_student_answer (str): Prompt template for evaluating student answers.
             prompt_begin_exam (str): Prompt template for beginning the exam.
@@ -108,12 +108,12 @@ class ExamSimulator:
         self, question: str, student_answer: str, correct_answer: str
     ) -> Dict[str, str]:
         """Function for Case one: The student's answer is correct and complete.
-        
+
         Args:
             question (str): The original question asked.
             student_answer (str): The answer provided by the student.
             correct_answer (str): The correct answer for comparison.
-        
+
         Returns:
             Dict[str, str]: The feedback and rating for the student's answer.
         """
@@ -197,7 +197,7 @@ class ExamSimulator:
             rating=rating,
         )
         await self._add_data_to_db([evaluation])
-        
+
     def begin_exam(self) -> Dict[str, str]:
         """Generates the prompt to begin the exam simulation.
 
