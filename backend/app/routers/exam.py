@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -25,7 +25,58 @@ exam_simulator = ExamSimulator(
 )
 
 
+@router.post("/begin_exam")
+async def start_exam() -> Dict[str, Union[str, int]]:
+    """Starts the exam simulation and returns the first question.
+
+    Returns:
+      Dict[str, Union[str, int]]: The first question of the exam.
+    """
+    try:
+        response = await exam_simulator.begin_exam()
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+class RephraseQuestionBody(BaseModel):
+    """Body for rephrasing a question.
+
+    Args:
+        question (str): The question to be rephrased.
+    """
+
+    question: str
+
+
+@router.post("/rephrase_question")
+def rephrase_question(body: RephraseQuestionBody) -> Dict[str, str]:
+    """Rephrases a question for the student.
+
+    Args:
+      unique_exam_id (str): The unique identifier for the exam.
+      question (str): The question to be rephrased.
+
+    Returns:
+      Dict[str, str]: The rephrased question.
+    """
+    try:
+        response = exam_simulator.rephrase_question(body.question)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
 class AnswerEvaluationBody(BaseModel):
+    """Body for evaluating a student's answer.
+
+    Args:
+        unique_exam_id (str): The unique identifier for the exam.
+        question (str): The question answered by the student.
+        student_answer (str): The answer provided by the student.
+        correct_answer (str): The correct answer for comparison.
+    """
+
     unique_exam_id: str
     question: str
     student_answer: str
@@ -55,6 +106,12 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
 
 
 class EvaluateExamBody(BaseModel):
+    """Body for evaluating the entire exam.
+
+    Args:
+        unique_exam_id (str): The unique identifier for the exam to be evaluated.
+    """
+
     unique_exam_id: str
 
 

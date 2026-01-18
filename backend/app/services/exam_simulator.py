@@ -1,12 +1,15 @@
 import json
 import uuid
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func
 import pandas as pd
 
 import requests
 from sqlalchemy import select
 
 from app.core.db import async_session
+from app.models.question import Question
 from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
 
@@ -77,7 +80,7 @@ class ExamSimulator:
         evaluate_exam: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset.
-        
+
         Args:
             evaluate_student_answer (str): Prompt template to evaluate student answers.
             prompt_begin_exam (str): Prompt template to begin the exam.
@@ -196,17 +199,29 @@ class ExamSimulator:
             rating=rating,
         )
         await self._add_data_to_db([evaluation])
-        
-    def begin_exam(self) -> Dict[str, str]:
+
+    async def _get_random_question(self, session: AsyncSession) -> str:
+        stmt = select(Question).order_by(func.random()).limit(1)
+
+        result = await session.execute(stmt)
+        return result.scalar_one_or_none()
+
+    async def begin_exam(self) -> Dict[str, Union[str, int]]:
         """Generates the prompt to begin the exam simulation.
 
         Returns:
-            Dict[str, str]: The prompt string to start the exam.
+            Dict[str, Union[str, int]]: The prompt string to start the exam.
         """
+        async with async_session() as session:
+            question: str = await self._get_random_question(session)
         result = self._llm_handler.call_llm(
-            self._prompt_begin_exam.format(questions=self._questions)
+            self._prompt_begin_exam.format(question=question.question)
         )
         result["unique_exam_id"] = self._generate_unique_exam_id()
+        result["answer"] = question.answer
+        result["question_id"] = question.id
+        result["question"] = question.question
+        print(f"Generated Result Object: {result}")
         return result
 
     async def evaluate_student_answer(
@@ -256,18 +271,27 @@ class ExamSimulator:
                 rating=answer_case_two["rating"],
             )
             return answer_case_two
-        elif "3" in answer_evaluation["case"] or "drei" in answer_evaluation["case"]:
-            answer_case_three = self._case_three(question)
-            await self._write_single_evaluation_to_db(
-                unique_exam_id=unique_exam_id,
-                question=question,
-                student_answer=student_answer,
-                correct_answer=correct_answer,
-                feedback="The student does not understand the question. Clarifications provided.",
-                rating="Did Not Understand Question",
-            )
-            return answer_case_three
         return {"message": "Functionality for case one not yet implemented."}
+
+    def rephrase_question(self, question: str) -> Dict[str, str]:
+        """Rephrases the given question using the LLM.
+
+        Args:
+            question (str): The question to be rephrased.
+
+        Returns:
+            Dict[str, str]: The rephrased question.
+        """
+        rephrased = self._case_three(question)
+        # await self._write_single_evaluation_to_db(
+        #         unique_exam_id=unique_exam_id,
+        #         question=question,
+        #         student_answer=student_answer,
+        #         correct_answer=correct_answer,
+        #         feedback="The student does not understand the question. Clarifications provided.",
+        #         rating="Did Not Understand Question",
+        #     )
+        return rephrased
 
     async def evaluate_the_exam(self, unique_exam_id: str) -> Dict[str, str]:
         """Evaluates the entire exam based on stored feedback and ratings.
