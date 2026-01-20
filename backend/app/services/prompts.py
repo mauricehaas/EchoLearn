@@ -2,67 +2,28 @@ begin_exam = """
 Du bist ein Data-Science-Prüfungsgenerator.
 Begrüße den Studenten freundlich und erkläre kurz den Ablauf sowie die Bedingungen der Prüfung.
 
-Wähle anschließend genau eine Frage aus dem folgenden Fragenkatalog aus und stelle sie dem Studenten wortgleich:
-
-<Fragenkatalog>
-{questions}
-</Fragenkatalog>
+Baue anschließend folgende Frage in deine Begrüßung ein. Am besten befindet sich die Frage am Ende deiner Aussage:
+<Frage>
+{question}
+</Frage>
 
 Wichtige Regeln:
 - Stelle die Frage ausschließlich so, wie sie im Fragenkatalog steht (keine Umformulierungen).
 - Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-- Beende deine Ausgabe mit der ausgewählten Frage.
 
 <Antwortformat>
 ```json
 {{
-"question": "<Die ausgewählte Frage wortgenau aus dem Fragenkatalog>",
-"statement": "<Die gesamte Ausgabe inklusive Begrüßung, Erklärung und der ausgewählten Frage>"
+"llm_answer": "<Die gesamte Ausgabe inklusive Begrüßung, Erklärung und der ausgewählten Frage>"
 }}
 ```
 """
-
-
-# evaluate_student_answer = """Bitte vergebe bis zu 5 Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
-# Vergebe die Punkte folgendermaßen:
-
-# Inhaltliche Korrektheit
-# - Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe 5 Punkte
-# - Wenn nicht, dann vergebe die erreichten Punkte prozentual
-
-# Gebe zusätzlich Verbesserungsvorschläge
-# - Was sollte der Student inhaltlich besser machen?
-# - Welche Schlüsselpunkte der Musterlösung wurden getroffen?
-# - Welche Aussagen sind falsch oder unvollständig?
-
-# Gib am Ende ein knappes Gesamtrating (0-5 Punkte). Gerundet auf eine Nachkommastelle
-
-# Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-
-# Frage:
-# {question}
-
-# Studentenantwort:
-# {student_answer}
-
-# Musterlösung:
-# {correct_answer}
-
-# <Antwortformat>
-# ```json
-# {{
-# "feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
-# "statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
-# "overall_rating": "<Gesamtrating (0-5 Punkte)>"
-# }}```
-# """
 
 evaluate_student_answer = """
 Analysiere die folgende Studentenantwort auf die gegebene Frage mithilfe der Musterlösung und entscheide, um welchen der folgenden Fälle es sich handelt:
 
 Fall 1: Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
 Fall 2: Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
-Fall 3: Der Student versteht die Frage nicht oder bittet um eine Umformulierung.
 
 Wichtige Regeln:
 - Wähle **genau einen** der drei Fälle.
@@ -82,7 +43,7 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-  "case": "Fall 1 | Fall 2 | Fall 3"
+  "case": "Fall 1 | Fall 2"
 }}```
 """
 
@@ -156,21 +117,15 @@ Erstelle anschließend fünf Ausgaben:
    - Leite fließend zur neuen Prüfungsfrage über.
    - Keine detaillierte Bewertung oder Punktevergabe in diesem Feld.
 
-2) **feedback**  
+2) **llm_feedback**  
    - Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
    - Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
    - Maximal 2–3 Sätze.
 
-3) **rating**  
+3) **llm_rating**  
    - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
    - Da es sich um Fall 1 handelt, muss die Bewertung **hoch ausfallen** (z. B. 4,0–5,0).
    - Gib nur die Zahl aus (z. B. `4.5`).
-
-4) **question**  
-   - Formuliere die neue Prüfungsfrage klar und präzise.
-
-5) **correct_answer**  
-   - Gib eine fachlich korrekte und vollständige Musterlösung zur neuen Frage an.
 
 Wichtige Regeln:
 - Stelle genau **eine** neue Frage.
@@ -195,10 +150,8 @@ Musterlösung:
 ```json
 {{
   "answer_llm": "<Dialogische Antwort im Prüfungskontext mit Überleitung zur neuen Frage>",
-  "feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
-  "rating": "<Gesamtbewertung (0–5 Punkte)>",
-  "question": "<Neue Prüfungsfrage>",
-  "correct_answer": "<Fachlich korrekte Musterlösung zur neuen Frage>"
+  "llm_feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
+  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>"
 }}```
 """
 
@@ -221,20 +174,20 @@ Erstelle anschließend fünf Ausgaben:
    - Weise vorsichtig auf die zentrale inhaltliche Lücke hin.
    - Integriere fließend die neue Folgefrage.
 
-2) **feedback**  
+2) **llm_feedback**  
    - Gib ein kurzes, sachliches Feedback zur Studentenantwort.
    - Benenne sowohl korrekte Aspekte als auch die wichtigste Schwäche.
    - Maximal 2–3 Sätze.
 
-3) **rating**  
+3) **llm_rating**  
    - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
    - Die Bewertung soll dem inhaltlichen Stand der Antwort entsprechen (typischerweise **1,0–3,9 Punkte**).
    - Gib nur die Zahl aus (z. B. `2.5`).
 
-4) **question**  
+4) **next_question**  
    - Formuliere **eine** gezielte Folgefrage, die auf die identifizierte Lücke abzielt.
 
-5) **expected_answer**  
+5) **correct_answer**  
    - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
 
 Wichtige Regeln:
@@ -260,36 +213,34 @@ Musterlösung:
 ```json
 {{
   "answer_llm": "<Dialogische Antwort mit Überleitung zur Folgefrage>",
-  "feedback": "<Kurzes Feedback zur Studentenantwort>",
-  "rating": "<Gesamtbewertung (0–5 Punkte)>",
-  "question": "<Gezielte Folgefrage zur identifizierten Lücke>",
-  "expected_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
+  "llm_feedback": "<Kurzes Feedback zur Studentenantwort>",
+  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>",
+  "next_question": "<Gezielte Folgefrage zur identifizierten Lücke>",
+  "correct_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
 }}```
 """
 
-prompt_case_three_student_does_not_understand_question = """Der Student hat signalisiert, dass er die Frage nicht verstanden hat oder um eine Umformulierung bittet (z. B. „Wie meinen Sie das?“).
+prompt_case_three_student_does_not_understand_question = """
+Deine einzige Aufgabe ist es, den folgenden Text sprachlich umzuschreiben.
 
-Deine Aufgabe ist es, die ursprüngliche Frage in einfacherer, klarerer Sprache neu zu formulieren und dies in einem natürlichen Gesprächsfluss zu präsentieren.
+- Beantworte die Frage NICHT.
+- Füge keine neuen Informationen hinzu.
+- Entferne keine inhaltlichen Informationen.
+- Ändere nur den Sprachstil: 
+  von akademisch/kompliziert → zu klar, einfach, allgemeinverständlich.
+- Vermeide Fachjargon, lange Schachtelsätze und abstrakte Formulierungen.
+- Verwende jedoch keine Slang-Ausdrücke, keine Jugendsprache und keine lockeren Redewendungen.
+- Die Bedeutung muss exakt gleich bleiben (bedeutungsinvariant).
 
-Wichtige Regeln:
-- Formuliere die Frage verständlicher, einfacher und klarer.
-- Der fachliche Inhalt der ursprünglichen Frage darf nicht verändert werden.
-- Gib keine zusätzlichen Erklärungen, Beispiele oder Hinweise zur Lösung.
-- Antworte so, als würdest du direkt mit dem Studenten sprechen.
-- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+Gib ausschließlich die umformulierte Frage aus, ohne Erklärung und ohne sie zu beantworten.
 
----
-
-Ursprüngliche Frage:
+Text:
 {question}
 
----
-
-<Antwortformat>
+Antwortformat:
 ```json
 {{
-  "answer_llm": "<Kurze dialogische Antwort, die Verständnis signalisiert und zur umformulierten Frage überleitet>",
-  "question": "<Vereinfachte, klar formulierte Version der ursprünglichen Frage>"
-}}```
+  "answer_llm": "<Die vereinfachte, allgemeinverständliche Version der Frage>"
+}}
+```
 """
