@@ -1,17 +1,15 @@
 import json
 import uuid
-from typing import Any, Dict, List, Union
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-import pandas as pd
+from typing import Any, Dict
 
 import requests
-from sqlalchemy import select
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import async_session
-from app.models.question import Question
 from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
+from app.models.question import Question
 
 
 class LLMHandler:
