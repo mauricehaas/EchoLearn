@@ -19,6 +19,5 @@ app.add_middleware(
 # ---------------------------
 app.include_router(questions.router)
 app.include_router(users.router)
-app.include_router(learn.router)
 app.include_router(exam.router)
 app.include_router(exam_evaluation_single_answers.router)
