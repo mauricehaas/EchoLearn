@@ -7,3 +7,7 @@ python-multipart
 asyncpg
 pandas
 requests
+scikit-learn
+numpy
+seaborn
+matplotlib

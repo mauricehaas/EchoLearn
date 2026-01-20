@@ -1,6 +1,6 @@
 # EchoLearn
 
-EchoLearn ist eine interaktive Lernplattform, die ...
+EchoLearn ist eine interaktive Lernplattform, die eine mündliche Prüfung simuliert, diese bewertet und an erwarteten Stellen Rückfragen stellt.
 
 ---
 
@@ -8,11 +8,8 @@ EchoLearn ist eine interaktive Lernplattform, die ...
 
 - Frontend: Vue 3 (Vite)
 - Backend: FastAPI (Python)
-- Authentifizierung: JWT (JSON Web Tokens)
 - Datenbank: PostgreSQL (Docker)
 - Containerisierung: Docker + Docker Compose
-- State Management: Pinia (optional)
-- Audio Processing / NLP: Whisper + GPT (für spätere Implementierung)
 
 ---
 
@@ -31,22 +28,13 @@ EchoLearn ist eine interaktive Lernplattform, die ...
 
 ---
 
-## Authentifizierung
-
-- JWT (JSON Web Tokens)
-- Rollen: student / teacher
-- Token wird im Frontend gespeichert (LocalStorage / Pinia)
-- Backend prüft Berechtigungen für API-Endpunkte
-
----
-
 ## Features (für den Prototyp)
 
-- Benutzerregistrierung / Login
-- Rolle-basiertes Dashboard (Student / Dozent)
 - Flashcards erstellen / verwalten
-- Audioaufnahme der Antworten
-- Feedback nach jeder Karte (inhaltlich + rhetorisch)
+- Text to Speech um Fragen vorzulesen
+- Speech to text um Antworten aufzunehmen
+- Bewertung der Antworten durch LLM
+- Stellen von Rückfragen an erwarteten Stellen
 - Lernstatistiken anzeigen
 
 ---

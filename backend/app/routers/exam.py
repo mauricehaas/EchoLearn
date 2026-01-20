@@ -1,37 +1,82 @@
-from typing import Dict
+from typing import Dict, Union
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from app.models.exam_simulator import ExamSimulator
-from app.models.data_science_questions import ds_questions
-from app.models.prompts import begin_exam, evaluate_student_answer, evaluate_exam
+from app.services.exam_simulator import ExamSimulator
+from app.services.prompts import (
+    begin_exam,
+    evaluate_exam,
+    evaluate_student_answer,
+    prompt_case_one_answer_correct_next_specific_question,
+    prompt_case_three_student_does_not_understand_question,
+    prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
+)
 
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 exam_simulator = ExamSimulator(
-    ds_questions=ds_questions,
-    begin_exam=begin_exam,
+    prompt_begin_exam=begin_exam,
     evaluate_student_answer=evaluate_student_answer,
+    prompt_case_one=prompt_case_one_answer_correct_next_specific_question,
+    prompt_case_two=prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
+    prompt_case_three=prompt_case_three_student_does_not_understand_question,
     evaluate_exam=evaluate_exam,
 )
 
 
 @router.post("/begin_exam")
-async def start_exam() -> Dict[str, str]:
+async def start_exam() -> Dict[str, Union[str, int]]:
     """Starts the exam simulation and returns the first question.
 
     Returns:
-      Dict[str, str]: The first question of the exam.
+      Dict[str, Union[str, int]]: The first question of the exam.
     """
     try:
-        response = exam_simulator.begin_exam()
+        response = await exam_simulator.begin_exam()
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+class RephraseQuestionBody(BaseModel):
+    """Body for rephrasing a question.
+
+    Args:
+        question (str): The question to be rephrased.
+    """
+
+    question: str
+
+
+@router.post("/rephrase_question")
+def rephrase_question(body: RephraseQuestionBody) -> Dict[str, str]:
+    """Rephrases a question for the student.
+
+    Args:
+      unique_exam_id (str): The unique identifier for the exam.
+      question (str): The question to be rephrased.
+
+    Returns:
+      Dict[str, str]: The rephrased question.
+    """
+    try:
+        response = exam_simulator.rephrase_question(body.question)
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 class AnswerEvaluationBody(BaseModel):
+    """Body for evaluating a student's answer.
+
+    Args:
+        unique_exam_id (str): The unique identifier for the exam.
+        question (str): The question answered by the student.
+        student_answer (str): The answer provided by the student.
+        correct_answer (str): The correct answer for comparison.
+    """
+
     unique_exam_id: str
     question: str
     student_answer: str
@@ -42,6 +87,7 @@ class AnswerEvaluationBody(BaseModel):
 async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
     """Evaluates the student's answer and provides feedback.
     Args:
+      question (str): The question answered by the student.
       student_answer (str): The answer provided by the student.
       correct_answer (str): The correct answer for comparison.
 
@@ -60,6 +106,12 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
 
 
 class EvaluateExamBody(BaseModel):
+    """Body for evaluating the entire exam.
+
+    Args:
+        unique_exam_id (str): The unique identifier for the exam to be evaluated.
+    """
+
     unique_exam_id: str
 
 
