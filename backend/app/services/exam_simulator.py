@@ -93,6 +93,9 @@ class ExamSimulator:
         self._prompt_begin_exam: str = prompt_begin_exam
         self._questions: List[str] = []
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
+        self._prompt_begin_exam: str = prompt_begin_exam
+        self._df = pd.read_csv("DataScience_Basics_QandA - Sheet1.csv")
+        self._questions: List[str] = self._df["Question"].to_list()
         self._prompt_case_one: str = prompt_case_one
         self._prompt_case_two: str = prompt_case_two
         self._prompt_case_three: str = prompt_case_three
