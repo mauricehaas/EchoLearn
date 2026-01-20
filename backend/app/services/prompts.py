@@ -1,24 +1,3 @@
-begin_exam = """
-Du bist ein Data-Science-Prüfungsgenerator.
-Begrüße den Studenten freundlich und erkläre kurz den Ablauf sowie die Bedingungen der Prüfung.
-
-Baue anschließend folgende Frage in deine Begrüßung ein. Am besten befindet sich die Frage am Ende deiner Aussage:
-<Frage>
-{question}
-</Frage>
-
-Wichtige Regeln:
-- Stelle die Frage ausschließlich so, wie sie im Fragenkatalog steht (keine Umformulierungen).
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-
-<Antwortformat>
-```json
-{{
-"llm_answer": "<Die gesamte Ausgabe inklusive Begrüßung, Erklärung und der ausgewählten Frage>"
-}}
-```
-"""
-
 evaluate_student_answer = """
 Analysiere die folgende Studentenantwort auf die gegebene Frage mithilfe der Musterlösung und entscheide, um welchen der folgenden Fälle es sich handelt:
 

@@ -73,7 +73,6 @@ class ExamSimulator:
     def __init__(
         self,
         evaluate_student_answer: str,
-        prompt_begin_exam: str,
         prompt_case_one: str,
         prompt_case_two: str,
         prompt_case_three: str,
@@ -83,17 +82,14 @@ class ExamSimulator:
 
         Args:
             evaluate_student_answer (str): Prompt template to evaluate student answers.
-            prompt_begin_exam (str): Prompt template to begin the exam.
             prompt_case_one (str): Prompt template for case one.
             prompt_case_two (str): Prompt template for case two.
             prompt_case_three (str): Prompt template for case three.
             evaluate_exam (str): Prompt template to evaluate the entire exam.
         """
         self._llm_handler = LLMHandler()
-        self._prompt_begin_exam: str = prompt_begin_exam
         self._questions: List[str] = []
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
-        self._prompt_begin_exam: str = prompt_begin_exam
         self._df = pd.read_csv("DataScience_Basics_QandA - Sheet1.csv")
         self._questions: List[str] = self._df["Question"].to_list()
         self._prompt_case_one: str = prompt_case_one
@@ -209,23 +205,6 @@ class ExamSimulator:
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def begin_exam(self) -> Dict[str, Union[str, int]]:
-        """Generates the prompt to begin the exam simulation.
-
-        Returns:
-            Dict[str, Union[str, int]]: The prompt string to start the exam.
-        """
-        async with async_session() as session:
-            question: str = await self._get_random_question(session)
-        result = self._llm_handler.call_llm(
-            self._prompt_begin_exam.format(question=question.question)
-        )
-        result["unique_exam_id"] = self._generate_unique_exam_id()
-        result["answer"] = question.answer
-        result["question_id"] = question.id
-        result["question"] = question.question
-        print(f"Generated Result Object: {result}")
-        return result
 
     async def evaluate_student_answer(
         self,

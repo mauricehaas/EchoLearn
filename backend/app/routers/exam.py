@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
 from app.services.prompts import (
-    begin_exam,
     evaluate_exam,
     evaluate_student_answer,
     prompt_case_one_answer_correct_next_specific_question,
@@ -16,27 +15,12 @@ from app.services.prompts import (
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 exam_simulator = ExamSimulator(
-    prompt_begin_exam=begin_exam,
     evaluate_student_answer=evaluate_student_answer,
     prompt_case_one=prompt_case_one_answer_correct_next_specific_question,
     prompt_case_two=prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
     prompt_case_three=prompt_case_three_student_does_not_understand_question,
     evaluate_exam=evaluate_exam,
 )
-
-
-@router.post("/begin_exam")
-async def start_exam() -> Dict[str, Union[str, int]]:
-    """Starts the exam simulation and returns the first question.
-
-    Returns:
-      Dict[str, Union[str, int]]: The first question of the exam.
-    """
-    try:
-        response = await exam_simulator.begin_exam()
-        return response
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 class RephraseQuestionBody(BaseModel):
