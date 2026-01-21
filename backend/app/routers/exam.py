@@ -5,20 +5,16 @@ from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
 from app.services.prompts import (
+    rephrase_question,
     evaluate_exam,
     evaluate_student_answer,
-    prompt_case_one_answer_correct_next_specific_question,
-    prompt_case_three_student_does_not_understand_question,
-    prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
 )
 
 router = APIRouter(prefix="/exam", tags=["exam"])
 
 exam_simulator = ExamSimulator(
+    rephrase_question=rephrase_question,
     evaluate_student_answer=evaluate_student_answer,
-    prompt_case_one=prompt_case_one_answer_correct_next_specific_question,
-    prompt_case_two=prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps,
-    prompt_case_three=prompt_case_three_student_does_not_understand_question,
     evaluate_exam=evaluate_exam,
 )
 
@@ -59,12 +55,14 @@ class AnswerEvaluationBody(BaseModel):
         question (str): The question answered by the student.
         student_answer (str): The answer provided by the student.
         correct_answer (str): The correct answer for comparison.
+        max_points (str): The max points.
     """
 
     unique_exam_id: str
     question: str
     student_answer: str
     correct_answer: str
+    max_points: str
 
 
 @router.post("/evaluate_answer")
@@ -83,6 +81,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
             question=body.question,
             student_answer=body.student_answer,
             correct_answer=body.correct_answer,
+            max_points=body.max_points,
         )
         return response
     except Exception as e:

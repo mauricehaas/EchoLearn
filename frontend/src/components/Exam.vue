@@ -31,15 +31,14 @@
 
         <span v-if="loading" class="spinner"></span>
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
+        <p v-if="rating" style="margin-top: 5px; font-weight: bold">Bewertung: {{ rating }}</p>
       </div>
 
       <div style="margin-top: 10px">
-        <!-- Wenn letzte Frage und abgeschickt, Abschließen-Button anzeigen -->
         <button v-if="currentIndex >= questions.length - 1 && submitted" @click="finishExam">
           Abschließen
         </button>
 
-        <!-- Ansonsten nächste Frage -->
         <button
           v-else
           @click="nextQuestion"
@@ -50,7 +49,6 @@
       </div>
     </div>
 
-    <!-- Abschlussanzeige -->
     <div v-else-if="examFinished" style="margin-top: 20px; font-weight: bold">
       <h2>Prüfung abgeschlossen.</h2>
       <p>Sehen Sie im Statistik-Bereich Ihre Bewertung.</p>
@@ -73,6 +71,8 @@
       const listening = ref(false)
       const loading = ref(false)
       const locked = ref(false)
+      const rating = ref('')
+      const followupText = ref('')
       const submitted = ref(false)
       const stopRequested = ref(false)
       const examFinished = ref(false) // neu: Prüfung abgeschlossen
@@ -156,7 +156,9 @@
             })
           })
           const data = await res.json()
-          feedback.value = data.feedback || 'Antwort erfolgreich abgesendet.'
+          feedback.value = data.feedback || 'Antwort erfolgreich abgesendet'
+          rating.value = data.rating || ''
+          followupText.value = data.followup_text || ''
 
           locked.value = true
           submitted.value = true
@@ -204,6 +206,7 @@
         locked,
         submitted,
         examFinished,
+        rating,
         startListening,
         stopListening,
         restartListening,
