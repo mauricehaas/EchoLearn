@@ -56,6 +56,7 @@ class AnswerEvaluationBody(BaseModel):
         student_answer (str): The answer provided by the student.
         correct_answer (str): The correct answer for comparison.
         max_points (str): The max points.
+        evaluate_only (bool): If set, there will be no follow up question.
     """
 
     unique_exam_id: str
@@ -63,6 +64,7 @@ class AnswerEvaluationBody(BaseModel):
     student_answer: str
     correct_answer: str
     max_points: str
+    evaluate_only: bool
 
 
 @router.post("/evaluate_answer")
@@ -82,6 +84,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
             student_answer=body.student_answer,
             correct_answer=body.correct_answer,
             max_points=body.max_points,
+            evaluate_only=body.evaluate_only,
         )
         return response
     except Exception as e:

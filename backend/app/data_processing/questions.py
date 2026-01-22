@@ -14,6 +14,7 @@ df = df.rename(
 )
 
 df = df[["question", "answer"]]
+df["max_points"] = 5
 
 Path("data/processed").mkdir(parents=True, exist_ok=True)
 df.to_csv("data/processed/questions.csv", index=False)

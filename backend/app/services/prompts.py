@@ -4,15 +4,16 @@ Vergebe die Punkte folgendermaßen:
 Inhaltliche Korrektheit
 - Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe {max_points} Punkte
 - Wenn nicht, dann vergebe die erreichten Punkte prozentual 
-
-Gebe zusätzlich Verbesserungsvorschläge
-- Was sollte der Student inhaltlich besser machen?
-- Welche Schlüsselpunkte der Musterlösung wurden getroffen?
-- Welche Aussagen sind falsch oder unvollständig?
+- Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
+- Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
+- Maximal 2–3 Sätze.
 
 Gib am Ende ein knappes Gesamtrating (0-{max_points} Punkte). Gerundet auf eine Nachkommastelle
 
-Wichtige Regel: Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+Wichtige Regeln: 
+- Gib keine Meta-Kommentare über dein Vorgehen aus.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
 
 Frage:
 {question}
@@ -104,5 +105,47 @@ Antwortformat:
 {{
   "answer_llm": "<Die vereinfachte, allgemeinverständliche Version der Frage>"
 }}
+```
+"""
+
+prompt_case_one_answer_correct_next_specific_question = """
+Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend genau **eine neue Prüfungsfrage** zu stellen. Dabei darfst du entscheiden, ob:
+- eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
+- eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
+
+**Interne Schritte (nicht ausgeben):**
+- Berücksichtige die ursprüngliche Frage und die Musterlösung.
+- Beurteile die Qualität der Studentenantwort.
+- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
+- Bestimme eine angemessene Punktzahl für diese Frage, **maximal 5 Punkte**.
+
+**Wichtige Regeln:**
+1. Gib nur die JSON-Antwort zurück, **keine zusätzlichen Kommentare oder Erklärungen**.
+2. Verwende das exakte JSON-Format unten.
+3. Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+4. `max_points` muss als String angegeben werden.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+<Antwortformat-Beispiel>
+```json
+{
+  "question": "<Generierte Vertiefungsfrage>",
+  "correct_answer": "<Musterlösung zur generierten Vertiefungsfrage>",
+  "max_points": "<Punkte als String, maximal '5'>"
+}
 ```
 """

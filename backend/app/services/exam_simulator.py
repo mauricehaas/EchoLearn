@@ -81,6 +81,7 @@ class ExamSimulator:
         student_answer: str,
         correct_answer: str,
         max_points: float,
+        evaluate_only: bool = False,
     ) -> Dict[str, str | int | None]:
 
         answer_evaluation = self._llm_handler.call_llm(
@@ -92,35 +93,28 @@ class ExamSimulator:
             )
         )
 
-        DEEPEN_TEXT = (
-            "Sehr gute Antwort! "
-            "Vertiefungsfrage: Können Sie erklären, "
-            "wie sich dieses Konzept in einem anderen Kontext anwenden lässt?"
-        )
-
         CLARIFY_TEXT = (
             "Die Antwort war noch nicht ganz vollständig. "
             "Können Sie den fehlenden Teil noch erklären?"
-        )
-
-        ADVANCE_TEXT = (
-            "Vielen Dank für Ihre Antwort. "
-            "Wir machen mit der nächsten Frage weiter."
         )
 
         raw_score = float(str(answer_evaluation["overall_rating"]).strip())
         max_points = float(max_points)
         percentage = (raw_score / max_points) * 100
 
-        if percentage >= 90:
-            next_action = "DEEPEN"
-            followup_text = DEEPEN_TEXT
-        elif percentage < 20:
-            next_action = "ADVANCE"
-            followup_text = ADVANCE_TEXT
-        else:
-            next_action = "CLARIFY"
-            followup_text = CLARIFY_TEXT
+        followup_text = ""
+        next_action = "EVALUATE_ONLY" if evaluate_only else ""
+
+        if not evaluate_only:
+            if percentage >= 90:
+                next_action = "DEEPEN"
+                followup_text = "Sehr gute Antwort! Vertiefungsfrage: ..."
+            elif percentage < 20:
+                next_action = "ADVANCE"
+                followup_text = ""
+            else:
+                next_action = "CLARIFY"
+                followup_text = CLARIFY_TEXT
 
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
@@ -130,7 +124,6 @@ class ExamSimulator:
             feedback=answer_evaluation["feedback_content"],
             rating=str(raw_score),
         )
-
         await self._add_data_to_db([evaluation])
 
         return {
@@ -139,6 +132,7 @@ class ExamSimulator:
             "next_action": next_action,
             "followup_text": followup_text,
         }
+
     
 
     def rephrase_question(self, question: str) -> Dict[str, str]:
@@ -177,7 +171,7 @@ class ExamSimulator:
         feedbacks = [entry[0] for entry in rows]
         ratings = [entry[1] for entry in rows]
         overall_feedback = "\n\n".join(feedbacks)
-        overall_rating = "\n\n".join(ratings)  # Most common rating
+        overall_rating = "\n\n".join(ratings)
 
         final_feedback = self._llm_handler.call_llm(
             self._prompt_evaluate_exam.format(
