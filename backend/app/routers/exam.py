@@ -65,10 +65,23 @@ class AnswerEvaluationBody(BaseModel):
     correct_answer: str
     max_points: str
     evaluate_only: bool
+    parent_id: int
+
+class AnswerEvaluationResponse(BaseModel):
+    feedback: str
+    rating: str
+    next_action: str
+    followup_text: str
+    answer_id: int
 
 
-@router.post("/evaluate_answer")
-async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
+@router.post(
+    "/evaluate_answer",
+    response_model=AnswerEvaluationResponse,
+)
+async def evaluate_answer(
+    body: AnswerEvaluationBody,
+) -> AnswerEvaluationResponse:
     """Evaluates the student's answer and provides feedback.
     Args:
       question (str): The question answered by the student.
@@ -85,6 +98,7 @@ async def evaluate_answer(body: AnswerEvaluationBody) -> Dict[str, str]:
             correct_answer=body.correct_answer,
             max_points=body.max_points,
             evaluate_only=body.evaluate_only,
+            parent_id=body.parent_id,
         )
         return response
     except Exception as e:

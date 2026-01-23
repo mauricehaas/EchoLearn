@@ -43,6 +43,15 @@ class ExamSimulator:
             session.add_all(data_to_add)
             await session.commit()
 
+    async def _add_single_data_to_db(self, data_to_add):
+        async with async_session() as session:
+            session.add(data_to_add)
+            await session.flush()
+            obj_id = data_to_add.id
+            await session.commit()
+            return obj_id
+        
+
     async def _write_single_evaluation_to_db(
         self,
         unique_exam_id: str,
@@ -81,6 +90,7 @@ class ExamSimulator:
         correct_answer: str,
         max_points: float,
         evaluate_only: bool = False,
+        parent_id: int = 0,
     ) -> Dict[str, str | int | None]:
 
         answer_evaluation = self._llm_handler.call_llm(
@@ -126,14 +136,16 @@ class ExamSimulator:
             correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],
             rating=str(raw_score),
+            parent_id=parent_id,
         )
-        await self._add_data_to_db([evaluation])
+        answer_id = await self._add_single_data_to_db(evaluation)
 
         return {
             "feedback": answer_evaluation["feedback_content"],
             "rating": str(raw_score),
             "next_action": next_action,
             "followup_text": followup_text,
+            "answer_id": answer_id,
         }
 
     

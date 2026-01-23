@@ -66,9 +66,7 @@
             @submit="submitFollowUp"
           />
 
-          <!-- Spinner unter der AnswerBox -->
           <span v-if="followupLoading" class="spinner"></span>
-
           <p v-if="followupFeedback" style="margin-top: 10px; color: green">
             {{ followupFeedback }}
           </p>
@@ -118,6 +116,7 @@
       const followupLoading = ref(false)
       const followupLocked = ref(false)
       const followupListening = ref(false)
+      const lastAnswerId = ref(null) // <- Hier speichern wir die ID der Hauptantwort
 
       const {
         transcript,
@@ -157,31 +156,45 @@
         loadingRef,
         correctAnswer = '',
         maxPoints = '5',
-        evaluateOnly = false
+        evaluateOnly = false,
+        parentId = null
       }) => {
         if (!answerRef.value || loadingRef.value || lockedRef.value) return
         loadingRef.value = true
         feedbackRef.value = ''
         if (listeningRef.value) stopListening()
+
         try {
+          const body = {
+            unique_exam_id: examId,
+            question:
+              typeof questionTextRef.value === 'string'
+                ? questionTextRef.value
+                : questionTextRef.value.question,
+            student_answer: answerRef.value,
+            correct_answer: correctAnswer,
+            max_points: maxPoints,
+            evaluate_only: evaluateOnly
+          }
+
+          if (parentId !== null) {
+            body.parent_id = parentId
+          }
+
           const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              unique_exam_id: examId,
-              question:
-                typeof questionTextRef.value === 'string'
-                  ? questionTextRef.value
-                  : questionTextRef.value.question,
-              student_answer: answerRef.value,
-              correct_answer: correctAnswer,
-              max_points: maxPoints,
-              evaluate_only: evaluateOnly
-            })
+            body: JSON.stringify(body)
           })
+
           const data = await res.json()
+
           feedbackRef.value = data.feedback || 'Antwort erfolgreich abgesendet'
           lockedRef.value = true
+
+          if (!evaluateOnly && data.answer_id) {
+            lastAnswerId.value = data.answer_id
+          }
 
           if (!evaluateOnly && data.followup_text) {
             followupText.value = data.followup_text
@@ -213,7 +226,8 @@
           loadingRef: isFollowUp ? followupLoading : loading,
           correctAnswer: currentQuestion.value?.answer || '',
           maxPoints: '5',
-          evaluateOnly: isFollowUp
+          evaluateOnly: isFollowUp,
+          parentId: isFollowUp ? lastAnswerId.value : 0
         })
       }
 
@@ -250,6 +264,7 @@
         feedback.value = ''
         locked.value = false
         submitted.value = false
+        lastAnswerId.value = null
         resetFollowUp()
         if (currentIndex.value < questions.value.length - 1) currentIndex.value++
       }
@@ -281,6 +296,7 @@
         followupLoading,
         followupLocked,
         followupListening,
+        lastAnswerId,
         examFinished,
         nextDisabled,
         startListening,
