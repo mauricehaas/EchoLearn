@@ -28,6 +28,7 @@
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
       </div>
 
+      <!-- Rückfrage -->
       <div
         v-if="submitted && followupText"
         style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px"
@@ -65,7 +66,9 @@
             @submit="submitFollowUp"
           />
 
+          <!-- Spinner unter der AnswerBox -->
           <span v-if="followupLoading" class="spinner"></span>
+
           <p v-if="followupFeedback" style="margin-top: 10px; color: green">
             {{ followupFeedback }}
           </p>
@@ -140,90 +143,99 @@
 
       const nextDisabled = computed(() => {
         if (!submitted.value) return true
-
         if (followupText.value && !followupLocked.value) return true
-
         return false
       })
 
-      const speakQuestion = () => {
-        if (!currentQuestion.value || loading.value || locked.value) return
-        speakText(currentQuestion.value.question)
-      }
-
-      const speakFollowUp = () => {
-        if (!followupText.value || followupLoading.value || followupLocked.value) return
-        followupLoading.value = true
-        try {
-          speakText(followupText.value)
-        } finally {
-          followupLoading.value = false
-        }
-      }
-
-      const submitAnswer = async () => {
-        if (!transcript.value || loading.value || locked.value) return
-        loading.value = true
-        feedback.value = ''
-        if (listening.value) stopListening()
+      const submit = async ({
+        examId = '1',
+        questionTextRef,
+        answerRef,
+        feedbackRef,
+        lockedRef,
+        listeningRef,
+        loadingRef,
+        correctAnswer = '',
+        maxPoints = '5',
+        evaluateOnly = false
+      }) => {
+        if (!answerRef.value || loadingRef.value || lockedRef.value) return
+        loadingRef.value = true
+        feedbackRef.value = ''
+        if (listeningRef.value) stopListening()
         try {
           const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              unique_exam_id: '1',
-              question: currentQuestion.value.question,
-              student_answer: transcript.value,
-              correct_answer: currentQuestion.value.answer,
-              max_points: '5'
+              unique_exam_id: examId,
+              question:
+                typeof questionTextRef.value === 'string'
+                  ? questionTextRef.value
+                  : questionTextRef.value.question,
+              student_answer: answerRef.value,
+              correct_answer: correctAnswer,
+              max_points: maxPoints,
+              evaluate_only: evaluateOnly
             })
           })
           const data = await res.json()
-          feedback.value = data.feedback || 'Antwort erfolgreich abgesendet'
-          locked.value = true
-          submitted.value = true
-          if (data.followup_text) followupText.value = data.followup_text
+          feedbackRef.value = data.feedback || 'Antwort erfolgreich abgesendet'
+          lockedRef.value = true
+
+          if (!evaluateOnly && data.followup_text) {
+            followupText.value = data.followup_text
+            followupTranscript.value = ''
+            followupInterimTranscript.value = ''
+            followupFeedback.value = ''
+            followupLoading.value = false
+            followupLocked.value = false
+            followupListening.value = false
+          }
+
+          if (!evaluateOnly) submitted.value = true
         } catch (err) {
-          feedback.value = 'Fehler beim Absenden, bitte erneut versuchen.'
+          feedbackRef.value = 'Fehler beim Absenden, bitte erneut versuchen.'
           console.error(err)
         } finally {
-          loading.value = false
+          loadingRef.value = false
         }
       }
 
-      const submitFollowUp = async () => {
-        if (!followupTranscript.value || followupLoading.value || followupLocked.value) return
-        followupLoading.value = true
-        followupFeedback.value = ''
-        if (followupListening.value) stopFollowupListening()
+      const submitAnswerOrFollowUp = (isFollowUp = false) => {
+        submit({
+          examId: '1',
+          questionTextRef: isFollowUp ? followupText : currentQuestion,
+          answerRef: isFollowUp ? followupTranscript : transcript,
+          feedbackRef: isFollowUp ? followupFeedback : feedback,
+          lockedRef: isFollowUp ? followupLocked : locked,
+          listeningRef: isFollowUp ? followupListening : listening,
+          loadingRef: isFollowUp ? followupLoading : loading,
+          correctAnswer: currentQuestion.value?.answer || '',
+          maxPoints: '5',
+          evaluateOnly: isFollowUp
+        })
+      }
+
+      const submitAnswer = () => submitAnswerOrFollowUp(false)
+      const submitFollowUp = () => submitAnswerOrFollowUp(true)
+
+      const speak = async (textRef, loadingRef, lockedRef) => {
+        if (!textRef.value || loadingRef.value || lockedRef.value) return
+        loadingRef.value = true
         try {
-          const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              unique_exam_id: '1',
-              question: followupText.value,
-              student_answer: followupTranscript.value,
-              correct_answer: currentQuestion.value.answer,
-              max_points: '5'
-            })
-          })
-          const data = await res.json()
-          followupFeedback.value = data.feedback || 'Antwort erfolgreich abgesendet'
-          followupLocked.value = true
-        } catch (err) {
-          followupFeedback.value = 'Fehler beim Absenden, bitte erneut versuchen.'
-          console.error(err)
+          const textToSpeak =
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+          await speakText(textToSpeak)
         } finally {
-          followupLoading.value = false
+          loadingRef.value = false
         }
       }
 
-      const nextQuestion = () => {
-        transcript.value = ''
-        feedback.value = ''
-        locked.value = false
-        submitted.value = false
+      const speakQuestion = () => speak(currentQuestion, loading, locked)
+      const speakFollowUp = () => speak(followupText, followupLoading, followupLocked)
+
+      const resetFollowUp = () => {
         followupText.value = ''
         followupTranscript.value = ''
         followupInterimTranscript.value = ''
@@ -231,6 +243,14 @@
         followupLoading.value = false
         followupLocked.value = false
         followupListening.value = false
+      }
+
+      const nextQuestion = () => {
+        transcript.value = ''
+        feedback.value = ''
+        locked.value = false
+        submitted.value = false
+        resetFollowUp()
         if (currentIndex.value < questions.value.length - 1) currentIndex.value++
       }
 

@@ -10,7 +10,6 @@ from app.core.db import async_session
 from app.services.llm_handler import LLMHandler
 from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
-from app.models.question import Question
 
 
 class ExamSimulator:
@@ -98,6 +97,10 @@ class ExamSimulator:
             "Können Sie den fehlenden Teil noch erklären?"
         )
 
+        DEEPEN_TEXT = (
+            "Vertiefungsfrage"
+        )
+
         raw_score = float(str(answer_evaluation["overall_rating"]).strip())
         max_points = float(max_points)
         percentage = (raw_score / max_points) * 100
@@ -108,7 +111,7 @@ class ExamSimulator:
         if not evaluate_only:
             if percentage >= 90:
                 next_action = "DEEPEN"
-                followup_text = "Sehr gute Antwort! Vertiefungsfrage: ..."
+                followup_text = DEEPEN_TEXT
             elif percentage < 20:
                 next_action = "ADVANCE"
                 followup_text = ""
