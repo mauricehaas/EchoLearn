@@ -109,14 +109,16 @@
       const locked = ref(false)
       const submitted = ref(false)
       const examFinished = ref(false)
+
       const followupText = ref('')
+      const followupType = ref('BASE')
       const followupTranscript = ref('')
       const followupInterimTranscript = ref('')
       const followupFeedback = ref('')
       const followupLoading = ref(false)
       const followupLocked = ref(false)
       const followupListening = ref(false)
-      const lastAnswerId = ref(null) // <- Hier speichern wir die ID der Hauptantwort
+      const lastAnswerId = ref(null)
 
       const {
         transcript,
@@ -157,7 +159,8 @@
         correctAnswer = '',
         maxPoints = '5',
         evaluateOnly = false,
-        parentId = null
+        parentId = null,
+        typeOverride = null
       }) => {
         if (!answerRef.value || loadingRef.value || lockedRef.value) return
         loadingRef.value = true
@@ -174,12 +177,11 @@
             student_answer: answerRef.value,
             correct_answer: correctAnswer,
             max_points: maxPoints,
-            evaluate_only: evaluateOnly
+            evaluate_only: evaluateOnly,
+            question_type: typeOverride || 'BASE'
           }
 
-          if (parentId !== null) {
-            body.parent_id = parentId
-          }
+          if (parentId !== null) body.parent_id = parentId
 
           const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
             method: 'POST',
@@ -192,12 +194,11 @@
           feedbackRef.value = data.feedback || 'Antwort erfolgreich abgesendet'
           lockedRef.value = true
 
-          if (!evaluateOnly && data.answer_id) {
-            lastAnswerId.value = data.answer_id
-          }
+          if (!evaluateOnly && data.answer_id) lastAnswerId.value = data.answer_id
 
           if (!evaluateOnly && data.followup_text) {
             followupText.value = data.followup_text
+            followupType.value = data.next_action || 'BASE'
             followupTranscript.value = ''
             followupInterimTranscript.value = ''
             followupFeedback.value = ''
@@ -227,7 +228,8 @@
           correctAnswer: currentQuestion.value?.answer || '',
           maxPoints: '5',
           evaluateOnly: isFollowUp,
-          parentId: isFollowUp ? lastAnswerId.value : 0
+          parentId: isFollowUp ? lastAnswerId.value : 0,
+          typeOverride: isFollowUp ? followupType.value : 'BASE'
         })
       }
 
@@ -251,6 +253,7 @@
 
       const resetFollowUp = () => {
         followupText.value = ''
+        followupType.value = 'BASE'
         followupTranscript.value = ''
         followupInterimTranscript.value = ''
         followupFeedback.value = ''
@@ -290,6 +293,7 @@
         locked,
         submitted,
         followupText,
+        followupType,
         followupTranscript,
         followupInterimTranscript,
         followupFeedback,

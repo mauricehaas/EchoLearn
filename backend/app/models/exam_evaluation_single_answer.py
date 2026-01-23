@@ -9,6 +9,7 @@ class ExamEvaluationSingleAnswer(Base):
     id = Column(Integer, primary_key=True, index=True)
     parent_id = Column(Integer)
     unique_exam_id = Column(Text, nullable=False)
+    question_type = Column(Text, nullable=False)
     question = Column(Text, nullable=False)
     student_answer = Column(Text, nullable=False)
     correct_answer = Column(Text, nullable=False)

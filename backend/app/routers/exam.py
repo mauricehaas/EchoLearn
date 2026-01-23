@@ -66,6 +66,7 @@ class AnswerEvaluationBody(BaseModel):
     max_points: str
     evaluate_only: bool
     parent_id: int
+    question_type: str
 
 class AnswerEvaluationResponse(BaseModel):
     feedback: str
@@ -99,6 +100,7 @@ async def evaluate_answer(
             max_points=body.max_points,
             evaluate_only=body.evaluate_only,
             parent_id=body.parent_id,
+            question_type=body.question_type,
         )
         return response
     except Exception as e:

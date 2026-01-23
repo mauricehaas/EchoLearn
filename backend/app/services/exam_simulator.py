@@ -89,6 +89,7 @@ class ExamSimulator:
         student_answer: str,
         correct_answer: str,
         max_points: float,
+        question_type: str,
         evaluate_only: bool = False,
         parent_id: int = 0,
     ) -> Dict[str, str | int | None]:
@@ -132,6 +133,7 @@ class ExamSimulator:
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,
             question=question,
+            question_type=question_type,
             student_answer=student_answer,
             correct_answer=correct_answer,
             feedback=answer_evaluation["feedback_content"],
