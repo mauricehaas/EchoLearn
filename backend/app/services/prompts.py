@@ -139,12 +139,12 @@ Musterlösung:
 
 ---
 
-<Antwortformat-Beispiel>
+Antwortformat:
 ```json
-{
+{{
   "question": "<Generierte Vertiefungsfrage>",
   "correct_answer": "<Musterlösung zur generierten Vertiefungsfrage>",
   "max_points": "<Punkte als String, maximal '5'>"
-}
+}}
 ```
 """
