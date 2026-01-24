@@ -217,19 +217,47 @@
       }
 
       const submitAnswerOrFollowUp = (isFollowUp = false) => {
+        let answerRef = transcript
+        let feedbackRef = feedback
+        let lockedRef = locked
+        let listeningRef = listening
+        let loadingRef = loading
+        let questionTextRef = currentQuestion
+        let evaluateOnly = false
+        let parentId = 0
+        let typeOverride = 'BASE'
+
+        if (isFollowUp) {
+          typeOverride = followupType.value
+
+          answerRef = followupTranscript
+          feedbackRef = followupFeedback
+          lockedRef = followupLocked
+          listeningRef = followupListening
+          loadingRef = followupLoading
+          questionTextRef = followupText
+          evaluateOnly = true
+          parentId = lastAnswerId.value
+
+          if (typeOverride === 'CLARIFY') {
+            answerRef = { value: transcript.value + ' ' + followupTranscript.value }
+            questionTextRef = currentQuestion
+          }
+        }
+
         submit({
           examId: '1',
-          questionTextRef: isFollowUp ? followupText : currentQuestion,
-          answerRef: isFollowUp ? followupTranscript : transcript,
-          feedbackRef: isFollowUp ? followupFeedback : feedback,
-          lockedRef: isFollowUp ? followupLocked : locked,
-          listeningRef: isFollowUp ? followupListening : listening,
-          loadingRef: isFollowUp ? followupLoading : loading,
+          questionTextRef,
+          answerRef,
+          feedbackRef,
+          lockedRef,
+          listeningRef,
+          loadingRef,
           correctAnswer: currentQuestion.value?.answer || '',
           maxPoints: '5',
-          evaluateOnly: isFollowUp,
-          parentId: isFollowUp ? lastAnswerId.value : 0,
-          typeOverride: isFollowUp ? followupType.value : 'BASE'
+          evaluateOnly,
+          parentId,
+          typeOverride
         })
       }
 
