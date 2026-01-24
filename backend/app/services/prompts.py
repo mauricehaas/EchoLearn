@@ -108,7 +108,7 @@ Antwortformat:
 ```
 """
 
-prompt_case_one_answer_correct_next_specific_question = """
+next_question = """
 Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
 
 Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend genau **eine neue Prüfungsfrage** zu stellen. Dabei darfst du entscheiden, ob:
@@ -117,7 +117,6 @@ Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und 
 
 **Interne Schritte (nicht ausgeben):**
 - Berücksichtige die ursprüngliche Frage und die Musterlösung.
-- Beurteile die Qualität der Studentenantwort.
 - Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
 - Bestimme eine angemessene Punktzahl für diese Frage, **maximal 5 Punkte**.
 

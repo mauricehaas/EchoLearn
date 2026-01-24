@@ -18,6 +18,7 @@ class ExamSimulator:
         rephrase_question: str,
         evaluate_student_answer: str,
         evaluate_exam: str,
+        next_question: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset.
 
@@ -29,6 +30,7 @@ class ExamSimulator:
         self._prompt_evaluate_student_answer: str = evaluate_student_answer
         self._prompt_evaluate_exam: str = evaluate_exam
         self._prompt_rephrase_question: str = rephrase_question
+        self._prompt_next_question: str = next_question
 
     def _generate_unique_exam_id(self) -> str:
         """Generates a unique exam ID using UUID4.
@@ -108,10 +110,6 @@ class ExamSimulator:
             "Können Sie den fehlenden Teil noch erklären?"
         )
 
-        DEEPEN_TEXT = (
-            "Vertiefungsfrage"
-        )
-
         raw_score = float(str(answer_evaluation["overall_rating"]).strip())
         max_points = float(max_points)
         percentage = (raw_score / max_points) * 100
@@ -122,7 +120,14 @@ class ExamSimulator:
         if not evaluate_only:
             if percentage >= 90:
                 next_action = "DEEPEN"
-                followup_text = DEEPEN_TEXT
+                next_question = self._llm_handler.call_llm(
+                    self._prompt_next_question.format(
+                        question=question,
+                        student_answer=student_answer,
+                        correct_answer=correct_answer,
+                    )
+                )
+                followup_text = next_question["question"]
             elif percentage < 20:
                 next_action = "ADVANCE"
                 followup_text = ""

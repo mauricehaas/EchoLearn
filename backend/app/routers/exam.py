@@ -8,6 +8,7 @@ from app.services.prompts import (
     rephrase_question,
     evaluate_exam,
     evaluate_student_answer,
+    next_question,
 )
 
 router = APIRouter(prefix="/exam", tags=["exam"])
@@ -16,6 +17,7 @@ exam_simulator = ExamSimulator(
     rephrase_question=rephrase_question,
     evaluate_student_answer=evaluate_student_answer,
     evaluate_exam=evaluate_exam,
+    next_question=next_question,
 )
 
 
