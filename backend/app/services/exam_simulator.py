@@ -2,14 +2,12 @@ import json
 import uuid
 from typing import Any, Dict
 
-
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.db import async_session
-from app.services.llm_handler import LLMHandler
 from app.models.exam_evaluation_final import ExamEvaluationFinal
 from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
+from app.services.llm_handler import LLMHandler
 
 
 class ExamSimulator:
@@ -52,7 +50,6 @@ class ExamSimulator:
             obj_id = data_to_add.id
             await session.commit()
             return obj_id
-        
 
     async def _write_single_evaluation_to_db(
         self,
@@ -82,7 +79,6 @@ class ExamSimulator:
             rating=rating,
         )
         await self._add_data_to_db([evaluation])
-
 
     async def evaluate_student_answer(
         self,
@@ -154,8 +150,6 @@ class ExamSimulator:
             "followup_text": followup_text,
             "answer_id": answer_id,
         }
-
-    
 
     def rephrase_question(self, question: str) -> Dict[str, str]:
         """Rephrases the given question using the LLM.

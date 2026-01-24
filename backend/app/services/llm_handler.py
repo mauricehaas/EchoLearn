@@ -1,6 +1,8 @@
-import requests
 import json
 from typing import Dict
+
+import requests
+
 
 class LLMHandler:
     def __init__(self, model: str = "phi4:latest") -> None:

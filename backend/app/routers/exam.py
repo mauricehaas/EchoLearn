@@ -5,10 +5,10 @@ from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
 from app.services.prompts import (
-    rephrase_question,
     evaluate_exam,
     evaluate_student_answer,
     next_question,
+    rephrase_question,
 )
 
 router = APIRouter(prefix="/exam", tags=["exam"])
@@ -69,6 +69,7 @@ class AnswerEvaluationBody(BaseModel):
     evaluate_only: bool
     parent_id: int
     question_type: str
+
 
 class AnswerEvaluationResponse(BaseModel):
     feedback: str
