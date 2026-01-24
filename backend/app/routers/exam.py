@@ -57,7 +57,7 @@ class AnswerEvaluationBody(BaseModel):
         question (str): The question answered by the student.
         student_answer (str): The answer provided by the student.
         correct_answer (str): The correct answer for comparison.
-        max_points (str): The max points.
+        max_points (int): The max points.
         evaluate_only (bool): If set, there will be no follow up question.
     """
 
@@ -65,7 +65,7 @@ class AnswerEvaluationBody(BaseModel):
     question: str
     student_answer: str
     correct_answer: str
-    max_points: str
+    max_points: int
     evaluate_only: bool
     parent_id: int
     question_type: str
@@ -73,7 +73,7 @@ class AnswerEvaluationBody(BaseModel):
 
 class AnswerEvaluationResponse(BaseModel):
     feedback: str
-    rating: str
+    rating: float
     next_action: str
     followup_text: str
     answer_id: int

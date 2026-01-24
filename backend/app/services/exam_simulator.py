@@ -86,7 +86,7 @@ class ExamSimulator:
         question: str,
         student_answer: str,
         correct_answer: str,
-        max_points: float,
+        max_points: int,
         question_type: str,
         evaluate_only: bool = False,
         parent_id: int = 0,
