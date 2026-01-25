@@ -17,40 +17,72 @@
       <div style="margin-top: 10px">
         <p class="interim" v-if="interimTranscript">…{{ interimTranscript }}</p>
 
-        <div class="answer-box">
-          <textarea
-            v-model="transcript"
-            placeholder="Deine erkannte Antwort"
-            :disabled="locked"
-          ></textarea>
-
-          <button class="submit" @click="submitAnswer" :disabled="!transcript || loading || locked">
-            {{ loading ? 'Wird geprüft…' : '🚀 Antwort absenden' }}
-          </button>
-        </div>
+        <AnswerBox
+          v-model="transcript"
+          :loading="loading"
+          :locked="locked"
+          @submit="submitAnswer"
+        />
 
         <span v-if="loading" class="spinner"></span>
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
       </div>
 
-      <div style="margin-top: 10px">
-        <!-- Wenn letzte Frage und abgeschickt, Abschließen-Button anzeigen -->
-        <button v-if="currentIndex >= questions.length - 1 && submitted" @click="finishExam">
-          Abschließen
+      <!-- Rückfrage -->
+      <div
+        v-if="submitted && followupText"
+        style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px"
+      >
+        <h2>Rückfrage</h2>
+        <button @click="speakFollowUp" :disabled="followupLoading || followupLocked">
+          🔊 Rückfrage anhören
         </button>
 
-        <!-- Ansonsten nächste Frage -->
-        <button
-          v-else
-          @click="nextQuestion"
-          :disabled="currentIndex >= questions.length - 1 || !submitted || loading"
-        >
-          ➡️ Nächste Frage
-        </button>
+        <div style="margin-top: 20px">
+          <button
+            @click="startFollowupListening"
+            :disabled="followupListening || followupLoading || followupLocked"
+          >
+            {{ followupListening ? 'Höre...' : '🎤 Sprich jetzt' }}
+          </button>
+          <button
+            @click="stopFollowupListening"
+            :disabled="!followupListening || followupLoading || followupLocked"
+          >
+            ⏹️ Stopp
+          </button>
+          <button @click="restartFollowupListening" :disabled="followupLoading || followupLocked">
+            🔄 Antwort verwerfen
+          </button>
+        </div>
+
+        <div style="margin-top: 10px">
+          <p class="interim" v-if="followupInterimTranscript">…{{ followupInterimTranscript }}</p>
+
+          <AnswerBox
+            v-model="followupTranscript"
+            :loading="followupLoading"
+            :locked="followupLocked"
+            @submit="submitFollowUp"
+          />
+
+          <span v-if="followupLoading" class="spinner"></span>
+          <p v-if="followupFeedback" style="margin-top: 10px; color: green">
+            {{ followupFeedback }}
+          </p>
+        </div>
       </div>
+
+      <QuestionNavigation
+        :currentIndex="currentIndex"
+        :total="questions.length"
+        :submitted="submitted"
+        :loading="loading || nextDisabled"
+        @next="nextQuestion"
+        @finish="finishExam"
+      />
     </div>
 
-    <!-- Abschlussanzeige -->
     <div v-else-if="examFinished" style="margin-top: 20px; font-weight: bold">
       <h2>Prüfung abgeschlossen.</h2>
       <p>Sehen Sie im Statistik-Bereich Ihre Bewertung.</p>
@@ -62,124 +94,209 @@
 
 <script>
   import { ref, onMounted, computed } from 'vue'
+  import { useSpeechRecognition } from '../composables/useSpeechRecognition'
+  import { speakText } from '../composables/useTextToSpeech'
+  import AnswerBox from './AnswerBox.vue'
+  import QuestionNavigation from './QuestionNavigation.vue'
 
   export default {
+    components: { AnswerBox, QuestionNavigation },
     setup() {
       const questions = ref([])
       const currentIndex = ref(0)
-      const transcript = ref('')
-      const interimTranscript = ref('')
       const feedback = ref('')
-      const listening = ref(false)
       const loading = ref(false)
       const locked = ref(false)
       const submitted = ref(false)
-      const stopRequested = ref(false)
-      const examFinished = ref(false) // neu: Prüfung abgeschlossen
-      let recognition = null
+      const examFinished = ref(false)
+
+      const followupText = ref('')
+      const followupType = ref('BASE')
+      const followupTranscript = ref('')
+      const followupInterimTranscript = ref('')
+      const followupFeedback = ref('')
+      const followupLoading = ref(false)
+      const followupLocked = ref(false)
+      const followupListening = ref(false)
+      const lastAnswerId = ref(null)
+
+      const {
+        transcript,
+        interimTranscript,
+        listening,
+        startListening,
+        stopListening,
+        restartListening
+      } = useSpeechRecognition({ lang: 'de-DE' })
+
+      const {
+        startListening: startFollowupListening,
+        stopListening: stopFollowupListening,
+        restartListening: restartFollowupListening
+      } = useSpeechRecognition({
+        transcriptRef: followupTranscript,
+        interimRef: followupInterimTranscript,
+        listeningRef: followupListening,
+        lang: 'de-DE'
+      })
 
       const currentQuestion = computed(() => questions.value[currentIndex.value])
 
-      const speakQuestion = () => {
-        if (!currentQuestion.value || loading.value || locked.value) return
-        const utterance = new SpeechSynthesisUtterance(currentQuestion.value.question)
-        utterance.lang = 'de-DE'
-        utterance.rate = 1
-        utterance.pitch = 1
-        speechSynthesis.speak(utterance)
-      }
+      const nextDisabled = computed(() => {
+        if (!submitted.value) return true
+        if (followupText.value && !followupLocked.value) return true
+        return false
+      })
 
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-        recognition = new SpeechRecognition()
-        recognition.lang = 'de-DE'
-        recognition.interimResults = true
-        recognition.continuous = true
-
-        recognition.onresult = (event) => {
-          let finalTranscript = ''
-          let interim = ''
-
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript
-            else interim += event.results[i][0].transcript
-          }
-
-          transcript.value = (transcript.value + ' ' + finalTranscript).trim()
-          interimTranscript.value = interim
-        }
-
-        recognition.onend = () => {
-          if (listening.value && !locked.value && !stopRequested.value) {
-            recognition.start()
-          } else stopRequested.value = false
-        }
-      } else {
-        alert('Speech-to-Text wird von diesem Browser nicht unterstützt.')
-      }
-
-      const startListening = () => {
-        if (loading.value || locked.value) return
-        listening.value = true
-        recognition.start()
-      }
-
-      const stopListening = () => {
-        if (!listening.value) return
-        stopRequested.value = true
-        recognition.stop()
-        listening.value = false
-      }
-
-      const restartListening = () => {
-        transcript.value = ''
-        interimTranscript.value = ''
-        listening.value = false
-      }
-
-      const submitAnswer = async () => {
-        if (!transcript.value || loading.value || locked.value) return
-
-        loading.value = true
-        feedback.value = ''
-        if (listening.value) stopListening()
+      const submit = async ({
+        examId = '1',
+        questionTextRef,
+        answerRef,
+        feedbackRef,
+        lockedRef,
+        listeningRef,
+        loadingRef,
+        correctAnswer = '',
+        maxPoints = '5',
+        evaluateOnly = false,
+        parentId = null,
+        typeOverride = null
+      }) => {
+        if (!answerRef.value || loadingRef.value || lockedRef.value) return
+        loadingRef.value = true
+        feedbackRef.value = ''
+        if (listeningRef.value) stopListening()
 
         try {
+          const body = {
+            unique_exam_id: examId,
+            question:
+              typeof questionTextRef.value === 'string'
+                ? questionTextRef.value
+                : questionTextRef.value.question,
+            student_answer: answerRef.value,
+            correct_answer: correctAnswer,
+            max_points: maxPoints,
+            evaluate_only: evaluateOnly,
+            question_type: typeOverride || 'BASE'
+          }
+
+          if (parentId !== null) body.parent_id = parentId
+
           const res = await fetch('http://localhost:8000/exam/evaluate_answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              unique_exam_id: '1',
-              question: currentQuestion.value.question,
-              student_answer: transcript.value,
-              correct_answer: currentQuestion.value.answer
-            })
+            body: JSON.stringify(body)
           })
+
           const data = await res.json()
-          feedback.value = data.feedback || 'Antwort erfolgreich abgesendet.'
 
-          locked.value = true
-          submitted.value = true
+          feedbackRef.value = data.feedback || 'Antwort erfolgreich abgesendet'
+          lockedRef.value = true
 
-          if (data.followup_question) {
-            const u = new SpeechSynthesisUtterance(data.followup_question)
-            u.lang = 'de-DE'
-            speechSynthesis.speak(u)
+          if (!evaluateOnly && data.answer_id) lastAnswerId.value = data.answer_id
+
+          if (!evaluateOnly && data.followup_text) {
+            followupText.value = data.followup_text
+            followupType.value = data.next_action || 'BASE'
+            followupTranscript.value = ''
+            followupInterimTranscript.value = ''
+            followupFeedback.value = ''
+            followupLoading.value = false
+            followupLocked.value = false
+            followupListening.value = false
           }
+
+          if (!evaluateOnly) submitted.value = true
         } catch (err) {
-          feedback.value = 'Fehler beim Absenden, bitte erneut versuchen.'
+          feedbackRef.value = 'Fehler beim Absenden, bitte erneut versuchen.'
           console.error(err)
         } finally {
-          loading.value = false
+          loadingRef.value = false
         }
+      }
+
+      const submitAnswerOrFollowUp = (isFollowUp = false) => {
+        let answerRef = transcript
+        let feedbackRef = feedback
+        let lockedRef = locked
+        let listeningRef = listening
+        let loadingRef = loading
+        let questionTextRef = currentQuestion
+        let evaluateOnly = false
+        let parentId = 0
+        let typeOverride = 'BASE'
+
+        if (isFollowUp) {
+          typeOverride = followupType.value
+
+          answerRef = followupTranscript
+          feedbackRef = followupFeedback
+          lockedRef = followupLocked
+          listeningRef = followupListening
+          loadingRef = followupLoading
+          questionTextRef = followupText
+          evaluateOnly = true
+          parentId = lastAnswerId.value
+
+          if (typeOverride === 'CLARIFY') {
+            answerRef = { value: transcript.value + ' ' + followupTranscript.value }
+            questionTextRef = currentQuestion
+          }
+        }
+
+        submit({
+          examId: '1',
+          questionTextRef,
+          answerRef,
+          feedbackRef,
+          lockedRef,
+          listeningRef,
+          loadingRef,
+          correctAnswer: currentQuestion.value?.answer || '',
+          maxPoints: '5',
+          evaluateOnly,
+          parentId,
+          typeOverride
+        })
+      }
+
+      const submitAnswer = () => submitAnswerOrFollowUp(false)
+      const submitFollowUp = () => submitAnswerOrFollowUp(true)
+
+      const speak = async (textRef, loadingRef, lockedRef) => {
+        if (!textRef.value || loadingRef.value || lockedRef.value) return
+        loadingRef.value = true
+        try {
+          const textToSpeak =
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+          await speakText(textToSpeak)
+        } finally {
+          loadingRef.value = false
+        }
+      }
+
+      const speakQuestion = () => speak(currentQuestion, loading, locked)
+      const speakFollowUp = () => speak(followupText, followupLoading, followupLocked)
+
+      const resetFollowUp = () => {
+        followupText.value = ''
+        followupType.value = 'BASE'
+        followupTranscript.value = ''
+        followupInterimTranscript.value = ''
+        followupFeedback.value = ''
+        followupLoading.value = false
+        followupLocked.value = false
+        followupListening.value = false
       }
 
       const nextQuestion = () => {
         transcript.value = ''
-        interimTranscript.value = ''
         feedback.value = ''
         locked.value = false
         submitted.value = false
+        lastAnswerId.value = null
+        resetFollowUp()
         if (currentIndex.value < questions.value.length - 1) currentIndex.value++
       }
 
@@ -203,14 +320,29 @@
         loading,
         locked,
         submitted,
+        followupText,
+        followupType,
+        followupTranscript,
+        followupInterimTranscript,
+        followupFeedback,
+        followupLoading,
+        followupLocked,
+        followupListening,
+        lastAnswerId,
         examFinished,
+        nextDisabled,
         startListening,
         stopListening,
         restartListening,
+        startFollowupListening,
+        stopFollowupListening,
+        restartFollowupListening,
+        speakQuestion,
+        speakFollowUp,
         submitAnswer,
+        submitFollowUp,
         nextQuestion,
-        finishExam,
-        speakQuestion
+        finishExam
       }
     }
   }
@@ -222,7 +354,6 @@
     color: #888;
     cursor: not-allowed;
   }
-
   .spinner {
     display: inline-block;
     width: 20px;
@@ -233,7 +364,6 @@
     animation: spin 1s linear infinite;
     margin-left: 10px;
   }
-
   @keyframes spin {
     0% {
       transform: rotate(0deg);
@@ -242,33 +372,8 @@
       transform: rotate(360deg);
     }
   }
-
-  .answer-box {
-    margin-top: 10px;
-    max-width: 600px;
-  }
-
-  .answer-box textarea {
-    width: 100%;
-    min-height: 90px;
-    resize: vertical;
-
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-
-    box-sizing: border-box;
-  }
-
-  .answer-box textarea:focus {
-    outline: none;
-    border-color: #4a90e2;
-  }
-
-  .answer-box .submit {
-    margin-top: 8px;
-    padding: 8px 14px;
-    border-radius: 8px;
+  .interim {
+    font-style: italic;
+    color: gray;
   }
 </style>
