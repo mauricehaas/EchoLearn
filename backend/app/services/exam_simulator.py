@@ -145,7 +145,7 @@ class ExamSimulator:
         answer_id = await self._add_single_data_to_db(evaluation)
 
         if next_action == "DEEPEN":
-           return {
+            return {
                 "feedback": answer_evaluation["feedback_content"],
                 "rating": str(raw_score),
                 "next_action": next_action,
@@ -153,7 +153,7 @@ class ExamSimulator:
                 "next_answer": next_question["answer"],
                 "followup_text": followup_text,
                 "answer_id": answer_id,
-            } 
+            }
 
         return {
             "feedback": answer_evaluation["feedback_content"],

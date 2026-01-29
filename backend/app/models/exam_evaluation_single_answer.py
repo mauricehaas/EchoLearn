@@ -16,4 +16,3 @@ class ExamEvaluationSingleAnswer(Base):
     feedback = Column(Text, nullable=False)
     rating = Column(Text, nullable=False)
     max_points = Column(Text, nullable=False)
-    
