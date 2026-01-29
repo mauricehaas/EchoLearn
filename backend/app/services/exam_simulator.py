@@ -114,7 +114,7 @@ class ExamSimulator:
         next_action = "EVALUATE_ONLY" if evaluate_only else ""
 
         if not evaluate_only:
-            if percentage >= 90:
+            if percentage >= 65:
                 next_action = "DEEPEN"
                 next_question = self._llm_handler.call_llm(
                     self._prompt_next_question.format(
@@ -124,7 +124,7 @@ class ExamSimulator:
                     )
                 )
                 followup_text = next_question["question"]
-            elif percentage < 20:
+            elif percentage < 49:
                 next_action = "ADVANCE"
                 followup_text = ""
             else:
@@ -140,8 +140,20 @@ class ExamSimulator:
             feedback=answer_evaluation["feedback_content"],
             rating=str(raw_score),
             parent_id=parent_id,
+            max_points=str(max_points),
         )
         answer_id = await self._add_single_data_to_db(evaluation)
+
+        if next_action == "DEEPEN":
+           return {
+                "feedback": answer_evaluation["feedback_content"],
+                "rating": str(raw_score),
+                "next_action": next_action,
+                "next_max_points": 5,
+                "next_answer": next_question["answer"],
+                "followup_text": followup_text,
+                "answer_id": answer_id,
+            } 
 
         return {
             "feedback": answer_evaluation["feedback_content"],
