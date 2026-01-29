@@ -33,9 +33,9 @@
         v-if="submitted && followupText"
         style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 15px"
       >
-        <h2>Rückfrage</h2>
+        <h2>{{ followupType === 'DEEPEN' ? 'Vertiefungsfrage' : 'Rückfrage' }}</h2>
         <button @click="speakFollowUp" :disabled="followupLoading || followupLocked">
-          🔊 Rückfrage anhören
+          🔊 {{ followupType === 'DEEPEN' ? 'Vertiefungsfrage anhören' : 'Rückfrage anhören' }}
         </button>
 
         <div style="margin-top: 20px">
@@ -119,6 +119,7 @@
       const followupLocked = ref(false)
       const followupListening = ref(false)
       const lastAnswerId = ref(null)
+      const nextAnswer = ref('')
 
       const {
         transcript,
@@ -205,6 +206,10 @@
             followupLoading.value = false
             followupLocked.value = false
             followupListening.value = false
+
+            if (data.next_action == 'DEEPEN') {
+              nextAnswer.value = data.next_answer
+            }
           }
 
           if (!evaluateOnly) submitted.value = true
@@ -225,11 +230,12 @@
         let questionTextRef = currentQuestion
         let evaluateOnly = false
         let parentId = 0
+        let maxPoints = currentQuestion.value?.max_points
         let typeOverride = 'BASE'
+        let correctAnswer = currentQuestion.value?.answer || ''
 
         if (isFollowUp) {
           typeOverride = followupType.value
-
           answerRef = followupTranscript
           feedbackRef = followupFeedback
           lockedRef = followupLocked
@@ -243,6 +249,11 @@
             answerRef = { value: transcript.value + ' ' + followupTranscript.value }
             questionTextRef = currentQuestion
           }
+
+          if (typeOverride === 'DEEPEN') {
+            correctAnswer = nextAnswer.value
+            maxPoints = 5
+          }
         }
 
         submit({
@@ -253,8 +264,8 @@
           lockedRef,
           listeningRef,
           loadingRef,
-          correctAnswer: currentQuestion.value?.answer || '',
-          maxPoints: '5',
+          correctAnswer,
+          maxPoints,
           evaluateOnly,
           parentId,
           typeOverride
