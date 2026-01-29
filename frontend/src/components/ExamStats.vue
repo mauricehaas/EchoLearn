@@ -12,19 +12,27 @@
     <table v-if="results.length > 0" class="results-table">
       <thead>
         <tr>
+          <th>id</th>
           <th>Frage</th>
           <th>Ihre Antwort</th>
           <th>Musterlösung</th>
-          <th>Bewertung (max. 5)</th>
+          <th>Parent</th>
+          <th>Typ</th>
+          <th>Bewertung</th>
+          <th>Max. Punkte</th>
           <th>Feedback</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in results" :key="row.id">
+          <td>{{ row.id }}</td>
           <td>{{ row.question }}</td>
           <td>{{ row.student_answer }}</td>
           <td>{{ row.correct_answer }}</td>
+          <td>{{ row.parent_id }}</td>
+          <td>{{ row.question_type }}</td>
           <td>{{ row.rating }}</td>
+          <td>{{ row.max_points }}</td>
           <td>{{ row.feedback }}</td>
         </tr>
       </tbody>

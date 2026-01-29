@@ -117,14 +117,13 @@ Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und 
 
 **Interne Schritte (nicht ausgeben):**
 - Berücksichtige die ursprüngliche Frage und die Musterlösung.
-- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
-- Bestimme eine angemessene Punktzahl für diese Frage, **maximal 5 Punkte**.
+- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft, für die du genau 5 Punkte vergeben würdest.
+- Gebe eine Musterlösung zu dieser neuen Prüfungsfrage an, welche maximal 3 Sätze lang sein darf.
 
 **Wichtige Regeln:**
 1. Gib nur die JSON-Antwort zurück, **keine zusätzlichen Kommentare oder Erklärungen**.
 2. Verwende das exakte JSON-Format unten.
 3. Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-4. `max_points` muss als String angegeben werden.
 
 ---
 
@@ -143,8 +142,7 @@ Antwortformat:
 ```json
 {{
   "question": "<Generierte Vertiefungsfrage>",
-  "correct_answer": "<Musterlösung zur generierten Vertiefungsfrage>",
-  "max_points": "<Punkte als String, maximal '5'>"
+  "answer": "<Musterlösung zur generierten Vertiefungsfrage>"
 }}
 ```
 """
