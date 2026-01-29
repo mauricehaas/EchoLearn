@@ -24,7 +24,12 @@ async def seed():
             User(username="admin", password_hash="hashed123", role="admin"),
             User(username="user", password_hash="hashed456", role="user"),
         ]
-        session.add_all(users)
+
+        exam_evaluation_final = []
+
+        exam_evaluation_single_answer = []
+
+        session.add_all(users + exam_evaluation_final + exam_evaluation_single_answer)
         await session.commit()
 
         questions = [
