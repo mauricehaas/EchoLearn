@@ -40,6 +40,9 @@
         <button @click="speakFollowUp" :disabled="followupLoading || followupLocked">
           🔊 {{ followupType === 'DEEPEN' ? 'Vertiefungsfrage anhören' : 'Rückfrage anhören' }}
         </button>
+        <button @click="rephraseFollowUpQuestion" :disabled="followupLoading || followupLocked">
+          🔊 Frage umformulieren
+        </button>
 
         <div style="margin-top: 20px">
           <button
@@ -293,10 +296,8 @@
       const speakQuestion = () => speak(currentQuestion, loading, locked)
       const speakFollowUp = () => speak(followupText, followupLoading, followupLocked)
 
-      const rephraseAndSpeak = async (textRef, loadingRef, lockedRef) => {
-        if (!textRef.value || loadingRef.value || lockedRef.value) return
-
-        loadingRef.value = true
+      const rephraseAndSpeak = async (textRef, lockedRef) => {
+        if (!textRef.value || lockedRef.value) return
 
         try {
           const originalText =
@@ -308,23 +309,24 @@
             body: JSON.stringify({ question: originalText })
           })
 
-          console.log(res)
+          if (!res.ok) {
+            throw new Error(`Server error ${res.status}`)
+          }
 
           const data = await res.json()
 
-          await speakText(data.rephrased_question)
+          await speakText(data.answer_llm)
         } catch (err) {
           console.error('Rephrase fehlgeschlagen, nutze Originaltext:', err)
 
           await speakText(
             typeof textRef.value === 'string' ? textRef.value : textRef.value.question
           )
-        } finally {
-          loadingRef.value = false
         }
       }
 
-      const rephraseQuestion = () => rephraseAndSpeak(currentQuestion, loading, locked)
+      const rephraseQuestion = () => rephraseAndSpeak(currentQuestion, locked)
+      const rephraseFollowUpQuestion = () => rephraseAndSpeak(followupText, followupLocked)
 
       const resetFollowUp = () => {
         followupText.value = ''
@@ -386,6 +388,7 @@
         restartFollowupListening,
         speakQuestion,
         rephraseQuestion,
+        rephraseFollowUpQuestion,
         speakFollowUp,
         submitAnswer,
         submitFollowUp,
