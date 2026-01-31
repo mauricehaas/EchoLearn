@@ -80,6 +80,7 @@ class AnswerEvaluationResponse(BaseModel):
     next_max_points: int = 0
     next_answer: str = ""
 
+
 @router.post(
     "/evaluate_answer",
     response_model=AnswerEvaluationResponse,
