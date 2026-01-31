@@ -114,6 +114,7 @@ Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
 Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend genau **eine neue Prüfungsfrage** zu stellen. Dabei darfst du entscheiden, ob:
 - eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
 - eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
+- eine **Musterlösung zu der neuen Frage** in maximal 3 Sätzen anzugeben.
 
 **Interne Schritte (nicht ausgeben):**
 - Berücksichtige die ursprüngliche Frage und die Musterlösung.
@@ -141,8 +142,8 @@ Musterlösung:
 Antwortformat:
 ```json
 {{
-  "question": "<Generierte Vertiefungsfrage>",
-  "answer": "<Musterlösung zur generierten Vertiefungsfrage>"
+  "question": "<string: Generierte Vertiefungsfrage>",
+  "answer": "<string: Musterlösung zur generierten Vertiefungsfrage>"
 }}
 ```
 """

@@ -77,7 +77,8 @@ class AnswerEvaluationResponse(BaseModel):
     next_action: str
     followup_text: str
     answer_id: int
-
+    next_max_points: int = 0
+    next_answer: str = ""
 
 @router.post(
     "/evaluate_answer",
