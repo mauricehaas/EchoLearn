@@ -3,6 +3,9 @@
     <div v-if="currentQuestion && !examFinished">
       <h2>Frage {{ currentIndex + 1 }}</h2>
       <button @click="speakQuestion" :disabled="loading || locked">🔊 Frage anhören</button>
+      <button @click="rephraseQuestion" :disabled="loading || locked">
+        🔊 Frage umformulieren
+      </button>
 
       <div style="margin-top: 20px">
         <button @click="startListening" :disabled="listening || loading || locked">
@@ -290,6 +293,39 @@
       const speakQuestion = () => speak(currentQuestion, loading, locked)
       const speakFollowUp = () => speak(followupText, followupLoading, followupLocked)
 
+      const rephraseAndSpeak = async (textRef, loadingRef, lockedRef) => {
+        if (!textRef.value || loadingRef.value || lockedRef.value) return
+
+        loadingRef.value = true
+
+        try {
+          const originalText =
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+
+          const res = await fetch('http://localhost:8000/exam/rephrase_question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: originalText })
+          })
+
+          console.log(res)
+
+          const data = await res.json()
+
+          await speakText(data.rephrased_question)
+        } catch (err) {
+          console.error('Rephrase fehlgeschlagen, nutze Originaltext:', err)
+
+          await speakText(
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+          )
+        } finally {
+          loadingRef.value = false
+        }
+      }
+
+      const rephraseQuestion = () => rephraseAndSpeak(currentQuestion, loading, locked)
+
       const resetFollowUp = () => {
         followupText.value = ''
         followupType.value = 'BASE'
@@ -349,6 +385,7 @@
         stopFollowupListening,
         restartFollowupListening,
         speakQuestion,
+        rephraseQuestion,
         speakFollowUp,
         submitAnswer,
         submitFollowUp,
