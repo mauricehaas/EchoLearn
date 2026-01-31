@@ -3,6 +3,9 @@
     <div v-if="currentQuestion && !examFinished">
       <h2>Frage {{ currentIndex + 1 }}</h2>
       <button @click="speakQuestion" :disabled="loading || locked">🔊 Frage anhören</button>
+      <button @click="rephraseQuestion" :disabled="loading || locked">
+        🔊 Frage umformulieren
+      </button>
 
       <div style="margin-top: 20px">
         <button @click="startListening" :disabled="listening || loading || locked">
@@ -36,6 +39,9 @@
         <h2>{{ followupType === 'DEEPEN' ? 'Vertiefungsfrage' : 'Rückfrage' }}</h2>
         <button @click="speakFollowUp" :disabled="followupLoading || followupLocked">
           🔊 {{ followupType === 'DEEPEN' ? 'Vertiefungsfrage anhören' : 'Rückfrage anhören' }}
+        </button>
+        <button @click="rephraseFollowUpQuestion" :disabled="followupLoading || followupLocked">
+          🔊 Frage umformulieren
         </button>
 
         <div style="margin-top: 20px">
@@ -290,6 +296,38 @@
       const speakQuestion = () => speak(currentQuestion, loading, locked)
       const speakFollowUp = () => speak(followupText, followupLoading, followupLocked)
 
+      const rephraseAndSpeak = async (textRef, lockedRef) => {
+        if (!textRef.value || lockedRef.value) return
+
+        try {
+          const originalText =
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+
+          const res = await fetch('http://localhost:8000/exam/rephrase_question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: originalText })
+          })
+
+          if (!res.ok) {
+            throw new Error(`Server error ${res.status}`)
+          }
+
+          const data = await res.json()
+
+          await speakText(data.answer_llm)
+        } catch (err) {
+          console.error('Rephrase fehlgeschlagen, nutze Originaltext:', err)
+
+          await speakText(
+            typeof textRef.value === 'string' ? textRef.value : textRef.value.question
+          )
+        }
+      }
+
+      const rephraseQuestion = () => rephraseAndSpeak(currentQuestion, locked)
+      const rephraseFollowUpQuestion = () => rephraseAndSpeak(followupText, followupLocked)
+
       const resetFollowUp = () => {
         followupText.value = ''
         followupType.value = 'BASE'
@@ -349,6 +387,8 @@
         stopFollowupListening,
         restartFollowupListening,
         speakQuestion,
+        rephraseQuestion,
+        rephraseFollowUpQuestion,
         speakFollowUp,
         submitAnswer,
         submitFollowUp,
