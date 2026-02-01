@@ -77,7 +77,6 @@
   const loading = ref(true)
   const error = ref(null)
 
-  // ggf. später über Router-Param setzen
   const uniqueExamId = '1'
 
   const gradeClass = computed(() => {

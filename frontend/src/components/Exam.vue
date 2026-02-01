@@ -84,14 +84,16 @@
         :total="questions.length"
         :submitted="submitted"
         :loading="loading || nextDisabled"
+        :examId="'1'"
         @next="nextQuestion"
-        @finish="finishExam"
+        @finish="handleExamFinished"
       />
     </div>
 
     <div v-else-if="examFinished" style="margin-top: 20px; font-weight: bold">
       <h2>Prüfung abgeschlossen.</h2>
-      <p>Sehen Sie im Statistik-Bereich Ihre Bewertung.</p>
+      <p v-if="finishMessage">{{ finishMessage }}</p>
+      <p>Sehen Sie im Statistik-Bereich Ihre Bewertung und weitere Details.</p>
     </div>
 
     <p v-else>Lade Fragen...</p>
@@ -115,6 +117,7 @@
       const locked = ref(false)
       const submitted = ref(false)
       const examFinished = ref(false)
+      const finishMessage = ref('')
 
       const followupText = ref('')
       const followupType = ref('BASE')
@@ -198,7 +201,7 @@
 
           const data = await res.json()
 
-          feedbackRef.value = data.feedback || 'Antwort erfolgreich abgesendet'
+          feedbackRef.value = 'Antwort erfolgreich abgesendet'
           lockedRef.value = true
 
           if (!evaluateOnly && data.answer_id) lastAnswerId.value = data.answer_id
@@ -349,7 +352,8 @@
         if (currentIndex.value < questions.value.length - 1) currentIndex.value++
       }
 
-      const finishExam = () => {
+      const handleExamFinished = (message) => {
+        finishMessage.value = message
         examFinished.value = true
       }
 
@@ -380,6 +384,7 @@
         lastAnswerId,
         examFinished,
         nextDisabled,
+        finishMessage,
         startListening,
         stopListening,
         restartListening,
@@ -393,7 +398,7 @@
         submitAnswer,
         submitFollowUp,
         nextQuestion,
-        finishExam
+        handleExamFinished
       }
     }
   }
