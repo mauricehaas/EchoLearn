@@ -8,10 +8,14 @@ app = FastAPI(title="EchoLearn API", docs_url="/docs")
 # ---------------------------
 # CORS konfigurieren
 # ---------------------------
-origins = ["http://localhost:5173"]  # Vite Dev Server
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]  # Vite Dev Server
 
 app.add_middleware(
-    CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
+    CORSMiddleware,
+    allow_origins=origins,  # Erlaubte Domains
+    allow_credentials=True,  # nötig für Cookies/Headers
+    allow_methods=["*"],  # GET, POST, PUT, DELETE, etc.
+    allow_headers=["*"],  # Content-Type, Authorization etc.
 )
 
 # ---------------------------
