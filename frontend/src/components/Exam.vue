@@ -92,6 +92,7 @@
 
     <div v-else-if="examFinished" style="margin-top: 20px; font-weight: bold">
       <h2>Prüfung abgeschlossen.</h2>
+      <ExamSummary examId="1" />
       <p v-if="finishMessage">{{ finishMessage }}</p>
       <p>Sehen Sie im Statistik-Bereich Ihre Bewertung und weitere Details.</p>
     </div>
@@ -106,9 +107,10 @@
   import { speakText } from '../composables/useTextToSpeech'
   import AnswerBox from './AnswerBox.vue'
   import QuestionNavigation from './QuestionNavigation.vue'
+  import ExamSummary from './ExamSummary.vue'
 
   export default {
-    components: { AnswerBox, QuestionNavigation },
+    components: { AnswerBox, QuestionNavigation, ExamSummary },
     setup() {
       const questions = ref([])
       const currentIndex = ref(0)

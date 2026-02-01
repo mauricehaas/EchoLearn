@@ -13,7 +13,7 @@ Gib am Ende ein knappes Gesamtrating (0-{max_points} Punkte). Gerundet auf eine 
 Wichtige Regeln: 
 - Gib keine Meta-Kommentare über dein Vorgehen aus.
 - Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+- Deutsch, Du-Form
 
 Frage:
 {question}
@@ -34,40 +34,22 @@ Musterlösung:
 """
 
 evaluate_exam = """
-Bitte erstelle auf Basis der folgenden zwei Informationsquellen eine umfassende Gesamtevaluierung der gesamten Prüfung:
+Bitte erstelle ausschließlich auf Basis der beiden folgenden Informationsquellen eine prägnante Gesamtevaluierung der gesamten Prüfung.
 
-Feedback-String: enthält alle inhaltlichen und sprachlichen Feedbacks zu den einzelnen Antworten
+Du darfst keinerlei Informationen ergänzen, interpretieren oder erfinden, die nicht explizit in den beiden Strings enthalten sind.
 
-Bewertungs-String: enthält die jeweiligen Einzelbewertungen (z. B. Punkte, Noten oder qualitative Einstufungen)
+<Aufgabenreihenfolge strikt einhalten>
+1. Gesamtzusammenfassung der Prüfung (Stärken & wiederkehrende Schwächen)
+2. Inhaltliche Gesamtbewertung (fachliche Beherrschung, starke & schwache Themen)
+3. Konkrete Verbesserungsvorschläge (fachlich und strukturell)
 
-<Aufgaben>
-Gesamtzusammenfassung der Prüfung
-- Welche Stärken zeigen sich über alle Antworten hinweg?
-- Welche Schwächen treten wiederholt auf?
-
-Inhaltliche Gesamtbewertung
-- Wie gut beherrscht der Student die zentralen fachlichen Konzepte insgesamt?
-
-- Welche Themenbereiche sind besonders stark bzw. schwach?
-
-Sprachliche & kommunikative Gesamtbewertung
-- Wie klar und präzise sind die Antworten insgesamt formuliert?
-- Tritt Unsicherheit häufig auf (z. B. durch Füllwörter wie „äh“, „ähm“, „vielleicht“, „glaube“ etc.)?
-- Wie gut ist der strukturelle Aufbau?
-
-Verbesserungsvorschläge
-- Fachlich
-- Sprachlich
-- Strukturell
-
-Gesamtbewertung
-- Fasse die Bewertung der gesamten Prüfung in einer abschließenden Note oder Qualitätsstufe zusammen (z. B. sehr gut / gut / ausreichend / mangelhaft oder vergleichbare Skala).
-- Begründe diese Gesamtnote verständlich anhand der Inhalte aus Feedback- und Bewertungs-String.
-
-Wichtige Hinweise:
-- Verwende ausschließlich die Informationen aus beiden Strings.
-- Formuliere die Gesamtevaluierung klar, strukturiert und in deutscher Sprache.
-</Aufgaben>
+<Wichtige Regeln>
+- Verwende nur Informationen aus Feedback-String und Bewertungs-String
+- Keine Beispiele erfinden
+- Keine neuen Argumente hinzufügen
+- Deutsch, Du-Form
+- Maximal 5 kurze, informationsdichte Sätze
+- Bewertungs-String muss in die Gesamtbewertung erkennbar einfließen
 
 Feedback-String:
 {overall_feedback}
@@ -78,8 +60,7 @@ Bewertungs-String:
 <Antwortformat>
 ```json
 {{
-  "final_feedback": "<string: Hier gibst du die gesamte Evaluierung der Prüfung wieder, inklusive Zusammenfassung, Stärken, Schwächen, Verbesserungsvorschläge und Gesamtbewertung.>",
-  "final_rating": "<string: Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
+  "final_feedback": "<Gesamtevaluierung hier>",
 }}```
 """
 

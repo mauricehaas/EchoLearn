@@ -8,24 +8,8 @@
     <!-- Error -->
     <div v-if="error" class="error">{{ error }}</div>
 
-    <!-- Gesamtübersicht -->
-    <div v-if="!loading && !error && results.length > 0" class="summary-card" :class="gradeClass">
-      <h3>Gesamtergebnis</h3>
-      <div class="summary-grid">
-        <div>
-          <strong>Punkte</strong>
-          <p>{{ summary.total_points }} / {{ summary.max_points }}</p>
-        </div>
-        <div>
-          <strong>Prozent</strong>
-          <p>{{ summary.percentage }} %</p>
-        </div>
-        <div>
-          <strong>Note</strong>
-          <p class="grade">{{ summary.grade }}</p>
-        </div>
-      </div>
-    </div>
+    <!-- Gesamtübersicht (ausgelagertes Component) -->
+    <ExamSummary examId="1" />
 
     <!-- Tabelle -->
     <table v-if="results.length > 0" class="results-table">
@@ -64,46 +48,25 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted } from 'vue'
+  import ExamSummary from './ExamSummary.vue'
 
   const results = ref([])
-  const summary = ref({
-    total_points: 0,
-    max_points: 0,
-    percentage: 0,
-    grade: ''
-  })
-
   const loading = ref(true)
   const error = ref(null)
 
   const uniqueExamId = '1'
-
-  const gradeClass = computed(() => {
-    const grade = parseFloat(summary.value.grade.replace(',', '.'))
-    if (grade <= 2) return 'good'
-    if (grade <= 4) return 'medium'
-    return 'bad'
-  })
 
   async function loadResults() {
     loading.value = true
     error.value = null
 
     try {
-      // Einzelne Antworten
       const resAnswers = await fetch(
         `http://localhost:8000/exam_evaluation_single_answers/exam/${uniqueExamId}`
       )
       if (!resAnswers.ok) throw new Error(resAnswers.status)
       results.value = await resAnswers.json()
-
-      // Gesamtauswertung
-      const resSummary = await fetch(
-        `http://localhost:8000/exam_evaluation_single_answers/exam_scores/${uniqueExamId}`
-      )
-      if (!resSummary.ok) throw new Error(resSummary.status)
-      summary.value = await resSummary.json()
     } catch (err) {
       error.value = 'Fehler beim Laden der Ergebnisse'
     } finally {
@@ -119,36 +82,6 @@
     padding: 20px;
   }
 
-  /* Summary Card jetzt weiß */
-  .summary-card {
-    margin: 20px 0;
-    padding: 20px;
-    border-radius: 12px;
-    background: white;
-    border: 1px solid #ccc;
-    font-size: 18px;
-  }
-
-  /* Grid */
-  .summary-grid {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-
-  .summary-grid div {
-    text-align: center;
-    flex: 1;
-  }
-
-  /* Note in Tabellen-Lila */
-  .grade {
-    font-size: 32px;
-    font-weight: bold;
-    color: #6a1b9a; /* lila wie typische Tabellen/Headers */
-  }
-
-  /* Table */
   .results-table {
     width: 100%;
     border-collapse: collapse;

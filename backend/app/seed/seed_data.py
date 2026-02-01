@@ -5,8 +5,8 @@ import pandas as pd
 from app.core.db import Base, async_session, engine
 from app.models.question import Question
 from app.models.user import User
-from app.models.exam_evaluation_final import ExamEvaluationFinal
-from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer
+from app.models.exam_evaluation_final import ExamEvaluationFinal # noqa: F401
+from app.models.exam_evaluation_single_answer import ExamEvaluationSingleAnswer # noqa: F401
 
 PROCESSED_QUESTIONS_PATH = "data/processed/questions.csv"
 BATCH_SIZE = 50

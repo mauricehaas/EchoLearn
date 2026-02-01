@@ -78,7 +78,7 @@ async def get_random_questions():
         questions = result.scalars().all()
 
         # Zufällig x auswählen (oder weniger, falls <x)
-        num_questions = min(3, len(questions))
+        num_questions = min(1, len(questions))
         random_questions = random.sample(questions, num_questions)
 
         return random_questions

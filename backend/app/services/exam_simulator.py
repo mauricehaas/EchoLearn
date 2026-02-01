@@ -212,13 +212,11 @@ class ExamSimulator:
             final_evaluation = ExamEvaluationFinal(
                 unique_exam_id=unique_exam_id,
                 overall_feedback=json.dumps(final_feedback["final_feedback"]),
-                overall_rating=final_feedback["final_rating"],
             )
         else:
             final_evaluation = ExamEvaluationFinal(
                 unique_exam_id=unique_exam_id,
                 overall_feedback=final_feedback["final_feedback"],
-                overall_rating=final_feedback["final_rating"],
             )
         await self._add_data_to_db([final_evaluation])
         return final_feedback

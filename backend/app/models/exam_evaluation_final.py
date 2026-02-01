@@ -9,4 +9,3 @@ class ExamEvaluationFinal(Base):
     id = Column(Integer, primary_key=True, index=True)
     unique_exam_id = Column(Text, nullable=False)
     overall_feedback = Column(Text, nullable=False)
-    overall_rating = Column(Text, nullable=False)
