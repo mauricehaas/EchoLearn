@@ -85,7 +85,6 @@ async def get_exam_scores(exam_id: str) -> Dict[str, float | str]:
         }
 
 
-
 def calculate_grade(percentage: float) -> str:
     """
     Berechnet die Note nach gängiger deutscher Prozent-Noten-Umrechnung
@@ -106,10 +105,9 @@ def calculate_grade(percentage: float) -> str:
         (50, "4,0"),
         (45, "4,3"),
         (40, "4,7"),
-        (0,  "5,0"),
+        (0, "5,0"),
     ]
 
     for threshold, grade in grade_scale:
         if percentage >= threshold:
             return grade
-
