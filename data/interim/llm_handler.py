@@ -57,9 +57,9 @@ class LLMHandler:
         try:
             answer_strd = self._standardize_answer(answer)
             return self._cleanup_llm_response(answer_strd)
-        except Exception as e:
+        except Exception:
             continue
-            #invalid.append({
-                #"output": answer,
-                #"error":str(e)
-            #})
+            # invalid.append({
+            # "output": answer,
+            # "error":str(e)
+            # })
