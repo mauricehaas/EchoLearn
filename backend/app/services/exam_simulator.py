@@ -17,6 +17,7 @@ class ExamSimulator:
         evaluate_student_answer: str,
         evaluate_exam: str,
         next_question: str,
+        clarify: str,
     ) -> None:
         """Initializes the ExamSimulator with LLM endpoint, model, and question dataset.
 
@@ -29,6 +30,7 @@ class ExamSimulator:
         self._prompt_evaluate_exam: str = evaluate_exam
         self._prompt_rephrase_question: str = rephrase_question
         self._prompt_next_question: str = next_question
+        self._prompt_clarify: str = clarify
 
     def _generate_unique_exam_id(self) -> str:
         """Generates a unique exam ID using UUID4.
@@ -101,11 +103,6 @@ class ExamSimulator:
             )
         )
 
-        CLARIFY_TEXT = (
-            "Die Antwort war noch nicht ganz vollständig. "
-            "Können Sie den fehlenden Teil noch erklären?"
-        )
-
         raw_score = float(str(answer_evaluation["overall_rating"]).strip())
         max_points = float(max_points)
         percentage = (raw_score / max_points) * 100
@@ -131,7 +128,14 @@ class ExamSimulator:
                 followup_text = ""
             else:
                 next_action = "CLARIFY"
-                followup_text = CLARIFY_TEXT
+                feedback = self._llm_handler.call_llm(
+                    self._prompt_clarify.format(
+                        question=question,
+                        student_answer=student_answer,
+                        correct_answer=correct_answer,
+                    )
+                )
+                followup_text = feedback["hint"]
 
         evaluation = ExamEvaluationSingleAnswer(
             unique_exam_id=unique_exam_id,

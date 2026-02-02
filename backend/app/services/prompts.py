@@ -128,3 +128,40 @@ Antwortformat:
 }}
 ```
 """
+
+clarify = """
+Die Antwort des Studenten ist teilweise korrekt (ca. 50-80%).
+
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und **nur einen minimalen Hinweis** zu geben, **welche Aspekte in der Antwort noch fehlen**, sodass der Student die Chance hat, den fehlenden Teil selbst zu ergänzen. Gib keine Musterlösungen, keine vollständigen Erklärungen und keine neuen Fragen.
+
+**Interne Schritte (nicht ausgeben):**
+- Analysiere die Studentenantwort im Hinblick auf die ursprüngliche Frage und Musterlösung.
+- Gib **nur einen kurzen Hinweis**, der den Studenten auf die fehlenden oder unvollständigen Punkte aufmerksam macht.
+- Ignoriere alles, was korrekt ist, außer um zu betonen, dass es korrekt ist.
+- Gib keine Musterlösungen oder weiterführende Fragen.
+
+**Wichtige Regeln:**
+1. Gib nur die JSON-Antwort zurück, **keine zusätzlichen Kommentare oder Erklärungen**.
+2. Verwende das exakte JSON-Format unten.
+3. Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+Antwortformat:
+```json
+{{
+  "hint": "<string: Minimaler Hinweis, welcher Teil der Antwort noch fehlt>"
+}}
+```
+"""

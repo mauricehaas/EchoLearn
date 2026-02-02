@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from app.services.exam_simulator import ExamSimulator
 from app.services.prompts import (
+    clarify,
     evaluate_exam,
     evaluate_student_answer,
     next_question,
@@ -18,6 +19,7 @@ exam_simulator = ExamSimulator(
     evaluate_student_answer=evaluate_student_answer,
     evaluate_exam=evaluate_exam,
     next_question=next_question,
+    clarify=clarify,
 )
 
 
