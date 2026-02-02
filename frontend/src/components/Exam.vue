@@ -27,7 +27,6 @@
           @submit="submitAnswer"
         />
 
-        <span v-if="loading" class="spinner"></span>
         <p v-if="feedback" style="margin-top: 10px; color: green">{{ feedback }}</p>
       </div>
 
@@ -72,7 +71,6 @@
             @submit="submitFollowUp"
           />
 
-          <span v-if="followupLoading" class="spinner"></span>
           <p v-if="followupFeedback" style="margin-top: 10px; color: green">
             {{ followupFeedback }}
           </p>
@@ -411,24 +409,6 @@
     background-color: #ddd;
     color: #888;
     cursor: not-allowed;
-  }
-  .spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: 10px;
-  }
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
   .interim {
     font-style: italic;

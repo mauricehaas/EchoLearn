@@ -7,9 +7,14 @@
       :disabled="locked"
     ></textarea>
 
-    <button class="submit" @click="$emit('submit')" :disabled="!modelValue || loading || locked">
-      {{ loading ? 'Wird geprüft…' : '🚀 Antwort absenden' }}
-    </button>
+    <div class="submit-container">
+      <button class="submit" @click="$emit('submit')" :disabled="!modelValue || loading || locked">
+        {{ loading ? 'Wird geprüft…' : '🚀 Antwort absenden' }}
+      </button>
+
+      <!-- Spinner neben Button -->
+      <span v-if="loading" class="spinner"></span>
+    </div>
   </div>
 </template>
 
@@ -45,8 +50,14 @@
       }
     }
 
-    .submit {
+    .submit-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px; /* Abstand zwischen Button und Spinner */
       margin-top: 8px;
+    }
+
+    .submit {
       padding: 8px 14px;
       border-radius: 8px;
     }
