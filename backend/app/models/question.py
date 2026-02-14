@@ -9,3 +9,4 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
+    max_points = Column(Text, nullable=False)

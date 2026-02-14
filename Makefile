@@ -34,6 +34,3 @@ clear-tables:
 	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE users RESTART IDENTITY CASCADE;"
 	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE questions RESTART IDENTITY CASCADE;"
 	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE exam_evaluation_single_answer RESTART IDENTITY CASCADE;"
-
-data-questions:
-	docker compose run --rm backend python app/data_processing/questions.py
