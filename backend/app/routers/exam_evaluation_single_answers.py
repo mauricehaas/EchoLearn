@@ -12,16 +12,34 @@ router = APIRouter(
 
 
 # Alle Datensätze abrufen
+# TODO: Add return type
 @router.get("/")
 async def get_all_exam_evaluation_single_answers():
+    """Defines the GET Endpoint for retreiving the Evaluations given to all single answers that were given in an exam
+
+    Returns:
+        _type_: _description_
+    """
     async for session in get_session():
         result = await session.execute(select(ExamEvaluationSingleAnswer))
         rows = result.scalars().all()
         return rows
 
 
+# TODO: Add return type
 @router.get("/exam/{exam_id}")
 async def get_exam_results(exam_id: str):
+    """Defines the GET Endpoint for retreiving the exam results based on an exam_id
+
+    Args:
+        exam_id (str): ID for retreiving exam results
+
+    Raises:
+        HTTPException: Throws an Exception if no exam results for a specific exam_id are found
+
+    Returns:
+        _type_: _description_
+    """
     async for session in get_session():
         result = await session.execute(
             select(ExamEvaluationSingleAnswer).where(
@@ -40,6 +58,17 @@ async def get_exam_results(exam_id: str):
 
 @router.get("/exam_scores/{exam_id}")
 async def get_exam_scores(exam_id: str) -> Dict[str, float | str]:
+    """Defines the GET Endpoint for getting the exam scores based on an exam_id
+
+    Args:
+        exam_id (str): the ID of the exam
+
+    Raises:
+        HTTPException: Raises Exception if no data available for given exam_id
+
+    Returns:
+        Dict[str, float | str]: The scores of the exam in structured form
+    """
     async for session in get_session():
         result = await session.execute(
             select(ExamEvaluationSingleAnswer).where(
@@ -86,8 +115,13 @@ async def get_exam_scores(exam_id: str) -> Dict[str, float | str]:
 
 
 def calculate_grade(percentage: float) -> str:
-    """
-    Berechnet die Note nach gängiger deutscher Prozent-Noten-Umrechnung
+    """Calculates the final grade based on German skala
+
+    Args:
+        perecentage (float): The percentage of correct answers in the exam
+
+    Returns:
+        str: The calculated grade
     """
 
     percentage = round(float(percentage), 2)

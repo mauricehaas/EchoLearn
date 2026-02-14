@@ -74,6 +74,18 @@ class AnswerEvaluationBody(BaseModel):
 
 
 class AnswerEvaluationResponse(BaseModel):
+    """Body for evaluating the response
+
+    Args:
+        feedback (str): The feedback given by the LLM
+        rating (float): The points given by the LLM
+        next_action (str): The action to be taken next
+        followup_text (str): The text to be returned and spoken in the Frontend
+        answer_id (int): The ID of the answer
+        next_max_points (int): How many points there are next
+        next_answer(str): The answer to come next
+    """
+
     feedback: str
     rating: float
     next_action: str
