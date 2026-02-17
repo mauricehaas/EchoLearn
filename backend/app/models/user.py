@@ -6,7 +6,7 @@ from app.core.db import Base
 class User(Base):
     """Database Schema for Table Users
 
-    Args:
+    Attributes:
         id (int): primary key of the table
         username (str): the username for the user
         password_hash (str): the encoded password that belongs to this user

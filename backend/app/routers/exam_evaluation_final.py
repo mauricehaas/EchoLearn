@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.future import select
 
+from typing import List
+
 from app.core.db import get_session
 from app.models.exam_evaluation_final import ExamEvaluationFinal
 
@@ -8,13 +10,12 @@ router = APIRouter(prefix="/exam_evaluation_final", tags=["exam_evaluation_final
 
 
 # Alle Datensätze abrufen
-# TODO: Add return type
 @router.get("/")
-async def get_all_exam_evaluation_final():
+async def get_all_exam_evaluation_final() -> List[ExamEvaluationFinal]:
     """Defines the GET Endpoint for retreiving the final exam evaluation
 
     Returns:
-        _type_: _description_
+        List[ExamEvaluationFinal]: A list of all exam evaluation final entries.
     """
     async for session in get_session():
         result = await session.execute(select(ExamEvaluationFinal))
@@ -22,9 +23,8 @@ async def get_all_exam_evaluation_final():
         return rows
 
 
-# TODO: Add return type
 @router.get("/exam/{exam_id}")
-async def get_exam_results(exam_id: str):
+async def get_exam_results(exam_id: str) -> List[ExamEvaluationFinal]:
     """Defines the GET Endpoint for retreiving the exam results based on an exam_id
 
     Args:
@@ -34,7 +34,7 @@ async def get_exam_results(exam_id: str):
         HTTPException: Throws an Exception if no exam results for a specific exam_id are found
 
     Returns:
-        _type_: _description_
+        List[ExamEvaluationFinal]: A list of exam evaluation final entries for the given exam_id.
     """
     async for session in get_session():
         result = await session.execute(

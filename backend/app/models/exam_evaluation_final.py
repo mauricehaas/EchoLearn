@@ -6,7 +6,7 @@ from app.core.db import Base
 class ExamEvaluationFinal(Base):
     """Database Schema for the Table ExamEvaluationFinal
 
-    Args:
+    Attributes:
         id (int): The primary key of the evaluation
         unique_exam_id (str): The unique exam identifier
         overall_feedback (str): The feedback to the exam

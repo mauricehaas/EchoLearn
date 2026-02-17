@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.future import select
@@ -12,13 +12,12 @@ router = APIRouter(
 
 
 # Alle Datensätze abrufen
-# TODO: Add return type
 @router.get("/")
-async def get_all_exam_evaluation_single_answers():
+async def get_all_exam_evaluation_single_answers() -> List[ExamEvaluationSingleAnswer]:
     """Defines the GET Endpoint for retreiving the Evaluations given to all single answers that were given in an exam
 
     Returns:
-        _type_: _description_
+        List[ExamEvaluationSingleAnswer]: A list of all exam evaluation single answer entries.
     """
     async for session in get_session():
         result = await session.execute(select(ExamEvaluationSingleAnswer))
@@ -26,9 +25,8 @@ async def get_all_exam_evaluation_single_answers():
         return rows
 
 
-# TODO: Add return type
 @router.get("/exam/{exam_id}")
-async def get_exam_results(exam_id: str):
+async def get_exam_results(exam_id: str) -> List[ExamEvaluationSingleAnswer]:
     """Defines the GET Endpoint for retreiving the exam results based on an exam_id
 
     Args:
@@ -38,7 +36,7 @@ async def get_exam_results(exam_id: str):
         HTTPException: Throws an Exception if no exam results for a specific exam_id are found
 
     Returns:
-        _type_: _description_
+        List[ExamEvaluationSingleAnswer]: A list of exam evaluation single answer entries for the given exam_id.
     """
     async for session in get_session():
         result = await session.execute(

@@ -6,7 +6,7 @@ from app.core.db import Base
 class ExamEvaluationSingleAnswer(Base):
     """Database schema for the table ExamEvaluationSingleAnswer
 
-    Args:
+    Attributes:
         id (int): The primary key for the table
         parent_id (int): The id of the previous question, 0 if no parent question attached, ≠0 if question of type "CLARIFY"
         unique_exam_id (str): Unique exam identifier
