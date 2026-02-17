@@ -4,6 +4,20 @@ EchoLearn ist eine interaktive Lernplattform, die eine mündliche Prüfung simul
 
 ---
 
+## Inhaltsverzeichnis
+
+- [Projektübersicht](#echolearn)
+- [Technologien](#technologien)
+- [Local Development (Docker-only)](#local-development-docker-only)
+- [Schnellstart](#schnellstart)
+- [Features (für den Prototyp)](#features-für-den-prototyp)
+- [Technische Dokumentation Backend](docs/technical_documentation.md)
+- [Benutzerdokumentation Backend](docs/user_documentation.md)
+- [Backend](backend/)
+- [Frontend](frontend/)
+- [Evaluation](docs/evaluation.md)
+
+
 ## Technologien
 
 - Frontend: Vue 3 (Vite)
