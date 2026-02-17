@@ -6,6 +6,11 @@ import requests
 
 class LLMHandler:
     def __init__(self, model: str = "phi4:latest") -> None:
+        """Initialization of the LLMHandler class
+
+        Args:
+            model (str, optional): The LLM model to be used for the application. Defaults to "phi4:latest".
+        """
         self._llm_endpoint: str = (
             "http://catalpa-llm.fernuni-hagen.de:11434/api/generate"
         )
