@@ -34,7 +34,7 @@
     setup() {
       const users = ref([])
       const currentPage = ref(1)
-      const perPage = 5 // Anzahl der User pro Seite
+      const perPage = 5
 
       onMounted(async () => {
         const res = await fetch('http://localhost:8000/users/')

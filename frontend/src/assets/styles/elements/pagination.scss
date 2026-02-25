@@ -9,14 +9,14 @@
     padding: 0.5rem 1rem;
     border-radius: 6px;
     border: none;
-    background-color: #3b82f6; // Blau
+    background-color: #3b82f6;
     color: white;
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease;
 
     &:disabled {
-      background-color: #9ca3af; // Grau für deaktiviert
+      background-color: #9ca3af;
       cursor: not-allowed;
     }
 
