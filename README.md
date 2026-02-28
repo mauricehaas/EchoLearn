@@ -1,4 +1,3 @@
-# EchoLearn
 
 EchoLearn ist ein interaktiver Prototyp zur Simulation mündlicher Prüfungssituationen.  
 Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rückfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
@@ -97,7 +96,6 @@ http://localhost:8000
 API Dokumentation  
 http://localhost:8000/docs
 
----
 
 ### Services stoppen
 
@@ -105,7 +103,6 @@ http://localhost:8000/docs
 make down
 ```
 
----
 
 ## Projektstatus
 
@@ -128,7 +125,14 @@ Lokaler Forschungs- und Entwicklungsprototyp.
 - Generierung kontextabhängiger Rückfragen
 - Anzeige von Lernstatistiken
 
----
+  <head>
+    <meta charset="utf-8">
+  <link rel="dns-prefetch" href="https://github.githubassets.com">
+  <link rel="dns-prefetch" href="https://avatars.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://github-cloud.s3.amazonaws.com">
+  <link rel="dns-prefetch" href="https://user-images.githubusercontent.com/">
+  <link rel="preconnect" href="https://github.githubassets.com" crossorigin>
+  <link rel="preconnect" href="https://avatars.githubusercontent.com">
 
 ## Technologieauswahl
 
