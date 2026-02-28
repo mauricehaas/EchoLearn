@@ -37,4 +37,4 @@ EchoLearn ist eine interaktive Lernplattform, die eine mündliche Prüfung simul
 - Stellen von Rückfragen an erwarteten Stellen
 - Lernstatistiken anzeigen
 
----
+
