@@ -12,7 +12,6 @@
         {{ loading ? 'Wird geprüft…' : '🚀 Antwort absenden' }}
       </button>
 
-      <!-- Spinner neben Button -->
       <span v-if="loading" class="spinner"></span>
     </div>
   </div>
@@ -53,7 +52,7 @@
     .submit-container {
       display: inline-flex;
       align-items: center;
-      gap: 10px; /* Abstand zwischen Button und Spinner */
+      gap: 10px;
       margin-top: 8px;
     }
 

@@ -2,16 +2,11 @@
   <div class="table-container">
     <h2>Ergebnisübersicht</h2>
 
-    <!-- Loading -->
     <div v-if="loading">Lade Ergebnisse...</div>
-
-    <!-- Error -->
     <div v-if="error" class="error">{{ error }}</div>
 
-    <!-- Gesamtübersicht (ausgelagertes Component) -->
     <ExamSummary examId="1" />
 
-    <!-- Tabelle -->
     <table v-if="results.length > 0" class="results-table">
       <thead>
         <tr>

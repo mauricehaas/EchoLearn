@@ -2,6 +2,7 @@
 build:
 	docker compose build
 
+# Installiert Frontend
 build-frontend:
 	docker compose run --rm frontend sh -c "npm install && npm install axios"
 
@@ -9,7 +10,7 @@ build-frontend:
 up:
 	docker compose up -d
 
-# Stoppt alle Services
+# Stoppt alle Services (Container herunterfahren)
 down:
 	docker compose down
 
