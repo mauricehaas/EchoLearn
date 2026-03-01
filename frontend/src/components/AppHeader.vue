@@ -45,7 +45,6 @@
     transition: color 0.2s ease;
   }
 
-  /* Hover */
   .link:hover {
     color: #2563eb;
   }

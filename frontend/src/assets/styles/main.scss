@@ -1,3 +1,13 @@
+/*
+--------------------------------------------------
+EchoLearn – Haupt-Stylesheet (SCSS)
+--------------------------------------------------
+Autor: Maurice Haas
+Beschreibung: Zentrale SCSS-Datei. Importiert Teilmodule und definiert globale Styles.
+Stand: 2026-02
+--------------------------------------------------
+*/
+
 @import 'elements/tables';
 @import 'elements/buttons';
 @import 'elements/modals';
