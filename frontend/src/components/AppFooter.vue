@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <p>&copy; 2025 EchoLearn.</p>
+    <p>&copy; 2026 EchoLearn.</p>
   </footer>
 </template>
 
