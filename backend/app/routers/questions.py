@@ -34,7 +34,9 @@ async def import_questions(file: UploadFile = None):
             if not question_text or not answer_text or not points:
                 continue
 
-            new_q = Question(question=question_text, answer=answer_text, max_points=points or "")
+            new_q = Question(
+                question=question_text, answer=answer_text, max_points=points or ""
+            )
             session.add(new_q)
             created += 1
         await session.commit()
@@ -111,7 +113,9 @@ class QuestionCreate(BaseModel):
 @router.post("/")
 async def create_question(data: QuestionCreate):
     async for session in get_session():
-        new_question = Question(question=data.question, answer=data.answer, max_points=data.max_points)
+        new_question = Question(
+            question=data.question, answer=data.answer, max_points=data.max_points
+        )
 
         session.add(new_question)
         await session.commit()
