@@ -94,7 +94,7 @@ class ExamSimulator:
         parent_id: int = 0,
     ) -> Dict[str, str | int | None]:
         """Evaluates a student's answer to a question and provides feedback, rating, and next steps.
-        
+
         Args:
             unique_exam_id (str): The unique identifier for the exam session.
             question (str): The original question asked.
@@ -104,7 +104,7 @@ class ExamSimulator:
             question_type (str): The type of the question (e.g., "multiple_choice", "open_ended").
             evaluate_only (bool, optional): Whether to only evaluate without suggesting next steps. Defaults to False.
             parent_id (int, optional): The ID of the parent evaluation entry for follow-up questions. Defaults to 0.
-            
+
         Returns:
             Dict[str, str | int | None]: A dictionary containing feedback, rating, next action, and follow-up information.
         """

@@ -18,7 +18,7 @@ router = APIRouter(prefix="/questions", tags=["questions"])
 async def import_questions(file: UploadFile = None) -> Dict[str, int]:
     """Defines POST Endpoint to import questions from a CSV file.
     The file should have two columns: "question" and "answer".
-    The endpoint reads the file, creates Question objects, and saves them 
+    The endpoint reads the file, creates Question objects, and saves them
     to the database.
 
     Args:
@@ -89,7 +89,7 @@ async def export_questions() -> Response:
 @router.get("/")
 async def get_questions() -> List[Question]:
     """Defines the GET Endpoint for retrieving all questions
-    
+
     Returns:
         List[Question]: A list of all questions in the database
     """
@@ -102,7 +102,7 @@ async def get_questions() -> List[Question]:
 @router.get("/random")
 async def get_random_questions() -> List[Question]:
     """Defines the GET Endpoint for retrieving random questions
-    
+
     Returns:
         List[Question]: A list of random questions from the database
     """
@@ -122,14 +122,14 @@ async def get_random_questions() -> List[Question]:
 @router.get("/{question_id}")
 async def get_question(question_id: int) -> Question:
     """Defines the GET Endpoint for retrieving a question by its ID
-    
+
     Args:
         question_id (int): The ID of the question to retrieve
-        
+
     Raises:
         HTTPException: If no question with the given ID is found, an HTTPException with status
         code 404 is raised.
-        
+
     Returns:
         Question: The question object with the specified ID
     """
@@ -148,11 +148,12 @@ async def get_question(question_id: int) -> Question:
 # CREATE – neue Frage anlegen
 class QuestionCreate(BaseModel):
     """Defines the schema for creating a new question
-    
+
     Attributes:
         question (str): The text of the question
         answer (str): The text of the answer
     """
+
     question: str
     answer: str
     max_points: str
@@ -161,10 +162,10 @@ class QuestionCreate(BaseModel):
 @router.post("/")
 async def create_question(data: QuestionCreate) -> Question:
     """Defines the POST Endpoint for creating a new question
-    
+
     Args:
         data (QuestionCreate): The data for the new question, including the question text and answer text
-        
+
     Returns:
         Question: The newly created question object
     """
@@ -184,14 +185,14 @@ async def create_question(data: QuestionCreate) -> Question:
 @router.delete("/{question_id}")
 async def delete_question(question_id: int) -> Dict[str, str]:
     """Defines the DELETE Endpoint for deleting a question by its ID
-    
+
     Args:
         question_id (int): The ID of the question to delete
-    
+
     Raises:
         HTTPException: If no question with the given ID is found, an HTTPException with status
         code 404 is raised.
-        
+
     Returns:
         Dict[str, str]: A dictionary with a message confirming the successful deletion of the question
     """
@@ -213,11 +214,12 @@ async def delete_question(question_id: int) -> Dict[str, str]:
 # UPDATE – Schema
 class QuestionUpdate(BaseModel):
     """Defines the schema for updating an existing question
-    
+
     Attributes:
         question (Optional[str]): The new text of the question (optional)
         answer (Optional[str]): The new text of the answer (optional)
     """
+
     question: Optional[str] = None
     answer: Optional[str] = None
     max_points: Optional[str] = None
@@ -227,16 +229,16 @@ class QuestionUpdate(BaseModel):
 @router.patch("/{question_id}")
 async def update_question(question_id: int, data: QuestionUpdate) -> Question:
     """Defines the PATCH Endpoint for updating an existing question by its ID
-    
+
     Args:
         question_id (int): The ID of the question to update
         data (QuestionUpdate): The data for updating the question, which may include a new question
         text and/or a new answer text. Both fields are optional.
-        
+
     Raises:
         HTTPException: If no question with the given ID is found, an HTTPException with status
         code 404 is raised.
-    
+
     Returns:
         Question: The updated question object with the new values
     """
