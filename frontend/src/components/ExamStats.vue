@@ -2,16 +2,10 @@
   <div class="table-container">
     <h2>Ergebnisübersicht</h2>
 
-    <!-- Loading -->
     <div v-if="loading">Lade Ergebnisse...</div>
-
-    <!-- Error -->
     <div v-if="error" class="error">{{ error }}</div>
+    <div v-else><ExamSummary examId="1" /></div>
 
-    <!-- Gesamtübersicht (ausgelagertes Component) -->
-    <ExamSummary examId="1" />
-
-    <!-- Tabelle -->
     <table v-if="results.length > 0" class="results-table">
       <thead>
         <tr>
@@ -68,7 +62,8 @@
       if (!resAnswers.ok) throw new Error(resAnswers.status)
       results.value = await resAnswers.json()
     } catch (err) {
-      error.value = 'Fehler beim Laden der Ergebnisse'
+      error.value =
+        'Entweder wurde noch keine Prüfung abgelegt oder es gab einen Fehler beim Laden der Ergebnisse'
     } finally {
       loading.value = false
     }

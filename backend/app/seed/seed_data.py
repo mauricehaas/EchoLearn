@@ -4,8 +4,10 @@ import pandas as pd
 
 from app.core.db import Base, async_session, engine
 from app.models.exam_evaluation_final import ExamEvaluationFinal  # noqa: F401
+from app.models.exam_evaluation_single_answer import (
+    ExamEvaluationSingleAnswer,  # noqa: F401
+)
 from app.models.question import Question
-from app.models.user import User
 
 PROCESSED_QUESTIONS_PATH = "data/processed/questions.csv"
 BATCH_SIZE = 50
@@ -22,16 +24,11 @@ async def seed() -> None:
     df = pd.read_csv(PROCESSED_QUESTIONS_PATH)
 
     async with async_session() as session:
-        users = [
-            User(username="admin", password_hash="hashed123", role="admin"),
-            User(username="user", password_hash="hashed456", role="user"),
-        ]
-
         exam_evaluation_final = []
 
         exam_evaluation_single_answer = []
 
-        session.add_all(users + exam_evaluation_final + exam_evaluation_single_answer)
+        session.add_all(exam_evaluation_final + exam_evaluation_single_answer)
         await session.commit()
 
         questions = [

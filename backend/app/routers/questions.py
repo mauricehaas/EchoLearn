@@ -45,10 +45,13 @@ async def import_questions(file: UploadFile = None) -> Dict[str, int]:
         for row in reader:
             question_text = row.get("question")
             answer_text = row.get("answer")
-            if not question_text:
+            points = row.get("max_points")
+            if not question_text or not answer_text or not points:
                 continue
 
-            new_q = Question(question=question_text, answer=answer_text or "")
+            new_q = Question(
+                question=question_text, answer=answer_text, max_points=points or ""
+            )
             session.add(new_q)
             created += 1
         await session.commit()
@@ -68,11 +71,12 @@ async def export_questions() -> Response:
         result = await session.execute(select(Question))
         questions = result.scalars().all()
 
-    output = "question,answer\n"
+    output = "question,answer,max_points\n"
     for q in questions:
         safe_question = q.question.replace('"', '""')
         safe_answer = q.answer.replace('"', '""')
-        output += f'"{safe_question}","{safe_answer}"\n'
+        safe_points = str(q.max_points or "").replace('"', '""')
+        output += f'"{safe_question}","{safe_answer}","{safe_points}"\n'
 
     return Response(
         content=output,
@@ -108,7 +112,7 @@ async def get_random_questions() -> List[Question]:
         questions = result.scalars().all()
 
         # Zufällig x auswählen (oder weniger, falls <x)
-        num_questions = min(1, len(questions))
+        num_questions = min(7, len(questions))
         random_questions = random.sample(questions, num_questions)
 
         return random_questions
@@ -151,6 +155,7 @@ class QuestionCreate(BaseModel):
     """
     question: str
     answer: str
+    max_points: str
 
 
 @router.post("/")
@@ -164,7 +169,9 @@ async def create_question(data: QuestionCreate) -> Question:
         Question: The newly created question object
     """
     async for session in get_session():
-        new_question = Question(question=data.question, answer=data.answer)
+        new_question = Question(
+            question=data.question, answer=data.answer, max_points=data.max_points
+        )
 
         session.add(new_question)
         await session.commit()
@@ -213,6 +220,7 @@ class QuestionUpdate(BaseModel):
     """
     question: Optional[str] = None
     answer: Optional[str] = None
+    max_points: Optional[str] = None
 
 
 # PATCH – Frage bearbeiten
@@ -246,6 +254,8 @@ async def update_question(question_id: int, data: QuestionUpdate) -> Question:
             question.question = data.question
         if data.answer is not None:
             question.answer = data.answer
+        if data.max_points is not None:
+            question.max_points = data.max_points
 
         await session.commit()
         await session.refresh(question)
