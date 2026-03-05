@@ -13,7 +13,8 @@ PROCESSED_QUESTIONS_PATH = "data/processed/questions.csv"
 BATCH_SIZE = 50
 
 
-async def seed():
+async def seed() -> None:
+    """Seed the database with initial data."""
     print("Creating tables…")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)

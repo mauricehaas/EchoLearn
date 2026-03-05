@@ -6,7 +6,7 @@ from app.core.db import Base
 class Question(Base):
     """Database Schema for Table Question
 
-    Args:
+    Attributes:
         id (int): unique question identifier, primary key
         question (str): question text in German
         answer (str): correct answer to the question in German
