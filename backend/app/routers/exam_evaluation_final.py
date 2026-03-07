@@ -11,11 +11,11 @@ router = APIRouter(prefix="/exam_evaluation_final", tags=["exam_evaluation_final
 
 # Alle Datensätze abrufen
 @router.get("/")
-async def get_all_exam_evaluation_final() -> List[ExamEvaluationFinal]:
+async def get_all_exam_evaluation_final():
     """Defines the GET Endpoint for retreiving the final exam evaluation
 
     Returns:
-        List[ExamEvaluationFinal]: A list of all exam evaluation final entries.
+        A list of all exam evaluation final entries.
     """
     async for session in get_session():
         result = await session.execute(select(ExamEvaluationFinal))
@@ -24,7 +24,7 @@ async def get_all_exam_evaluation_final() -> List[ExamEvaluationFinal]:
 
 
 @router.get("/exam/{exam_id}")
-async def get_exam_results(exam_id: str) -> List[ExamEvaluationFinal]:
+async def get_exam_results(exam_id: str):
     """Defines the GET Endpoint for retreiving the exam results based on an exam_id
 
     Args:
@@ -34,7 +34,7 @@ async def get_exam_results(exam_id: str) -> List[ExamEvaluationFinal]:
         HTTPException: Throws an Exception if no exam results for a specific exam_id are found
 
     Returns:
-        List[ExamEvaluationFinal]: A list of exam evaluation final entries for the given exam_id.
+        A list of exam evaluation final entries for the given exam_id.
     """
     async for session in get_session():
         result = await session.execute(

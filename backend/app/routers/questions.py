@@ -87,11 +87,11 @@ async def export_questions() -> Response:
 
 # Alle Fragen abrufen
 @router.get("/")
-async def get_questions() -> List[Question]:
+async def get_questions():
     """Defines the GET Endpoint for retrieving all questions
 
     Returns:
-        List[Question]: A list of all questions in the database
+        A list of all questions in the database
     """
     async for session in get_session():
         result = await session.execute(select(Question))
@@ -100,11 +100,11 @@ async def get_questions() -> List[Question]:
 
 
 @router.get("/random")
-async def get_random_questions() -> List[Question]:
+async def get_random_questions():
     """Defines the GET Endpoint for retrieving random questions
 
     Returns:
-        List[Question]: A list of random questions from the database
+        A list of random questions from the database
     """
     async for session in get_session():
         # Alle Fragen abrufen
@@ -120,7 +120,7 @@ async def get_random_questions() -> List[Question]:
 
 # Eine Frage nach ID abrufen
 @router.get("/{question_id}")
-async def get_question(question_id: int) -> Question:
+async def get_question(question_id: int):
     """Defines the GET Endpoint for retrieving a question by its ID
 
     Args:
@@ -131,7 +131,7 @@ async def get_question(question_id: int) -> Question:
         code 404 is raised.
 
     Returns:
-        Question: The question object with the specified ID
+        The question object with the specified ID
     """
     async for session in get_session():
         result = await session.execute(
@@ -160,14 +160,14 @@ class QuestionCreate(BaseModel):
 
 
 @router.post("/")
-async def create_question(data: QuestionCreate) -> Question:
+async def create_question(data: QuestionCreate):
     """Defines the POST Endpoint for creating a new question
 
     Args:
         data (QuestionCreate): The data for the new question, including the question text and answer text
 
     Returns:
-        Question: The newly created question object
+        The newly created question object
     """
     async for session in get_session():
         new_question = Question(
@@ -227,7 +227,7 @@ class QuestionUpdate(BaseModel):
 
 # PATCH – Frage bearbeiten
 @router.patch("/{question_id}")
-async def update_question(question_id: int, data: QuestionUpdate) -> Question:
+async def update_question(question_id: int, data: QuestionUpdate):
     """Defines the PATCH Endpoint for updating an existing question by its ID
 
     Args:
@@ -240,7 +240,7 @@ async def update_question(question_id: int, data: QuestionUpdate) -> Question:
         code 404 is raised.
 
     Returns:
-        Question: The updated question object with the new values
+        The updated question object with the new values
     """
     async for session in get_session():
 
