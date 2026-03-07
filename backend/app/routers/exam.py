@@ -26,7 +26,7 @@ exam_simulator = ExamSimulator(
 class RephraseQuestionBody(BaseModel):
     """Body for rephrasing a question.
 
-    Args:
+    Attributes:
         question (str): The question to be rephrased.
     """
 
@@ -54,7 +54,7 @@ def rephrase_question(body: RephraseQuestionBody) -> Dict[str, str]:
 class AnswerEvaluationBody(BaseModel):
     """Body for evaluating a student's answer.
 
-    Args:
+    Attributes:
         unique_exam_id (str): The unique identifier for the exam.
         question (str): The question answered by the student.
         student_answer (str): The answer provided by the student.
@@ -76,7 +76,7 @@ class AnswerEvaluationBody(BaseModel):
 class AnswerEvaluationResponse(BaseModel):
     """Body for evaluating the response
 
-    Args:
+    Attributes:
         feedback (str): The feedback given by the LLM
         rating (float): The points given by the LLM
         next_action (str): The action to be taken next
@@ -129,7 +129,7 @@ async def evaluate_answer(
 class EvaluateExamBody(BaseModel):
     """Body for evaluating the entire exam.
 
-    Args:
+    Attributes:
         unique_exam_id (str): The unique identifier for the exam to be evaluated.
     """
 

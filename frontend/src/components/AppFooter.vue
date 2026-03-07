@@ -1,10 +1,6 @@
 <template>
   <footer class="app-footer">
-    <p>&copy; 2025 EchoLearn.</p>
-    <nav>
-      <a href="#">Impressum</a> |
-      <a href="#">Datenschutz</a>
-    </nav>
+    <p>&copy; 2026 EchoLearn.</p>
   </footer>
 </template>
 

@@ -93,6 +93,21 @@ class ExamSimulator:
         evaluate_only: bool = False,
         parent_id: int = 0,
     ) -> Dict[str, str | int | None]:
+        """Evaluates a student's answer to a question and provides feedback, rating, and next steps.
+
+        Args:
+            unique_exam_id (str): The unique identifier for the exam session.
+            question (str): The original question asked.
+            student_answer (str): The answer provided by the student.
+            correct_answer (str): The correct answer for comparison.
+            max_points (int): The maximum points for the question.
+            question_type (str): The type of the question (e.g., "multiple_choice", "open_ended").
+            evaluate_only (bool, optional): Whether to only evaluate without suggesting next steps. Defaults to False.
+            parent_id (int, optional): The ID of the parent evaluation entry for follow-up questions. Defaults to 0.
+
+        Returns:
+            Dict[str, str | int | None]: A dictionary containing feedback, rating, next action, and follow-up information.
+        """
 
         answer_evaluation = self._llm_handler.call_llm(
             self._prompt_evaluate_student_answer.format(
