@@ -1,7 +1,6 @@
+
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.future import select
-
-from typing import List
 
 from app.core.db import get_session
 from app.models.exam_evaluation_final import ExamEvaluationFinal

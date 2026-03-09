@@ -1,7 +1,7 @@
 import csv
 import random
 from io import StringIO
-from typing import Optional, Dict, List
+from typing import Dict, Optional
 
 from fastapi import APIRouter, HTTPException, Response, UploadFile
 from pydantic import BaseModel
