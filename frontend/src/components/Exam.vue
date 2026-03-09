@@ -1,6 +1,6 @@
 <template>
   <div class="speech-input">
-    <div v-if="false && currentQuestion && !examFinished">
+    <div v-if="currentQuestion && !examFinished">
       <h2>Frage {{ currentIndex + 1 }}</h2>
       <button @click="speakQuestion" :disabled="loading || locked">🔊 Frage anhören</button>
       <button @click="rephraseQuestion" :disabled="loading || locked">
@@ -88,7 +88,7 @@
       />
     </div>
 
-    <div v-else-if="true || examFinished" style="margin-top: 20px; font-weight: bold">
+    <div v-else-if="examFinished" style="margin-top: 20px; font-weight: bold">
       <h2>Prüfung abgeschlossen.</h2>
       <ExamSummary examId="1" />
       <p v-if="finishMessage">{{ finishMessage }}</p>
