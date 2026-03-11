@@ -4,7 +4,7 @@
  * Wandelt einen Text in Sprache um und gibt ihn über die Systemausgabe aus.
  *
  * @param {string} text           - Der Text, der gesprochen werden soll
- * @param {string} [lang='de-DE'] - Sprachcode für die Sprachausgabe (z. B. 'de-DE', 'en-US')
+ * @param {string} [lang='de-DE'] - Sprachcode für die Sprachausgabe (z.B. 'de-DE', 'en-US')
  * @returns {void}                - Gibt keinen Wert zurück
  *
  * @author Maurice Haas
