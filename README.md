@@ -90,6 +90,16 @@ CI: Github Actions
 
 ---
 
+## Weitere Dokumentation
+
+Weitere konzeptionelle Details befinden sich hier:
+
+- [Allgemeine Projektdokumentation](docs/documentation_allgemein.md)
+- [Frontend Dokumentation](docs/documentation_frontend.md)
+- [Backend Dokumentation](docs/documentation_backend.md)
+- [Architektur Dokumentation](docs/documentation_architecture.md)
+- [Evaluation Dokumentation](docs/evaluation.md)
+
 ## Verantwortungsbereiche
 
 **Sandra Fischer**
