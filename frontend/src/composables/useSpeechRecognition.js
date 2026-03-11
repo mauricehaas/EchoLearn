@@ -1,3 +1,26 @@
+/**
+ * useSpeechRecognition
+ *
+ * Ein Vue 3 Composable-Hook für die Sprachaufnahme und Transkription.
+ * Unterstützt Interim-Ergebnisse und kontinuierliche Erkennung.
+ *
+ * @param {Object} options                      - Optionen zur Konfiguration
+ * @param {Ref<string>} [options.transcriptRef] - Ref für endgültigen Transkripttext
+ * @param {Ref<string>} [options.interimRef]    - Ref für Zwischenergebnisse
+ * @param {Ref<boolean>} [options.listeningRef] - Ref für den Listening-Status
+ * @param {string} [options.lang='de-DE']       - Sprache für die Spracherkennung
+ *
+ * @returns {Object}                      - Enthält:
+ *   - transcript {Ref<string>}           - finaler Transkripttext
+ *   - interimTranscript {Ref<string>}    - aktueller Zwischentext
+ *   - listening {Ref<boolean>}           - ob gerade aufgenommen wird
+ *   - startListening {Function}          - startet die Spracherkennung
+ *   - stopListening {Function}           - stoppt die Spracherkennung
+ *   - restartListening {Function}        - setzt Transkript und Status zurück
+ *
+ * @author Maurice Haas
+ */
+
 import { ref } from 'vue'
 
 export function useSpeechRecognition({
