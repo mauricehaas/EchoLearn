@@ -1,3 +1,19 @@
+/**
+ * submitToEndpoint
+ *
+ * Sendet die Antwort eines Studierenden an das Backend zur Bewertung.
+ *
+ * @param {string} examId             - Eindeutige ID der Prüfung
+ * @param {string} question           - Text der Prüfungsfrage
+ * @param {string} studentAnswer      - Antwort des Studierenden
+ * @param {string|null} correctAnswer - Optional: korrekte Antwort zur Referenz
+ * @param {number} maxPoints          - Maximal erreichbare Punkte für die Frage
+ *
+ * @returns {Promise<Object>}         - JSON-Antwort vom Backend mit Bewertung und Feedback
+ *
+ * @author Maurice Haas
+ */
+
 export async function submitToEndpoint({
   examId,
   question,

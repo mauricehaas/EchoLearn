@@ -74,8 +74,8 @@ Lokaler Forschungs- und Entwicklungsprototyp.
 ## Funktionsumfang
 
 - Erstellung und Verwaltung von Prüfungsfragen
-- Vorlesen von Fragen (Text-to-Speech)
-- Aufnahme gesprochener Antworten (Speech-to-Text)
+- Vorlesen von Fragen durch Text-to-Speech (TTS)
+- Aufnahme gesprochener Antworten durch Speech-to-Text (STT)
 - Automatisierte Bewertung durch ein Sprachmodell
 - Generierung kontextabhängiger Rückfragen
 - Anzeige von Lernstatistiken
@@ -103,11 +103,22 @@ Weitere konzeptionelle Details befinden sich hier:
 ## Verantwortungsbereiche
 
 **Sandra Fischer**
-Dokumentation, Testen, Daten
+
+- Dokumentation (Screenshots and Graphs, Draft)
+- Testen
+- Daten (Generation, Cleaning, Evaluationsdatensätze)
+- Evaluation (menschliche Bewertung der Evaluationsdatensätze)
 
 **Aleksandar Trifonov**
-Backend (funktionale und inhaltliche Anbindung der LLMs in die App, Bereitstellung der Daten für die LLMs, Testen der
-Funktionalitäten)
+
+- Backend (funktionale und inhaltliche Anbindung der LLMs in die App, Bereitstellung der Daten für die LLMs, Testen der Funktionalitäten)
+- Evaluation (menschliche Bewertung der Evaluationsdatensätze, Notebooks zur LLM Evaluation)
+- Dokumentation (Evaluation, Backend)
 
 **Maurice Haas**
-Projektarchitektur (Docker, CI Pipelines, Linter, Formatter, Make-Befehle), Frontend, Backend (CRUD Routen, CSV-Export/Import Routen), Datenbankverbindung, Skript für automatische Datenbankerstellung und Löschung
+
+- Projektarchitektur (Docker, CI Pipelines, Linter, Formatter, Make-Befehle)
+- Frontend (STT, TTS, Design, Vue Komponenten & Templates, Frontend Routen)
+- Backend (CRUD Routen, CSV-Export/Import Routen), Datenbankverbindung, Skript für automatische Datenbankerstellung und Löschung
+- Dokumentation (Readme, Allgemein, Frontend, Architektur)
+- Evaluation (menschliche Bewertung der Evaluationsdatensätze)

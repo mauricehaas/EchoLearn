@@ -1,3 +1,14 @@
+/**
+ * speakText
+ *
+ * Wandelt einen Text in Sprache um und gibt ihn über die Systemausgabe aus.
+ *
+ * @param {string} text           - Der Text, der gesprochen werden soll
+ * @param {string} [lang='de-DE'] - Sprachcode für die Sprachausgabe (z. B. 'de-DE', 'en-US')
+ *
+ * @author Maurice Haas
+ */
+
 export function speakText(text, lang = 'de-DE') {
   if (!text) return
   const utterance = new SpeechSynthesisUtterance(text)
