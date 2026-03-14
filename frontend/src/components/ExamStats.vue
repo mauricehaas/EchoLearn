@@ -22,7 +22,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in results" :key="row.id">
+        <tr
+          :class="{ clarify: row.question_type === 'CLARIFY' }"
+          v-for="row in results"
+          :key="row.id"
+        >
           <td>{{ row.id }}</td>
           <td>{{ row.question }}</td>
           <td>{{ row.student_answer }}</td>
@@ -81,13 +85,19 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-  }
 
-  .results-table th,
-  .results-table td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: left;
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    tr {
+      &:has(+ tr.clarify) {
+        color: lightgrey;
+      }
+    }
   }
 
   .error {
