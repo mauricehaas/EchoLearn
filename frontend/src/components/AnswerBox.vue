@@ -56,11 +56,6 @@
       margin-top: 8px;
     }
 
-    .submit {
-      padding: 8px 14px;
-      border-radius: 8px;
-    }
-
     button:disabled {
       background-color: #ddd;
       color: #888;

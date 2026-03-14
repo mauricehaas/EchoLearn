@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading && summary" class="summary-card" :class="gradeClass">
+  <div v-if="!loading && summary" class="summary-card">
     <h3>Gesamtergebnis</h3>
     <div class="summary-grid">
       <div>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from 'vue'
+  import { ref, onMounted } from 'vue'
 
   const props = defineProps({
     examId: {
@@ -32,14 +32,6 @@
 
   const summary = ref(null)
   const loading = ref(true)
-
-  const gradeClass = computed(() => {
-    if (!summary.value) return ''
-    const g = parseFloat(summary.value.grade.replace(',', '.'))
-    if (g <= 2) return 'good'
-    if (g <= 4) return 'medium'
-    return 'bad'
-  })
 
   onMounted(async () => {
     const res = await fetch(
@@ -55,27 +47,23 @@
     margin: 20px 0;
     padding: 20px;
     border-radius: 12px;
-    background: white;
+    background: #fff;
     border: 1px solid #ccc;
     font-size: 18px;
   }
 
-  /* Grid */
   .summary-grid {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+
+    div {
+      text-align: center;
+      flex: 1;
+    }
   }
 
-  .summary-grid div {
-    text-align: center;
-    flex: 1;
-  }
-
-  /* Note */
   .grade {
-    font-size: 32px;
     font-weight: bold;
-    color: #6a1b9a;
   }
 </style>
