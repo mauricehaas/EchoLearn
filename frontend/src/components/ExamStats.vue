@@ -3,7 +3,8 @@
     <h2>Ergebnisübersicht</h2>
 
     <div v-if="loading">Lade Ergebnisse...</div>
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else-if="results.length === 0">Noch keine Prüfung abgelegt.</div>
     <div v-else><ExamSummary examId="1" /></div>
 
     <table v-if="results.length > 0" class="results-table">
@@ -34,10 +35,6 @@
         </tr>
       </tbody>
     </table>
-
-    <div v-if="!loading && results.length === 0 && !error">
-      Keine Ergebnisse für diese Prüfung gefunden.
-    </div>
   </div>
 </template>
 
@@ -59,11 +56,14 @@
       const resAnswers = await fetch(
         `http://localhost:8000/exam_evaluation_single_answers/exam/${uniqueExamId}`
       )
+      if (resAnswers.status === 404) {
+        results.value = []
+        return
+      }
       if (!resAnswers.ok) throw new Error(resAnswers.status)
       results.value = await resAnswers.json()
     } catch (err) {
-      error.value =
-        'Entweder wurde noch keine Prüfung abgelegt oder es gab einen Fehler beim Laden der Ergebnisse'
+      error.value = 'Es gab einen Fehler beim Laden der Ergebnisse'
     } finally {
       loading.value = false
     }
