@@ -9,9 +9,9 @@
 
       <div style="margin-top: 20px">
         <button @click="startListening" :disabled="listening || loading || locked">
-          {{ listening ? 'Höre...' : '🎤 Sprich jetzt' }}
+          {{ listening ? 'Aufnahme...' : '🎤 Sprich jetzt' }}
         </button>
-        <button @click="stopListening" :disabled="!listening || loading || locked">⏹️ Stopp</button>
+        <button @click="stopListening" :disabled="!listening || loading || locked">⏹️ Stop</button>
         <button @click="restartListening" :disabled="loading || locked">
           🔄 Antwort verwerfen
         </button>
@@ -48,13 +48,13 @@
             @click="startFollowupListening"
             :disabled="followupListening || followupLoading || followupLocked"
           >
-            {{ followupListening ? 'Höre...' : '🎤 Sprich jetzt' }}
+            {{ followupListening ? 'Aufnahme...' : '🎤 Sprich jetzt' }}
           </button>
           <button
             @click="stopFollowupListening"
             :disabled="!followupListening || followupLoading || followupLocked"
           >
-            ⏹️ Stopp
+            ⏹️ Stop
           </button>
           <button @click="restartFollowupListening" :disabled="followupLoading || followupLocked">
             🔄 Antwort verwerfen

@@ -1,6 +1,6 @@
 <template>
   <div class="table-container">
-    <h2>Questions</h2>
+    <h2>Fragen</h2>
 
     <!-- Action Buttons -->
     <div class="actions-top">
@@ -13,7 +13,7 @@
     <!-- Modal -->
     <div v-if="editing" class="modal-backdrop">
       <div class="modal-content">
-        <h3>{{ editForm.id ? 'Edit Question #' + editForm.id : 'Create Question' }}</h3>
+        <h3>{{ editForm.id ? 'Frage #' + editForm.id + ' bearbeiten' : 'Frage erstellen' }}</h3>
 
         <label>Frage:</label>
         <input v-model="editForm.question" />
@@ -25,8 +25,8 @@
         <input v-model="editForm.max_points" />
 
         <div class="modal-buttons">
-          <button class="primary" @click="saveEdit" type="button">Save</button>
-          <button class="cancel" @click="cancelEdit" type="button">Cancel</button>
+          <button class="primary" @click="saveEdit" type="button">Speichern</button>
+          <button class="cancel" @click="cancelEdit" type="button">Zurück</button>
         </div>
       </div>
     </div>
