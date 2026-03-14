@@ -408,11 +408,6 @@
 </script>
 
 <style scoped>
-  button:disabled {
-    background-color: #ddd;
-    color: #888;
-    cursor: not-allowed;
-  }
   .interim {
     font-style: italic;
     color: gray;

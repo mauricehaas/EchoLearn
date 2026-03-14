@@ -9,7 +9,6 @@ Stand: 2026-02
 */
 
 .table-container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 
   h2 {
@@ -22,7 +21,7 @@ Stand: 2026-02
     border-collapse: separate; // für abgerundete Ecken
     border-spacing: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
 
     th,
