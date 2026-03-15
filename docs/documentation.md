@@ -5,71 +5,33 @@
 ## Inhaltsverzeichnis
 
 - [Einleitung](#einleitung)
-  - [Motivation & Ziel des Projekts](#motivation--ziel-des-projekts)
-  - [Projektansatz](#projektansatz)
-- [Systemarchitektur](#systemarchitektur)
-  - [Überblick Gesamtarchitektur](#überblick-gesamtarchitektur)
-  - [Dokumentation des Backends](#dokumentation-des-backends)
-    - [Überblick Backend](#backend-überblick)
-    - [Aktuelle Ordnerstruktur](#aktuelle-ordnerstruktur)
-    - [Aktive Router in 'main.py'](#aktive-router-in-mainpy)
-    - [Datenbank](#datenbank)
-    - [Modelle](#modelle)
-    - [LLM-Integration](#llm-integration)
-    - [API-Referenz](#api-referenz)
-    - [Fachlogik](#fachlogik)
-  - [Dokumentation des Frontends](#dokumentation-des-frontends)
-    - [Aktuelle Ordnerstruktur](#aktuelle-ordnerstruktur-1)
-    - [Views und Components](#views-und-components)
-     - [Views](#views)
-     - [Components](#components)
-    - [Composables](#composables)
-      - [1. 'useSpeechRecognition'](#1-usespeechrecognition)
-      - [2. 'speakText'](#2-speaktext)
-      - [Vorteile der Composables](#vorteile-der-composables)
-    - [Routing](#routing)
-  - [Dokumentation der Datengeneration und -aufbereitung](#dokumentation-der-datenaufbereitung)
-  - [Schnittstellen](#schnittstellen)
-  - [verwendete Technologien](#verwendete-technologien)
+- [Überblick Gesamtarchitektur](#überblick-gesamtarchitektur)
+- [Dokumentation des Backends](#dokumentation-des-backends)
+- [Dokumentation des Frontends](#dokumentation-des-frontends)
+- [Dokumentation der Datengeneration und -aufbereitung](#dokumentation-der-datengrundlage-und--aufbereitung)
+- [verwendete Technologien](#verwendete-technologien)
 - [Installation und Setup](#installation-und-setup)
-- [Nutzerleitfaden und Demo](#nutzerleitfaden--demo)
+- [Nutzerleitfaden](#nutzerleitfaden)
 - [Evaluation](#evaluation)
-  - [Zielsetzung](#zielsetzung-1)
-  - [Evaluation des Speach-to-text-Modells](#1-evaluation-des-stt-modells)
-    - [Datengrundlage](#datengrundlage)
-    - [Evaluationslogik](#evaluationslogik)
-    - [Evaluationsprozess](#evaluationsprozess)
-  - [Evaluation der Large Language Modells als Prüfungsbewerter](#2-evaluation_llm_exam_judge)
-    - [Evaluationsdesign](#evaluationsdesign)
-    - [Vergleichsmetriken](#vergleichsmetriken)
-    - [Evaluationsprozess](#evaluationsprozess-1)
-  - [Evaluation der Large Language Modells auf Robustheit](#3-evaluation_llm_exam_judge_transcript)
-    - [Datengrundlage](#datengrundlage-1)
-    - [Evaluationsdesign](#evaluationsdesign-1)
-    - [Vergleichsmetriken](#vergleichsmetriken-1)
-    - [Evaluationsprozess](#evaluationsprozess-2)
-  - [Ergebnis der Evaluation](#gesamtergebnis-der-evaluation)
 - [Limitationen](#limitationen)
 - [Einordnung](#einordnung)
 - [Ausblick](#ausblick)
 - [Fazit](#fazit)
 - [Verantwortlichkeiten im Projekt](#verantwortungsbereiche)
-- [Quellen](#quellen)
-
-
-
 
 
 
 ## Einleitung
+
 EchoLearn ist ein interaktiver Prototyp zur Simulation mündlicher Prüfungssituationen zum Thema Data Science.  
 Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert je nach Qualität der Antwort adaptive Rück- oder Vertiefungsfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
 
 Das Projekt wurde im universitären Kontext als experimenteller Prototyp entwickelt und dient der konzeptionellen Untersuchung KI-gestützter Bewertung frei gegebener mündlicher Antworten.
-
+  
 ---
 
 ### Motivation & Ziel des Projekts
+
 Die Vorbereitung auf mündliche Prüfungen ist oft eingeschränkt, da sie typischerweise eine zweite Person erfordert und reale Prüfungssituationen nur schwer reproduzierbar sind.
 
 Digitale Lernsysteme bieten häufig nur:
@@ -83,31 +45,156 @@ Das Ziel des Projekts besteht daher darin zu untersuchen, inwiefern durch Speach
 Hierfür wurden im Projekt folgende Leitfragen untersucht:
 1. Kann ein LLM die Generierung einer Klassifizierung von Fragetypen sowie maximal zu erreichenden Punkten inklusive Übersetzung von Antworten und Fragen aus dem Englischen ins Deutsche zuverlässig übernehmen?
 2. Ist die Transkripitonsqualität des STT ausreichend, um darauf aufbauend automatisierte Bewertungen durch ein LLM erzeugen zu lassen?
-3. Ist ein LLM als automatischer Bewerter und Feedbackgeber zum Lernen geeignet? 
+3. Ist ein LLM als automatischer Bewerter und Feedbackgeber in der Lage den Lernprozess zu unterstützen? 
 4. Wie robust ist die Bewertung des LLM trotz Transkriptionsfehlern oder sprachlichen Unschärfen?
 
 ---
 
+### Ursprüngliche Pitch Beschreibung
+
+Die Idee ist eine KI-gestützte Lernplattform zur ganzheitlichen Vorbereitung auf mündliche Prüfungen. Ziel ist es, nicht nur Wissen aufzubauen, sondern die tatsächliche Prüfungssituation realitätsnah zu trainieren.
+
+Im Zentrum steht eine intelligente Prüfungssimulation, wobei die KI die Rolle der prüfenden Person übernimmt, fachliche Fragen stellt, dynamisch auf Antworten reagiert und durch gezielte Rückfragen zu präziserem Denken und Argumentieren herausfordert, ähnlich wie in einer echten mündlichen Prüfung. Im Anschluss erfolgt eine differenzierte Bewertung der Leistung mit individuellem Feedback zu Inhalt, Argumentationsstruktur, sprachlicher Klarheit und Prüfungskompetenz.
+
+Ergänzend dazu umfasst das Konzept einen Trainingsbereich, der auf lernpsychologischen Prinzipien wie Active Recall und Spaced Repetition basiert. Inhalte werden aktiv abgefragt, wiederholt und langfristig gefestigt. Dabei erfolgt die Interaktion sowohl schriftlich als auch mündlich: Lernende erklären Inhalte laut, beantworten Fragen verbal und trainieren so neben Fachwissen auch ihre Ausdrucksfähigkeit und spontane Reaktionskompetenz.
+
+Die Vision: Eine Plattform, die Wissensaufbau, Anwendung und Performanztraining verbindet – damit Lernende nicht nur wissen, was richtig ist, sondern es auch souverän und strukturiert ausdrücken können.
+
+---
+
 ### Projektansatz
+
 Um das Ziel des Projekts zu erreichen, wurde mit "EchoLearn" ein Prüfungssimulator entwickelt, der den Ansatz verfolgt, einen adaptiven Prüfungsdialog zu simulieren, auf offene Antworten zu reagiert und gezielte Rückfragen zu stellen, um anschließend durch spezifisches Feedback eine kontinuierliche Verbesserung des Wissensstandes von Lernenden zu ermöglichen.
 Im Prototyp enthält die Prüfung zum Testen lediglich 3 Fragen. Zum Einsatz zur Prüfungsvorbereitung empfehlen wir 7 bis 10 Fragen, um einen Übungseffekt zu erzielen und sich der Dauer einer realen mündlichen Prüfung anzunäher.
 Es wurden Prüfungen simuliert, eine automatische textuale sowie quantitative Bewertung durch verschiedene LLMs erzeugt und diese mit einer Referenzbewertung, welche durch die Projektmitglieder vergeben wurde, verglichen, um eine Evaluation durchführen zu und so die zentralen Fragestellungen des Projekts beantworten zu können.
-"EchoLearn" fokusiert sich auf Grund des begrenzten zeitlichen Projektrahmens auf die Erstellung eines Prototypen, um eine grobe Einschätzung einer möglichen Umsetzung der Projektidee zu erhalten. Es wurde daher bewusst auf eine Integration innerhalb eines Lernmanagementsystems verzichtet und lediglich mit einem begrenzten Evaluationsdatensatz gearbeitet. Auf Grund des zeitlichen Rahmens wurde auf eine Analyse der Qualität der generierten Ergänzungsfragen sowie Vertiefungsfragen bewusst verzichtet und lediglich die grundsätzliche Möglichkeit zur Integration im Prototyp demonstriert.
----
-
-## Systemarchitektur
+"EchoLearn" fokusiert sich auf Grund des begrenzten zeitlichen Projektrahmens auf die Erstellung eines Prototypen, um eine grobe Einschätzung einer möglichen Umsetzung der Projektidee zu erhalten. Es wurde daher bewusst auf eine Laufzeitanalyse, sowie auf die Integration innerhalb eines Lernmanagementsystems verzichtet und lediglich mit einem begrenzten Evaluationsdatensatz gearbeitet. Auch auf eine Analyse der Qualität der generierten Ergänzungsfragen sowie Vertiefungsfragen bewusst verzichtet und lediglich die grundsätzliche Möglichkeit zur Integration im Prototyp demonstriert.
 
 ---
 
-### Überblick Gesamtarchitektur
+## Überblick Gesamtarchitektur
+
+### Docker-Architektur
+
+Die Anwendung wird lokal über **Docker Compose** ausgeführt und besteht aus drei zentralen Services:
+
+- Backend (API)
+- Datenbank
+- Frontend
+
+Durch die Containerisierung werden alle benötigten Komponenten in isolierten Umgebungen gestartet und automatisch miteinander verbunden.
 
 ---
 
-### Dokumentation des Backends
+### Backend Service
+
+Der Backend-Service stellt die zentrale API der Anwendung bereit.
+Er wird aus dem lokalen `backend` Verzeichnis gebaut und läuft in einem eigenen Container.
+
+Das Backend übernimmt unter anderem:
+
+- Verarbeitung von API-Anfragen
+- Zugriff auf die Datenbank
+- Integration der Sprachmodelle zur Bewertung von Antworten
+- Bereitstellung der Daten für das Frontend
+
+Der Service ist über folgenden Port erreichbar:
+
+```
+http://localhost:8000
+```
+
+Die API-Dokumentation wird automatisch von FastAPI generiert und ist unter folgender Adresse verfügbar:
+
+```
+http://localhost:8000/docs
+```
+
+Die Verbindung zur Datenbank erfolgt über die Umgebungsvariable `DATABASE_URL`.
 
 ---
 
-#### Backend-Überblick
+### Datenbank Service
+
+Für die Persistenz der Daten wird eine **PostgreSQL-Datenbank** verwendet.
+
+Der Datenbankcontainer basiert auf dem offiziellen PostgreSQL-Image und wird mit folgenden Parametern initialisiert:
+
+- Datenbankname: `echolearn`
+- Benutzer: `echolearn`
+- Passwort: `echolearn`
+
+Die Daten werden in einem **Docker-Volume** gespeichert, sodass sie auch nach einem Neustart der Container erhalten bleiben.
+
+```
+Volume: db-data
+```
+
+Die Datenbank ist lokal über Port `5432` erreichbar.
+
+---
+
+### Frontend Service
+
+Das Frontend basiert auf **Vue 3** und wird innerhalb eines Node.js-Containers ausgeführt.
+
+Beim Start des Containers werden automatisch:
+
+1. die benötigten npm-Abhängigkeiten installiert
+2. die Entwicklungsumgebung gestartet
+
+Der Dev-Server wird anschließend auf Port `5173` bereitgestellt.
+
+```
+http://localhost:5173
+```
+
+Das Frontend kommuniziert mit der Backend-API, um:
+
+- Prüfungsfragen abzurufen
+- Antworten zu übermitteln
+- Bewertungen und Rückfragen zu erhalten
+- Lernstatistiken darzustellen
+
+---
+
+### Service-Abhängigkeiten
+
+Die Services werden in einer definierten Reihenfolge gestartet:
+
+1. Datenbank (`db`)
+2. Backend (`backend`)
+3. Frontend (`frontend`)
+
+Das Backend benötigt eine aktive Datenbankverbindung, während das Frontend auf das Backend zugreift.
+
+Docker Compose stellt sicher, dass diese Abhängigkeiten berücksichtigt werden.
+
+---
+
+### Persistente Daten
+
+Die Datenbank speichert ihre Daten in einem benannten Docker-Volume:
+
+```
+db-data
+```
+
+Dieses Volume sorgt dafür, dass Daten auch dann erhalten bleiben, wenn die Container neu gestartet oder neu gebaut werden.
+
+---
+
+### Lokales Entwicklungssetup
+
+Die gesamte Anwendung kann lokal mit Docker Compose gestartet werden.
+Alle Services sind anschließend über die jeweiligen Ports erreichbar und bilden gemeinsam die vollständige Entwicklungsumgebung.
+
+---
+
+## Dokumentation des Backends
+
+---
+
+### Backend-Überblick
 
 Das EchoLearn-Backend ist der Teil des Systems, der den Prüfungsablauf im Hintergrund steuert.  
 Es verwaltet Fragen, nimmt Antworten entgegen, lässt diese vom LLM bewerten und speichert sowohl Einzelbewertungen als auch das Gesamtfeedback einer Sitzung.
@@ -117,7 +204,9 @@ Grob ist der Code in drei Bereiche aufgeteilt:
 - `services/`: Hier liegt die eigentliche Fachlogik (z. B. Bewertung und nächste Aktion).
 - `models/` + `core/db.py`: Hier ist definiert, wie Daten gespeichert werden.
 
-#### Aktuelle Ordnerstruktur
+---
+
+### Aktuelle Ordnerstruktur
 
 - `backend/app/main.py`: Startpunkt der FastAPI-Anwendung, inklusive CORS und Router-Einbindung
 - `backend/app/core/`: Basis-Setup wie die Datenbankverbindung (`db.py`)
@@ -127,14 +216,18 @@ Grob ist der Code in drei Bereiche aufgeteilt:
 - `backend/app/seed/`: Seed-Skript zum Neuaufsetzen der Tabellen und Befüllen mit Startdaten
 - `backend/app/utils/`: vorhanden, derzeit ohne aktive Nutzung
 
-#### Aktive Router in `main.py`
+---
+
+### Aktive Router in `main.py`
 
 Aktuell sind folgende Router aktiv eingebunden:
 - `questions.router`
 - `exam.router`
 - `exam_evaluation_single_answers.router`
 
-#### Datenbank
+---
+
+### Datenbank
 
 - Verbindungs-URL in `backend/app/core/db.py`:
   - `postgresql+asyncpg://echolearn:echolearn@db:5432/echolearn`
@@ -143,7 +236,9 @@ Aktuell sind folgende Router aktiv eingebunden:
   - setzt die Tabellen neu auf (`drop_all` + `create_all`)
   - lädt Fragen aus `data/processed/questions.csv` in die Datenbank
 
-#### Modelle
+---
+
+### Modelle
 
 - `Question` (`questions`)
   - `id` (`Integer`, PK)
@@ -168,7 +263,9 @@ Aktuell sind folgende Router aktiv eingebunden:
   - `unique_exam_id` (`Text`, Pflicht)
   - `overall_feedback` (`Text`, Pflicht)
 
-#### LLM-Integration
+---
+
+### LLM-Integration
 
 Die Kommunikation mit dem Modellserver ist zentral in `backend/app/services/llm_handler.py` gekapselt.  
 So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
@@ -185,9 +282,13 @@ So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
 - Fachliche Orchestrierung:
   - `backend/app/services/exam_simulator.py`
 
-#### API-Referenz
+---
 
-##### Questions (`/questions`)
+### API-Referenz
+
+---
+
+#### Questions (`/questions`)
 
 - <span style="background:#1d4ed8;color:#ffffff;padding:2px 6px;border-radius:4px;font-weight:700;">GET</span> ` /questions/`
   - gibt alle gespeicherten Fragen zurück
@@ -313,7 +414,9 @@ So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
     - `text/csv; charset=utf-8`
     - Header: `Content-Disposition: attachment; filename=questions.csv`
 
-##### Exam (`/exam`)
+    ---
+
+#### Exam (`/exam`)
 
 - <span style="background:#16a34a;color:#ffffff;padding:2px 6px;border-radius:4px;font-weight:700;">POST</span> ` /exam/rephrase_question`
   - formuliert eine Frage verständlicher um (inhaltlich gleich)
@@ -372,6 +475,8 @@ So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
       "final_feedback": "Insgesamt zeigst du ein gutes Verständnis ..."
     }
     ```
+
+---
 
 ### Exam-Einzelbewertungen (`/exam_evaluation_single_answers`)
 
@@ -435,7 +540,9 @@ So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
     ```
   - `404`, wenn keine Daten vorhanden
 
-#### Fachlogik
+---
+
+### Fachlogik
 
 `ExamSimulator` steuert den Ablauf nach jeder Antwort:
 - gute Antwort: `DEEPEN`
@@ -445,15 +552,19 @@ So bleibt die Fachlogik unabhängig von den technischen Details des LLM-Aufrufs.
 
 Einzelbewertungen landen in `exam_evaluation_single_answer`, das finale Gesamtfeedback in `exam_evaluation_final`.
 
-### Dokumentation des Frontends
+---
 
-#### Frontend-Überblick
+## Dokumentation des Frontends
+
+--
+
+### Frontend-Überblick
 
 Das EchoLearn-Frontend ist modular aufgebaut und besteht aus **Views, Components und Composables**, die gemeinsam die Benutzeroberfläche und die Interaktivität bereitstellen.
 
 ---
 
-#### Aktuelle Ordnerstruktur
+### Aktuelle Ordnerstruktur
 
 - `assets`: Globale SCSS-Dateien für das Design
 - `components`: Vue 3 Komponenten
@@ -463,9 +574,11 @@ Das EchoLearn-Frontend ist modular aufgebaut und besteht aus **Views, Components
 
 ---
 
-#### Views und Components
+### Views und Components
 
-##### Views
+---
+
+#### Views
 
 Views repräsentieren die Hauptseiten des Frontends und sind direkt mit **Routen** verbunden. Jede View kapselt die Logik und das Layout einer gesamten Seite.
 
@@ -481,7 +594,7 @@ Views repräsentieren die Hauptseiten des Frontends und sind direkt mit **Routen
 
 ---
 
-##### Components
+#### Components
 
 Components sind wiederverwendbare UI- oder Funktionsbausteine, die innerhalb von Views oder anderen Components eingesetzt werden.  
 Sie kapseln einzelne Funktionalitäten oder Layout-Elemente und fördern die Wiederverwendbarkeit.
@@ -505,11 +618,13 @@ Sie kapseln einzelne Funktionalitäten oder Layout-Elemente und fördern die Wie
 
 ---
 
-#### Composables
+### Composables
 
 Im Frontend von **EchoLearn** werden zentrale Funktionen der Sprachinteraktion über **Vue 3 Composables** bereitgestellt. Composables sind wiederverwendbare Hooks, die Logik und Zustand kapseln und in mehreren Components genutzt werden können.
 
-##### 1. `useSpeechRecognition`
+---
+
+#### 1. `useSpeechRecognition`
 
 **Zweck:**  
 Ermöglicht die Aufnahme und Transkription gesprochener Antworten. Unterstützt kontinuierliche Erkennung und Zwischenstände (interim results).
@@ -528,7 +643,7 @@ Optional können eigene Refs für `transcriptRef`, `interimRef` und `listeningRe
 
 ---
 
-##### 2. `speakText`
+#### 2. `speakText`
 
 **Zweck:**  
 Wandelt Text in Sprache um und gibt ihn über die Systemausgabe aus.
@@ -545,7 +660,7 @@ Wandelt Text in Sprache um und gibt ihn über die Systemausgabe aus.
 
 ---
 
-##### Vorteile der Composables
+#### Vorteile der Composables
 
 - Wiederverwendbarkeit in mehreren Components
 - Logik ist vom UI getrennt
@@ -554,11 +669,11 @@ Wandelt Text in Sprache um und gibt ihn über die Systemausgabe aus.
 
 ---
 
-#### Routing
+### Routing
 
 Die Navigation im Frontend von **EchoLearn** wird über **Vue Router** gesteuert. Das Projekt verwendet **`createWebHistory()`** für sauberes URL-Management ohne Hash (#).
 
-##### Routenübersicht
+#### Routenübersicht
 
 | Pfad          | Name            | Beschreibung                                |
 | ------------- | --------------- | ------------------------------------------- |
@@ -579,35 +694,66 @@ Die Navigation im Frontend von **EchoLearn** wird über **Vue Router** gesteuert
 - Saubere URLs dank `createWebHistory()`
 - Erweiterbar: Neue Seiten/Routen lassen sich leicht hinzufügen
 
-### Dokumentation der Datenaufbereitung
+---
 
-#### Datengrundlage und -anreicherung
-"EchoLearn" bietet die Möglichkeit, dass Fragen inklusive Musterlösung und maximal erreichbarer Punkte von Grund auf manuell im Prototyp angelegt oder aus einer CSV eingelesen und anschließend verwendet werden können. 
-Als Ausgangspunkt für die Untersuchung im Projekt "EchoLearn" wurde der Datensatz "DataScienceBasics_QandA - Sheet1.csv" mit 200 englischen Fragen und zugehörigen Antworten zum Thema Data Science gewählt. Dieser wurde innerhalb des Jupyter-Notebooks "data_generation.ipynb" durch Systemprompting mittels des LLM 'phi4:latest' in deutsche Sprache übersetzt, die Fragentypen klassifiziert, Schlüsselbegriffe herausgefiltert und die Antwort mit einer maximal zu erreichenden Punktzahl versehen.
-Zur Klassifikation wurden die Begriffe "Hauptfrage", "Vertiefungsfrage", "Aufzählung" sowie "Sonstige" vorgegeben. 
-Die zu vergebenden Punkte sollten sich auf einer Skala zwischen eins und zehn bewegen und dabei auch den Schwierigkeitsgrad berücksichten. Hierfür wurden folgende Vorgaben gewählt:
- - 1 bis 3 Punkte für Basiswissen
- - 4 bis 5 Punkte für einfaches Verständnis
- - 6 bis 8 Punkte für erweiterte Anwendung
+## Dokumentation der Datengrundlage und -aufbereitung
+
+
+### Datengrundlage
+
+Um für einen Lernenden Flexibilität zu bieten, was gelernt werden soll und gleichzeitig Schnittstellen für mögliche Weiterentwicklungen zu öffnen, bietet "EchoLearn" die Möglichkeit, Fragen inklusive Musterlösung und maximal erreichbarer Punkte von Grund auf manuell im Prototyp anzulegen oder aus einer CSV einzulesen, sodass diese anschließend in der Prüfungssimulation verwendet werden können. Als Ausgangspunkt für die Untersuchung im Projekt "EchoLearn" wurde der Datensatz "DataScienceBasics_QandA - Sheet1.csv" [Quelle](https://www.kaggle.com/datasets/yessicatuteja/data-science-question-answers-dataset) mit 200 englischen Fragen und zugehörigen Antworten zum Thema Data Science gewählt. Folgende Gründe wurden bei der Auswahl des Datensatzes maßgebend:
+- Copyright
+- Größe des Datensatzes
+- realer Bezug zum Studium
+
+Der Datensatz steht unter der Lizenz CC0, dies bedeutet er unterliegt keinem Copyright. Er kann somit öffentlich verwendet und auch beliebig verändert und erweitert werden.
+Die 200 enthaltenen Fragen sind eine überschaubare Datenmenge, welche zwar nicht als repräsentativ für jeglichen Anwendungsfall angesehen werden können, aber in Anbetracht der zur Verfügung stehenden Ressourcen innerhalb des Projektrahmens eine eine Datenaufbereitung sowie -anreicherung realisierbar machte.
+Das Thema "DataScience" wurde gewählt, weil es einen realen Bezug zum Studium der Projektmitglieder herstellte und zugleich Ableitungen auf andere Themen ermöglicht, weil es Fachbegriffe und Abkürzungen enthält, die in der alltäglichen Sprache kaum oder gar keine Verwendung finden. Zusätzlich handelt es sich um einen Englischen Datensatz, wie dies in Modulen von Informatikstudiengängen ebenfalls häufig der Fall ist, wenngleich Klausuren häufig dennoch in Deutscher Sprache durchgeführt werden.
+
+---
+
+### Datenanreicherung
+
+Der Rohdatensatz wurde die CSV ["DataScienceBasics_QandA - Sheet1.csv"](../data/raw/DataScienceBasics_QandA%20-%20Sheet1.csv) in das Jupyter-Notebook ["data_generation.ipynb"](../data/interim/data_generation.ipynb) geladen und anschließend mittels Aufruf des LLM 'phi4:latest' in Verbindung mit Systemprompting in deutsche Sprache übersetzt, Fragentypen klassifiziert, Schlüsselbegriffe herausgefiltert und die Antwort mit einer maximal zu erreichenden Punktzahl versehen.
+
+Die Übersetzung erfolgte, weil innerhalb Deutschlands die meisten Prüfungen in deutscher Sprache absolviert werden müssen.Dies hätte auch innerhalb der Prüfungssimulation geschehen können, allerdings wurde so eine konstante Übersetzungen bei mehreren Prüfungssimulationen gewährleistet und gleichzeitig die Laufzeit innerhalb des Prototyps geringfügig reduziert.
+
+Zur Klassifikation der Fragetypen wurden die Begriffe "Hauptfrage", "Vertiefungsfrage", "Aufzählung" sowie "Sonstige" vorgegeben. Diese Ergänzung sollte es ermöglichen einen ersten Überblick über die Zusammensetzung der Fragen zu liefern. 
+
+Schlüsselbegriffe bieten einen Überblick über erwartete Fachbegriff und Inhalte, welche in einer textualen Bewertung einbezogen und für Rückfragen genutzt werden können.
+
+Die Bewertung einer Antwort mit Punkten soll den Schwierigkeitsgrad und die Komplexität einer Frage und dessen Antworten berücksichtigen, weshalb im Projekt die maximal zu vergebende Punktzahl zur jeweiligen Frage ergänzt wurde. Hierfür wurden im Systemprompt folgende Vorgaben gewählt:
+
+ - 1 bis  3 Punkte für Basiswissen
+ - 4 bis  5 Punkte für einfaches Verständnis
+ - 6 bis  8 Punkte für erweiterte Anwendung
  - 9 bis 10 Punkte für Expertenlevel
 
-#### Datenaufbereitung
-Die Datenaufbereitung erfolgte mittels Jupyter-Notebook "data_cleaning.ipynb". Dabei wurde zuerst die Datenstruktur der Ausgangsdaten analysiert und auf fehlende Daten geprüft. Im Anschluss erfolgte eine Überprüfung der Übersetzung der Fragen und Antworten unter den Gesichtspunkten Semantischer Ähnlichkeit sowie vergleichbarer Länge der Texte.
+---
+
+### Datenaufbereitung
+
+Die Datenaufbereitung erfolgte mittels des Jupyter-Notebook "data_cleaning.ipynb". Dabei wurde zuerst die Datenstruktur der Ausgangsdaten analysiert und auf fehlende Daten geprüft. Im Anschluss erfolgte eine Überprüfung der Übersetzung der Fragen und Antworten unter den Gesichtspunkten Semantischer Ähnlichkeit sowie vergleichbarer Länge der Texte.
 Die Fragen und Antworten wurden zusätzlich darauf getestet, inwiefern Dopplungen existieren. Das Vorhandensein von Dopplungen wurde dazu genutzt, um die Konsistenz der Punktvergabe zu prüfen. Doppelte Datensätze wurden anschließend gefiltert, manuell geprüft und bei Bestätigung des doppelten Vorkommens entfernt.
 Für die Punktvergabe wurde analysiert, welche Punktverteilung sich ergibt, ob dabei die gemäß Systemprompt zu vergebende maximale Punktzahl eingehalten wurden, ob die Punktvergabe der Komplexität der Antworten entspricht und welche Ausreißer sich erkennen lassen.
 Die Analyse der Schlüsselbegriffe erstreckte sich auf das Vorhandensein in der Musterlösung sowie die punktuelle manuelle Prüfung, ob die Kerninhalte der Antworten tatsächlich erfasst wurden.
 Abschließend wurde der um doppelte Fragen bereinigte Datensatz erzeugt und im Ordner "processed" als "questions.csv" gespeichert, sodass dieser in die Datenbank des Protoyps geladen werden kann.
 
-### Schnittstellen
+---
 
-### verwendete Technologien
+## verwendete Technologien
 Frontend: Vue 3 (Vite)  
 Backend: FastAPI (Python)  
 Datenbank: PostgreSQL  
 Containerisierung: Docker + Docker Compose  
 CI: Github Actions
 
+---
+
 ## Installation und Setup
+
+---
+
 ### Voraussetzungen
 
 Für die lokale Ausführung werden benötigt:
@@ -654,6 +800,7 @@ http://localhost:8000
 API Dokumentation  
 http://localhost:8000/docs
 
+---
 
 ### Services stoppen
 
@@ -661,30 +808,129 @@ http://localhost:8000/docs
 make down
 ```
 
+---
+
 ## Nutzerleitfaden
 
-Nach Installation und Start des Prototyps haben Lernende auf der Startseite von "EchoLearn" die Option die Prüfung zu starten,sich im Anschluss an eine durchgeführte Prüfung eine Statistik mit allen Antworten und Bewertungen ausgeben zu lassen und die Fragen innerhalb der Datenbank zu verwalten. Die 3 Optionen können über das Auswahlmenü oben rechts angesteuert werden. Die Hauptelemente des Prototyps "Prüfung starten" und "Statistik" sind zusätzlich als große Schaltflächen zentral dargestellt.
+### Start
+Nachdem die Installation und das Setup abgeschlossen sind, können Lernende über das Frontend des Prototyps die hier abgebildete Startseite von "EchoLearn" aufrufen.
+
 ![Startseite](screenshots_and_graphs/00_Home_Startpage.jpg)
 
-Zum Üben wird "Prüfung starten" ausgewählt, die Fragen werden in die Datenbank geladen und es erscheint das hier abgebildete Menü:
-![Startseite](screenshots_and_graphs/01_Pruefungsbereich.jpg)
+Die Startseite enthält oben rechts eine Menüauswahl mit den Optionen "Home", "Prüfung", "Statistik" und "Verwaltung", sowie mittig einen Willkommenstext und darunter 2 groß dargestellte Buttons, welche die Hauptfunktionalitäten "Prüfung starten" und "Statistik" des Prototyps in den Vordergrund rücken.
 
-Nach Betätigung der ersten Schaltfläche "Frage anhören" wird die jeweilige Frage abgespielt. Sollten Lernende die Frage nicht verstanden haben, kann diese nochmals angehört oder aber über Auswahl der rechts daneben angeordnete Schaltfläche umformuliert werden.
+### Prüfung absolvieren
 
-Um zu Antworten wählt man "Sprich jetzt" und startet damit die Aufzeichnung durch das STT-Modell. Die transkripierte Sprache wird im Textfeld unterhalb der Schaltfläche angezeigt. Die Aufzeichnung läuft bis die Schaltfläche "Stopp" oder direkt "Antwort absenden" ausgewählt wird. Vor dem Absenden der Antwort kann der erkannte Text im Textfeld bei Bedarf mit Tastatureingaben korrigiert werden.
+Bevor die Prüfung gestartet wird, muss sichergestellt werden, dass die Verbindung zum genutzten LLM Modell hergestellt wurde. Im Prototyp wird aktuell das Modell "phi4-latest" auf den Servern der Fernuniversität Hagen genutzt, sodass die VPN Verbindung gemäß [Installationshinweis der Fernuniversität](https://wiki.fernuni-hagen.de/helpdesk/Anyconnect_4_-_Installationshinweise_und_Systemvorraussetzungen) hergestellt werden muss.
+
+Der Prototyp enthält einen Datensatz mit Fragen zum Thema Data Science, sodass nach erfolgreichem Verbindungsaufbau ohne weitere Vorbereitung eine Prüfung gestartet werden kann.
+
+Zum Üben wird nun  der Button "Prüfung starten" oder der Menüpunkt "Prüfung" ausgewählt, die Fragen für die Prüfungsimulation werden geladen und es erscheint das hier abgebildete Menü:
+
+![Prüfungsbereich Frage 1](screenshots_and_graphs/01_Pruefung_Frage1.png)
+
+Nach Betätigung der Schaltfläche "Frage anhören" wird die jeweilige Frage abgespielt. 
+Sollten die Frage nicht verstanden worden sein, kann diese nochmals angehört oder aber per Klick auf die Schaltfläche rechts daneben umformuliert werden.
+
+Um zu Antworten wählt man anschließend "Sprich jetzt" und startet damit die Sprachaufzeichnung durch das STT-Modell.
+Um diese nutzen zu können, wird zwingend ein Browser benötigt, welcher Speach-To-Text unterstützt, ansonsten wäre lediglich eine textuelle Eingabe der Antwort im Textfeld unterhalb möglich.
+
+Die transkripierte Sprache wird im Textfeld unterhalb der Schaltfläche angezeigt. 
+
+![Prüfungsbereich Antwort aufnehmen](screenshots_and_graphs/01_Pruefung_FrageKorrigieren.png)
+
+Die Sprachaufzeichnung läuft so lange bis die Schaltfläche "Stopp" oder aber direkt "Antwort absenden" ausgewählt wird. 
+
+Vor dem Absenden der Antwort kann der erkannte Text im Textfeld bei Bedarf mit Tastatureingaben korrigiert werden.
+
 Ist man mit der gesamten Spracherkennung nicht zufrieden oder hat eine falsche Antwort gegeben, kann diese über "Antwort verwerfen" gelöscht und im Anschluss im gleichen Prinzip neu aufgenommen werden.
-Nach der Beantwortung jeder Frage gibt es 3 Optionen:
-1. Die Frage wurde korrekt beantwortet, sodass eine Vertiefungsfrage gestellt wird, um Lernende weiter zu fördern.
-2. Die Frage wurde grundsätzlich korrekt beantwortet, aber die Antwort war noch nicht ganz vollständig. Hier erfolgt eine Rückfrage, um zum Beispiel fehlende Fach- oder Schlüsselbegriffe noch ergänzen zu können. Wird die Rückfrage richtig beantwortet, werden die Punkte ergänzt.
-3. Die Frage wurde falsch oder in einer zu geringen Qualität beantwortet. Da in diesem Fall keine qualifizierte Ergänzungen zu erwarten sind, wird direkt mir der nächsten Frage fortgefahren.
 
-In den Fällen 1 und 2 erhalten Lernende erst nach Beantwortung der Vertiefungs- bzw. Rückfrage die nächsten Frage.
+Nach der Beantwortung einer Frage gibt folgende es 3 Optionen:
+1. Die Frage wurde falsch oder lediglich in einer mangelhaften Qualität, also zu weniger als 50%, beantwortet: In diesem Fall wäre keine qualifizierte Ergänzungen zu erwarten und es wird direkt mit der nächsten Frage fortgefahren.
+
+2. Die Frage wurde beantwortet, es sind aber noch deutliche Lücken erkennbar (Bewertung von 50 bis 80%): Hier erfolgt eine Rückfrage, sodass Lernende zum Beispiel fehlende Fach- oder Schlüsselbegriffe noch ergänzend erklären können, falls diese lediglich vergessen wurden. Die Rückfrage erscheint nach Absenden der teilweise korrekten Antwort unterhalb der ursprünglichen Frage.
+Ein solcher Fall ist im nachfolgenden Screenshot dargestellt:
+
+![Prüfungsbereich Rückfrage](screenshots_and_graphs/01_Pruefung_Rueckfrage.png)
 
 
+3. Die Frage wurde zu mindestens 80% korrekt beantwortet: Um den Trainingseffekt bei bereits guten oder sehr guten Kenntnissen zu verstärken, wird eine Vertiefungsfrage gestellt. 
+Ähnlich wie im vorherigen Fall erscheint auch die Vertiefungsfrage unterhalb der Ausgangsfrage, wie im nachfolgenden Bild zu erkennen:
+
+![Prüfungsbereich Vertiefungsfrage](screenshots_and_graphs/01_Pruefung_Vertiefungsfrage.png)
+
+
+In den beiden letztgenannten Fällen erhalten Lernende erst nach Beantwortung der Vertiefungs- bzw. Rückfrage die nächste reguläre Frage. Bis dahin bleibt die Schaltfläche "Nächste Frage" / "Abschließen" ausgegraut und ohne Funktion.
+
+Nach Beantwortung aller Fragen erscheint anstatt der Schaltfläche "Nächste Frage", der Button "Abschließen", welcher eine kurze Zusammenfassung der Prüfungssimulation aufruft:
+
+![Prüfungsabschluss](screenshots_and_graphs/01_Pruefungsabschluss.png)
+
+Wie auf dem oben abgebildeten Screenshot zu sehen, enthält diese das Gesamtergebnis ausgedrückt in den typischen Zahlen, die zur Bewertung einer Prüfung herangezogen werden, sowie eine kurze textuale Zusammenfassung der erkannten Stärken und Schwächen.
+
+Im Prototyp wird die Note aus der Prozentzahl der erreichten Punkte gemäß Notenskala der [Prüfungsordnung der Fernuniversität Hagen](https://www.fernuni-hagen.de/wirtschaftswissenschaft/studium/download/ordnungen/po_bsc_wiwi.pdf) angegeben.
+
+Details zu den einzelnen Fragen können im Anschluss im Statistik-Bereich eingesehen werden. 
+Dieser ist im Text verlinkt, kann aber ebenso über den zu Beginn bereits erwähnten Menüpunkt "Statistik", welcher oben rechts zu finden ist, jederzeit erneut aufgerufen werden.
+
+### Statistik
+
+Die Statistik generiert sich während der Beantwortung der einzelnen Prüfungsfragen.
+
+Im Kopf der Ergebnisübersicht wird erneut die Gesamtleistung mit Punkten, Prozentzahl und Note beziffert, darunter folgt eine Tabelle, welche für alle in der Prüfungssimulation beantworteten die im nachfolgenden Screenshot abgebildeten Daten enthält.
+
+![Statistik](screenshots_and_graphs/02_Statistikaufbau.png)
+
+Dabei startet die ID bei 1 und ergibt sich aus der Reihenfolge der gestellten Fragen, indem fortlaufend gezählt wird. Parent gibt an, ob eine Verknüpfung zu einer anderen Frage existiert. Wenn dies der Fall ist, steht dort die ID der zugehörigen Frage, ansonsten "0". Die Spalte Typ unterscheidet zwischen "BASE", "CLARIFY" und "DEEPEN".
+Bei "BASE" handelt es sich um die Basisfragen aus der Fragendatenbank, "CLARIFY" kennzeichnet die erhaltenen Rückfragen und "DEEPEN" steht für eine Vertiefungsfrage.
+
+Für die Berechnung werden die Vertiefungsfragen wie eigenständige Fragen behandelt, die vollständig in die Bewertung eingehen. 
+
+![Statistik_Vertiefungsfrage](screenshots_and_graphs/02_Statistik_Vertiefungsfrage.png)
+
+Antworten auf Rückfragen ergänzen dagegen die Basisfrage. Die erhaltenen Punkte bei "CLARIFY" beziehen sich auf die kombinierte Antwort aus der zugehörigen Basisfrage und der Rückfrage. Das bedeutet eine Rückfrage sorgt nicht für eine Erhöhung der gesamt zu erreichenden Punktzahl, sondern es geht in diesem Fall nur die erreichte sowie die maximal zu erreichende Punktzahl aus "CLARIFY" in die Gesamtbewertung ein, die Bewertung der zugehörigen "Basisfrage" wird ignoriert und daher leicht ausgegraut in der Statistik dargestellt:
+
+![Statistik_Rueckfrage](screenshots_and_graphs/02_Statistik_Rueckfrage.png)
+
+Besonderheit der Statistik:
+Diese wird aktuell fortgeschrieben, wenn weitere Prüfungssimulationen absolviert werden. Es erfolgt eine Verrechnung der simulationsübergreifend erhaltenen Punkte.
+Wird eine komplett neue Bewertung gewünscht, muss die Datenbank vor der Durchführung der nächsten Prüfungssimulation zurückgesetzt werden.
+
+Wird die Statistik aufgerufen, ohne das vorab eine Frage beantwortet wurde, erscheint folgendes Bild:
+
+![Statistikfehler](screenshots_and_graphs/02_Statistikfehler_ohne_Pruefung.jpg)
+
+
+### Verwaltung
+
+Über den Menüpunkt "Verwaltung" können die zur Prüfungssimulation zu verwendenden Fragen eingesehen, bearbeitet, gelöscht oder ergänzt werden.
+
+![Verwaltung Übersicht](screenshots_and_graphs/03_Verwaltung_Uebersicht.png)
+
+Um eine zusätzliche Frage zu ergänzen, klickt man unter "Questions" auf die Schaltfläche "Erstellen".
+Es öffnet sich die nachfolgende Eingabemaske:
+
+![Verwaltung Frage erstellen](screenshots_and_graphs/03_Verwaltung_FrageErstellen.png)
+
+Alle 3 Felder müssen befüllt und anschließen gespeichert werden, damit die Frage korrekt im System übernommen und in einer Prüfungssimulation verwendet werden kann.
+
+Jede Frage, die in der Datenbank vorhanden ist, kann über die in grün dargestellte Schaltfläche in der Spalte "Aktionen" bearbeitet werden:
+
+![Verwaltung Frage bearbeiten](screenshots_and_graphs/03_Verwaltung_FrageBearbeiten.png)
+
+Vorgenommene Änderungen werden mit Betätigung der Schaltfläche "Save" übernommen.
+
+### Beendigung der Prüfungssimulation
+
+Um den Prototypen zu beenden, kann der Browser, in dem das Frontend geöffnet wurde, geschlossen, die VPN-Verbindung zum Server der Fernuniversität getrennt und der Prototyp mit dem Befehl "make down" beendet werden.
+
+---
 
 ## Evaluation
 
 Diese Dokumentation beschreibt das Evaluationsvorgehen im Rahmen des Projekts **Echolearn**. Ziel war es, sowohl die Qualität eines Speech-to-Text-(STT)-Modells als auch die Leistungsfähigkeit eines Large Language Models (LLM) als automatischen Prüfungsbewerter („LLM Judge“) systematisch zu untersuchen.
+
+---
 
 ### Zielsetzung der Evaluation
 
@@ -709,9 +955,29 @@ Auf diese Weise soll die Frage beantwortet werden, wie robust die Bewertung des 
 
 ---
 
-### 1. Evaluation der Datenanreicherung mit LLM
+### 1. Evaluationsaufbau der Analyse der Datenanreicherung
 
-### 2. Evaluation des STT-Modells
+#### Datengrundlage
+
+Die zur Analyse verwendeten Daten stammen aus der Datei: generated_q_and_a.csv
+
+Diese enthält unter anderem:
+
+- `question` – Prüfungsfrage auf Deutsch
+- `answer` – Musterlösung auf Deutsch 
+- `max_points` – maximal erreichbare Punkte  
+- `keywords` - die wichtigen Schlüsselbegriffe der Antwort
+- `classification` - die Klassifizierung des Fragetyps
+- `original_question` - die Prüfungsfrage auf Englisch aus dem Ausgangsdatensatz
+- `original_answer` - die Musterlösung auf Englisch aus dem Ausgangsdatensatz
+
+#### Evaluationslogik
+
+Die Analyse der Datenanreicherung mit Hilfe des LLMs erfolgte
+
+---
+
+### 2. Evaluationsaufbau der Analyse des STT-Modells
 
 #### Datengrundlage
 
@@ -752,18 +1018,9 @@ Die Bewertung des Speech-to-Text-Modells erfolgte über textuelle Ähnlichkeitsm
 Es wurde sich dafür entschieden, Fehlertypen `0` und `1` in die Kategorie `akzeptabel` zu gruppieren. Dies bedeutet, dass mit diesen Fehlern eine automatisierte Bewertung weiterhin möglich ist.
 Für Fehlertypen `2` und `3` wurde die Kategorie `nicht akzeptabel` gewählt.
 
-
-#### Ergebnis
-
-- 64,2% der transkribierten Antworten fallen in die Kategorie `akzeptabel`
-- 35,8% der transkribierten Antworten fallen in die Kategorie `nicht akzeptabel`
-Das spricht für die weitere Verwendung des STT-Modells
-
- 
-
 ---
 
-### 3. evaluation_llm_exam_judge
+### 3. Evaluationsaufbau der Analyse des evaluation_llm_exam_judge
 
 #### Evaluationsdesign
 
@@ -808,19 +1065,9 @@ Die Berechnung der semantischen Ähnlichkeit erfolgte wie folgt:
 4. Vergleich mit dem menschlichen Feedback und Score  
 5. Aggregierte statistische Auswertung  
 
-
-#### Ergebnis
-![results normal evaluation](result_eval_normal.png)
-Wie auf der Grafik zu sehen, werden hier zwei Metriken nebeneinander präsentiert:
-- `sem_sim_mean`: Das ist die durschnittliche semantische Ähnlichkeit zwischen *human_feebdack* und *llm_feedback* pro LLM
-- `ok_10_rate`: Die Anzahl der Abweichungen zwischem *human_score* und *llm_rating* um 1.0-Punkten
-Aus der Grafik lassen sich folgende Top-3 Modelle ablesen:
-1. phi4:latest
-2. gemma3:27b
-3. llama3.3:latest
 ---
 
-### 4. evaluation_llm_exam_judge_transcript
+### 4. Evaluationsaufbau der Analyse des evaluation_llm_exam_judge_transcript
 
 #### Datengrundlage
 
@@ -862,25 +1109,39 @@ Die Berechnung der semantischen Ähnlichkeit erfolgte wie folgt:
 4. Vergleich mit dem menschlichen Feedback und Score  
 5. Aggregierte statistische Auswertung 
 
-
-
-#### Ergebnis
-![result transcript evaluation](result_evaluation_transcript.png)
-Wie auf der Grafik zu sehen, werden hier zwei Metriken nebeneinander präsentiert:
-- `sem_sim_mean`: Das ist die durschnittliche semantische Ähnlichkeit zwischen *human_feebdack* und *llm_feedback* ro LLM
-- `ok_10_rate`: Die Anzahl der Abweichungen zwischem *human_score* und *llm_rating* um 1.0-Punkten
-Im Vergleich zur vorherigen Evaluation sind die Ergebnisse der `sem_sim_mean` hier schlechter, aufgrund der zu Beginn genannten Limitation des STT-Modells. Dennoch lässt sich hier ein Ranking feststellen:
-1. mistral-small3.1:latest
-2. mixtral:latest
-3. phi4:latest
-
 ---
 
 ### Gesamtergebnis der Evaluation
 
 Die vierstufige Evaluation im Projekt **Echolearn** erlaubt eine ganzheitliche Betrachtung der automatisierten Bewertung mündlicher Prüfungsleistungen. Dabei wurden sowohl die Qualität der Transkription (STT) als auch die Leistungsfähigkeit verschiedener LLMs als automatischer Prüfungsbewerter unter Ideal- und Realbedingungen untersucht.
 
-#### 1. Bewertung des STT-Modells
+#### 1. Bewertung der Datenanreicherung mittels LLM
+
+Zur Analyse der Datenanreicherung mit Hilfe von Systemprompting durch Aufruf des LLM "phi4-latest" wurden sowohl die Übersetzungsqualität, die Bewertung der maximal erreichbaren Punkte für eine Beantwortung einer Frage als auch die Generierung von Schlüsselbegriffen betrachtet.
+
+Die Analyse der semantische Ähnlichkeit der ins Deutsche übersetzten Antworten und Fragen weißen im Vergleich zum englischen Originaldatensatz eine hohe semantische Ähnlichkeite auf. 
+![analyse_answer_generation](screenshots_and_graphs/analyse_answer_generation.png)
+
+![analyse_question_generation](screenshots_and_graphs/analyse_question_generation_1.png)
+
+Auch die Analyse der Textlängen zeigt ebenfalls nur wenige Ausreißer:
+![analyse_question_length](screenshots_and_graphs/analyse_question_length.png)
+
+![analyse_answer_length](screenshots_and_graphs/analyse_answer_length.png)
+
+Auch im Systemtest selbst konnten manuell trotz der hohen Konzentration an Fachbegriffen und Abkürzungen kaum Abweichungen oder Unklarheiten erkannt werden.
+
+Im Vergleich zur Qualität der Übersetzung ließ sich die Extraktion der Schlüsselbegriffe mit Hilfe von exaktem Vergleich zur Antwort nur bedingt analysieren, da bereits geringe Abwandlungen wie zum Beispiel die Verwendung von Einzahl oder Mehrzahl  einen exakten Abgleich erschwerte. Hier wurden daher Stichprobenhaft manuelle Kontrolle durchgeführt, welche grundsätzlich eine gute Übereinstimmung erkennen ließ.
+
+
+Die nachfolgende Grafik zeigt auf der y-Achse die Verteilung der maximal erreichbaren Punkte sowie auf der x-Achse die Länge der Antwort mit frablicher Aufschlüsselung der Klassifizierung des Fragetyps: 
+![analyse_max_points](screenshots_and_graphs/analyse_max_points.png)
+
+Aus dieser Grafik lässt sich ablesen, dass die erreichbaren Punkte sich im Rahmen der Vorgaben gemäß des Systemprompts bewegen. Auffällig ist, dass sich die Punktvergabe hauptsächlich im Bereich von 4 bis 6 Punkten bewegt und sich lediglich wenige Ausreißer im Bereich von 3 und 8 Punkten bewegen. Dieses Ergebnis war, bedingt durch den genutzten Datensatz, welcher fragenübergreifend eine hohe Ähnlichkeit der Antwortkomplexität aufweist, erwartbar.
+
+---
+
+#### 2. Bewertung des STT-Modells
 
 - 64,2 % der Transkripte wurden als **akzeptabel** (Fehlertyp 0 oder 1) eingestuft.
 - 35,8 % wurden als **nicht akzeptabel** (Fehlertyp 2 oder 3) klassifiziert.
@@ -890,13 +1151,19 @@ Trotz dieser Limitation wurde das STT-Modell als ausreichend leistungsfähig ein
 
 ---
 
-#### 2. Evaluation der LLMs mit Originalantworten
+#### 3. Evaluation der LLMs mit Originalantworten
+
 
 Unter Idealbedingungen (direkt vom Menschen verfasste Antworten) zeigte sich:
 
 - Hohe semantische Ähnlichkeit zwischen menschlichem und LLM-Feedback bei den Top-Modellen.
 - Geringe mittlere absolute Abweichung (MAE) zwischen `human_score` und `llm_rating`.
 - Konsistente Rangfolge der leistungsstärksten Modelle.
+
+![results normal evaluation](screenshots_and_graphs/result_eval_normal.png)
+Wie auf der Grafik zu sehen, werden hier zwei Metriken nebeneinander präsentiert:
+- `sem_sim_mean`: Das ist die durschnittliche semantische Ähnlichkeit zwischen *human_feebdack* und *llm_feedback* pro LLM
+- `ok_10_rate`: Die Anzahl der Abweichungen zwischem *human_score* und *llm_rating* um 1.0-Punkten
 
 **Top-3 Modelle (Originalantworten):**
 
@@ -911,13 +1178,20 @@ Unter Idealbedingungen (direkt vom Menschen verfasste Antworten) zeigte sich:
 
 ---
 
-#### 3. Evaluation der LLMs mit STT-Transkripten
+#### 4. Evaluation der LLMs mit STT-Transkripten
 
 Unter realistischen Pipeline-Bedingungen (STT → LLM) zeigte sich:
 
 - Ein Rückgang der semantischen Ähnlichkeit (`sem_sim_mean`)
 - Eine leichte Verschlechterung der Punktgenauigkeit
 - Größere Sensitivität gegenüber Transkriptionsfehlern
+
+![result transcript evaluation](screenshots_and_graphs/result_evaluation_transcript.png)
+Wie auf der Grafik zu sehen, werden hier zwei Metriken nebeneinander präsentiert:
+- `sem_sim_mean`: Das ist die durschnittliche semantische Ähnlichkeit zwischen *human_feebdack* und *llm_feedback* ro LLM
+- `ok_10_rate`: Die Anzahl der Abweichungen zwischem *human_score* und *llm_rating* um 1.0-Punkten
+
+Im Vergleich zur vorherigen Evaluation sind die Ergebnisse der `sem_sim_mean` hier schlechter, aufgrund der zu Beginn genannten Limitation des STT-Modells. 
 
 **Top-3 Modelle (Transkripte):**
 
@@ -931,14 +1205,11 @@ Obwohl sich das Ranking verschob, blieb `phi4:latest` weiterhin unter den leistu
 
 ### Gesamtbewertung der Pipeline
 
-Die kombinierte Betrachtung aller drei Evaluationsschritte zeigt:
+Die kombinierte Betrachtung aller vier Evaluationsschritte zeigt:
 
 - Das STT-Modell liefert in der Mehrheit der Fälle verwertbare Transkripte.
 - LLMs sind grundsätzlich in der Lage, Prüfungsleistungen automatisiert zu bewerten.
-- Transkriptionsfehler wirken sich messbar auf die Bewertungsqualität aus.
-- Dennoch bleibt die Gesamtperformance auf einem praktikablen Niveau.
-
-Besonders relevant ist, dass kein Modell ausschließlich unter Idealbedingungen überzeugte, sondern auch Robustheit gegenüber realistischen Eingaben zeigen musste.
+- Transkriptionsfehler wirken sich messbar auf die Bewertungsqualität aus, dennoch bleibt die Gesamtperformance auf einem praktikablen Niveau.
 
 ---
 
@@ -946,7 +1217,7 @@ Besonders relevant ist, dass kein Modell ausschließlich unter Idealbedingungen 
 
 Auf Basis der Evaluationsergebnisse wurde das Modell **`phi4:latest`** für die Anwendung in Echolearn ausgewählt.
 
-#### Begründung der Modellwahl
+Die positiven Aspekte in Bezug auf die Performance sowie die praktische Eignung wurden nachfolgen stichpunktartig nochmals hervorgehoben:
 
 1. **Beste Gesamtperformance unter Idealbedingungen**  
    - Höchste semantische Ähnlichkeit zum menschlichen Feedback  
@@ -967,10 +1238,15 @@ Auf Basis der Evaluationsergebnisse wurde das Modell **`phi4:latest`** für die 
 - Bewertung basiert auf probabilistischen Sprachmodellen
 - keine pädagogische Validierung der Bewertungsqualität
 - keine Benutzerstudie zur Wirksamkeit
-- Speech-to-Text abhängig von Audioqualität
-- eingeschränkte inhaltliche Domänen
+- Speech-to-Text abhängig von Audioqualität und gewähltem Modell
+- eingeschränkter Testdatensatz
+- Laufzeitperformance
+- Umgang und konsequente Erkennung von Abkürzungen
+- Anpassung an System-Prompts
 
-Das im Projekt verwendete STT-Modell hat beim Transkribieren keine Satzzeichen gesetzt. Bei einer Antowrt, die aus mehreren Sätzen besteht, führt dies in Teilen zu einer Verschlechterung des Bewertungsergebnisses.
+Das im Projekt verwendete STT-Modell hat beim Transkribieren teilweise keine Satzzeichen gesetzt. Bei einer Antowrt, die aus mehreren Sätzen besteht, kann dies die Bewertungsergebnisse beeinflussen.
+
+---
 
 ## Einordnung
 - empirische Evaluation mit Studierenden
@@ -978,43 +1254,48 @@ Das im Projekt verwendete STT-Modell hat beim Transkribieren keine Satzzeichen g
 - personalisierte Lernpfade
 - Benutzerkonten und Langzeittracking
 - Lernmodus (Active Recall und Spaced Repetition) implementieren
-## Ausblick
-- rasante Entwicklung im Bereich der KI schafft neue Möglichkeiten
-## Fazit
-Die Evaluation zeigt, dass eine automatisierte Bewertung mündlicher Prüfungsleistungen technisch realisierbar ist.
 
-Zentrale Erkenntnisse:
+---
+
+## Fazit
+
+Die Evaluation des Prototyps zeigt, dass eine automatisierte Bewertung mündlicher gegebener Antworten technisch möglich und somit eine Unterstützung beim Lernen und Üben für mündliche Prüfungen realisierbar ist.
+
+Als zentrale Erkenntnisse können dabei folgende Punkte herausgestellt werden:
 
 - Die Qualität der Transkription ist ein entscheidender Faktor für die Gesamtperformance.
-- LLMs können menschliche Bewertungen in vielen Fällen mit hoher Übereinstimmung approximieren.
-- Eine sorgfältige Modellwahl ist essenziell, da sich Modelle unterschiedlich sensitiv gegenüber Transkriptionsfehlern zeigen.
+- LLMs können menschliche Bewertungen bereits in vielen Fällen mit hoher Übereinstimmung approximieren.
+- Eine sorgfältige Modellwahl ist essenziell, da sich Modelle unterschiedlich sensitiv gegenüber Transkriptionsfehlern und der Verwendung von Fachbegriffen und Abkürzungen zeigen.
+- Die Laufzeit während der Prüfungssimulation ist ein kritischer Faktor, um einen praxistauglichen Lernfluss zu gewährleisten.
 
-Mit der Entscheidung für **`phi4:latest`** wurde ein Modell gewählt, das sowohl unter Ideal- als auch unter Realbedingungen eine stabile und leistungsfähige Bewertung ermöglicht.
+Mit der Entscheidung für **`phi4:latest`** wurde aus den zur Verfügung stehenden LLM-Modellen der Fernuniversität Hagen ein Modell gewählt, welches sowohl unter Ideal- als auch unter Realbedingungen eine stabile und leistungsfähige Bewertung ermöglicht.
 
-Damit stellt Echolearn eine praktikable Grundlage für die automatisierte Unterstützung mündlicher Prüfungsformate dar – mit klar identifizierten Verbesserungspotenzialen im Bereich der Transkription und strukturellen Textaufbereitung.
+Der Prototyp "EchoLearn" demonstriert damit die Leistungsfähigkeit von LLM-Modellen zur automatisierten Bewertung. Eine Unterstützung bei der Vorbereitung auf mündliche Prüfungsvorbereitung ist aus Sicht der Projektbeteiligten gegeben, allerdings mit klar identifizierten Verbesserungspotenzialen im Bereich der Laufzeit, der Transkription und adaptiven Anpassung auf Prüfungsthemen sowie Bewertungsschwerpunkte.
+
+---
 
 ## Verantwortungsbereiche
 
 **Sandra Fischer**
 
-- Dokumentation (Screenshots and Graphs, Draft)
-- Testen
 - Daten (Generation, Cleaning, Evaluationsdatensätze)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze, Notebooks zur LLM Evaluation)
-- Dokumentation (Gesamtaufbereitung, Daten, Evaluation, Einordnung, Ausblick)
+- Evaluation (menschliche Bewertung von Evaluationsdatensätzen, Notebooks zur LLM Evaluation)
+- Testen
+- Dokumentation (Gesamtaufbereitung, Datenstruktur, Evaluation, Limitation, Einordnung, Fazit)
 
 **Aleksandar Trifonov**
 
 - Backend (funktionale und inhaltliche Anbindung der LLMs in die App, Bereitstellung der Daten für die LLMs, Testen der Funktionalitäten)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze, Notebooks zur LLM Evaluation)
-- Dokumentation (Evaluation, Backend)
+- Evaluation (menschliche Bewertung von Evaluationsdatensätzen, Notebooks zur LLM Evaluation)
+- Dokumentation (Backend, Evaluation)
 
 **Maurice Haas**
 
 - Projektarchitektur (Docker, CI Pipelines, Linter, Formatter, Make-Befehle)
 - Frontend (STT, TTS, Design, Vue Komponenten & Templates, Frontend Routen)
 - Backend (CRUD Routen, CSV-Export/Import Routen), Datenbankverbindung, Skript für automatische Datenbankerstellung und Löschung
-- Dokumentation (Readme, Allgemein, Frontend, Architektur)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze)
+- Evaluation (menschliche Bewertung von Evaluationsdatensätzen)
+- Dokumentation (Readme, Frontend, Architektur)
 
-## Quellen
+---
+
