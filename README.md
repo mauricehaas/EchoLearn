@@ -14,6 +14,7 @@ Für die lokale Ausführung werden benötigt:
 - Docker
 - Docker Compose
 - make
+- Browser muss Speech-to-Text (STT) unterstützen (z.B. Edge)
 
 ---
 
@@ -81,7 +82,7 @@ Lokaler Forschungs- und Entwicklungsprototyp.
 
 - Erstellung und Verwaltung von Prüfungsfragen
 - Vorlesen von Fragen durch Text-to-Speech (TTS)
-- Aufnahme gesprochener Antworten durch Speech-to-Text (STT)
+- Aufnahme gesprochener Antworten durch STT
 - Automatisierte Bewertung durch ein Sprachmodell
 - Generierung kontextabhängiger Rückfragen und Vertiefungsfragen
 - Anzeige von Lernstatistiken
