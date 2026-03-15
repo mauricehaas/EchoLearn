@@ -1,5 +1,7 @@
+## Einleitung
+
 EchoLearn ist ein interaktiver Prototyp zur Simulation mündlicher Prüfungssituationen.  
-Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rückfragen und Vertiefungsfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
+Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rück- oder Vertiefungsfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
 
 Das Projekt wurde im universitären Kontext als experimentelle Lernplattform entwickelt und dient der konzeptionellen Untersuchung KI-gestützter Bewertung freier mündlicher Antworten.
 
