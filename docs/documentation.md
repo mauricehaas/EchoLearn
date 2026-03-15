@@ -1304,8 +1304,9 @@ Die Auflistung stellt keinen Anspruch auf Vollzähligkeit, sondern soll lediglic
 ## Einordnung
 
 Im Prototyp EchoLearn konnten die gewünschten Funktionalitäten aus der Motivation abgebildet und somit eine erste Machbarkeit demonstriert werden. 
-Um zu analysieren, inwiefern mit dem System ein Lernerfolg sowie bessere Leistungen in mündlichen Prüfungen erzielt werden können, benötigt es weitere Untersuchungen sowie Experimente im realen Einsatz mit Studierenden.
-Hierfür empfiehlt sich eine Weiterentwicklung des Prototyps, um ihn praxistauglich zu machen. So sollte zum realen Einsatz das Anlegen verschiedener Benutzerkonten und ein Langzeittracking ermöglicht werden. Auch personalisierte Lernpfade, unterschiedliche Lernmodi sowie adaptive Schwierigkeitsanpassungen und die Einbindung in ein Lernmanagementsystem wären wünschenswert, um das volle Potential eines KI-basierten Lerntools zur Vorbereitung auf mündliche Prüfungen ausschöpfen und in empirischen Studien überprüfen zu können.
+Um zu analysieren, inwiefern mit dem System ein Lernerfolg sowie bessere Leistungen in mündlichen Prüfungen erzielt werden können, benötigt es weitere Untersuchungen sowie Experimente im realen Einsatz mit Studierenden. 
+Im Prototyp wurden lediglich 3 Fragen zum Testen in einer Prfüungssimulation verwendet, zum realen Einsatz zur Prüfungsvorbereitung werden 7 bis 10 Fragen als praktikabel angesehen, um einen Übungseffekt zu erzielen und sich der Dauer einer realen mündlichen Prüfung anzunähern.
+Insgesamt empfiehlt sich eine Weiterentwicklung des Prototyps, um ihn praxistauglich zu machen. So sollte zum realen Einsatz das Anlegen verschiedener Benutzerkonten und ein Langzeittracking ermöglicht werden. Auch personalisierte Lernpfade, unterschiedliche Lernmodi sowie adaptive Schwierigkeitsanpassungen und die Einbindung in ein Lernmanagementsystem wären wünschenswert, um das volle Potential eines KI-basierten Lerntools zur Vorbereitung auf mündliche Prüfungen ausschöpfen und in empirischen Studien überprüfen zu können.
 
 ---
 
