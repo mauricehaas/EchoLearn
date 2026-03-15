@@ -1,35 +1,19 @@
-begin_exam = """
-Du bist ein Data-Science-Prüfungsgenerator.
-Begrüße den Studenten freundlich und erkläre kurz den Ablauf sowie die Bedingungen der Prüfung.
+evaluate_student_answer = """Bitte vergebe bis zu {max_points} Punkte für die folgende Studentenantwort auf die gegebene Frage. Für die Orientierung bekommst du eine bereitgestellte Musterlösung.
+Vergebe die Punkte folgendermaßen:
 
-Baue anschließend folgende Frage in deine Begrüßung ein. Am besten befindet sich die Frage am Ende deiner Aussage:
-<Frage>
-{question}
-</Frage>
+Inhaltliche Korrektheit
+- Wurden die Antwort komplett richtig und vollständig beantwortet, vergebe {max_points} Punkte
+- Wenn nicht, dann vergebe die erreichten Punkte prozentual 
+- Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
+- Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
+- Maximal 2–3 Sätze.
 
-Wichtige Regeln:
-- Stelle die Frage ausschließlich so, wie sie im Fragenkatalog steht (keine Umformulierungen).
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+Gib am Ende ein knappes Gesamtrating (0-{max_points} Punkte). Gerundet auf eine Nachkommastelle
 
-<Antwortformat>
-```json
-{{
-"llm_answer": "<Die gesamte Ausgabe inklusive Begrüßung, Erklärung und der ausgewählten Frage>"
-}}
-```
-"""
-
-evaluate_student_answer = """
-Analysiere die folgende Studentenantwort auf die gegebene Frage mithilfe der Musterlösung und entscheide, um welchen der folgenden Fälle es sich handelt:
-
-Fall 1: Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
-Fall 2: Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
-
-Wichtige Regeln:
-- Wähle **genau einen** der drei Fälle.
-- Gib **keine Begründung**, **keine Bewertung**, **keine Rückfragen** und **keinen zusätzlichen Text** aus.
-- Die gesamte Ausgabe muss **ausschließlich** aus dem unten definierten JSON bestehen.
-- Die gesamte Ausgabe muss in **deutscher Sprache** erfolgen.
+Wichtige Regeln: 
+- Gib keine Meta-Kommentare über dein Vorgehen aus.
+- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
+- Deutsch, Du-Form
 
 Frage:
 {question}
@@ -43,45 +27,29 @@ Musterlösung:
 <Antwortformat>
 ```json
 {{
-  "case": "Fall 1 | Fall 2"
+"feedback_content": "<Hier antwortest du auf die Antwort des Studenten und gibts ihm Feedback entsprechend der Analysepunkte. Die Antwort ist ein Text, es gibt keine JSON-Struktur>",
+"statement": "<Hier gehst du kurz auf die Antwort des Studenten ein.>",
+"overall_rating": "<Gesamtrating (0-{max_points} Punkte)>"
 }}```
 """
 
 evaluate_exam = """
-Bitte erstelle auf Basis der folgenden zwei Informationsquellen eine umfassende Gesamtevaluierung der gesamten Prüfung:
+Bitte erstelle ausschließlich auf Basis der beiden folgenden Informationsquellen eine prägnante Gesamtevaluierung der gesamten Prüfung.
 
-Feedback-String: enthält alle inhaltlichen und sprachlichen Feedbacks zu den einzelnen Antworten
+Du darfst keinerlei Informationen ergänzen, interpretieren oder erfinden, die nicht explizit in den beiden Strings enthalten sind.
 
-Bewertungs-String: enthält die jeweiligen Einzelbewertungen (z. B. Punkte, Noten oder qualitative Einstufungen)
+<Aufgabenreihenfolge strikt einhalten>
+1. Gesamtzusammenfassung der Prüfung (Stärken & wiederkehrende Schwächen)
+2. Inhaltliche Gesamtbewertung (fachliche Beherrschung, starke & schwache Themen)
+3. Konkrete Verbesserungsvorschläge (fachlich und strukturell)
 
-<Aufgaben>
-Gesamtzusammenfassung der Prüfung
-- Welche Stärken zeigen sich über alle Antworten hinweg?
-- Welche Schwächen treten wiederholt auf?
-
-Inhaltliche Gesamtbewertung
-- Wie gut beherrscht der Student die zentralen fachlichen Konzepte insgesamt?
-
-- Welche Themenbereiche sind besonders stark bzw. schwach?
-
-Sprachliche & kommunikative Gesamtbewertung
-- Wie klar und präzise sind die Antworten insgesamt formuliert?
-- Tritt Unsicherheit häufig auf (z. B. durch Füllwörter wie „äh“, „ähm“, „vielleicht“, „glaube“ etc.)?
-- Wie gut ist der strukturelle Aufbau?
-
-Verbesserungsvorschläge
-- Fachlich
-- Sprachlich
-- Strukturell
-
-Gesamtbewertung
-- Fasse die Bewertung der gesamten Prüfung in einer abschließenden Note oder Qualitätsstufe zusammen (z. B. sehr gut / gut / ausreichend / mangelhaft oder vergleichbare Skala).
-- Begründe diese Gesamtnote verständlich anhand der Inhalte aus Feedback- und Bewertungs-String.
-
-Wichtige Hinweise:
-- Verwende ausschließlich die Informationen aus beiden Strings.
-- Formuliere die Gesamtevaluierung klar, strukturiert und in deutscher Sprache.
-</Aufgaben>
+<Wichtige Regeln>
+- Verwende nur Informationen aus Feedback-String und Bewertungs-String
+- Keine Beispiele erfinden
+- Keine neuen Argumente hinzufügen
+- Deutsch, Du-Form
+- Maximal 5 kurze, informationsdichte Sätze
+- Bewertungs-String muss in die Gesamtbewertung erkennbar einfließen
 
 Feedback-String:
 {overall_feedback}
@@ -92,135 +60,11 @@ Bewertungs-String:
 <Antwortformat>
 ```json
 {{
-  "final_feedback": "<string: Hier gibst du die gesamte Evaluierung der Prüfung wieder, inklusive Zusammenfassung, Stärken, Schwächen, Verbesserungsvorschläge und Gesamtbewertung.>",
-  "final_rating": "<string: Hier gibst du die abschließende Note oder Qualitätsstufe der gesamten Prüfung wieder.>"
+  "final_feedback": "<Gesamtevaluierung hier>",
 }}```
 """
 
-prompt_case_one_answer_correct_next_specific_question = """
-Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
-
-Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend eine neue Prüfungsfrage zu stellen. Dabei darfst du frei entscheiden, ob:
-- eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
-- eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
-
-Gehe dabei intern wie folgt vor (ohne dies auszugeben):
-- Berücksichtige die ursprüngliche Frage und die Musterlösung.
-- Beurteile die Qualität der Studentenantwort.
-- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft.
-
-Erstelle anschließend fünf Ausgaben:
-
-1) **answer_llm**  
-   - Antworte dialogisch wie in einer mündlichen Prüfung.
-   - Gehe kurz positiv auf die korrekte Antwort des Studenten ein.
-   - Leite fließend zur neuen Prüfungsfrage über.
-   - Keine detaillierte Bewertung oder Punktevergabe in diesem Feld.
-
-2) **llm_feedback**  
-   - Gib ein kurzes, sachliches Feedback zur Antwort des Studenten.
-   - Hebe Stärken hervor (z. B. fachliche Korrektheit, Struktur, Vollständigkeit).
-   - Maximal 2–3 Sätze.
-
-3) **llm_rating**  
-   - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
-   - Da es sich um Fall 1 handelt, muss die Bewertung **hoch ausfallen** (z. B. 4,0–5,0).
-   - Gib nur die Zahl aus (z. B. `4.5`).
-
-Wichtige Regeln:
-- Stelle genau **eine** neue Frage.
-- Gib keine Meta-Kommentare über dein Vorgehen aus.
-- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-
----
-
-Frage:
-{question}
-
-Studentenantwort:
-{student_answer}
-
-Musterlösung:
-{correct_answer}
-
----
-
-<Antwortformat>
-```json
-{{
-  "answer_llm": "<Dialogische Antwort im Prüfungskontext mit Überleitung zur neuen Frage>",
-  "llm_feedback": "<Kurzes inhaltliches Feedback zur Antwort des Studenten>",
-  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>"
-}}```
-"""
-
-prompt_case_two_answer_partially_correct_question_to_examine_knowledge_gaps = """
-Die Antwort des Studenten ist teilweise korrekt oder inkorrekt.
-
-Deine Aufgabe ist es, die Studentenantwort im Kontext der ursprünglichen Frage und der Musterlösung zu analysieren und darauf dialogisch zu reagieren.
-
-Gehe dabei intern wie folgt vor (ohne dies auszugeben):
-- Prüfe, ob die Studentenantwort zur ursprünglichen Frage passt.
-- Vergleiche die Studentenantwort mit der Musterlösung.
-- Identifiziere inhaltliche Lücken, unklare Stellen oder falsche Aussagen.
-- Wähle die **wichtigste inhaltliche Lücke**, die für das Verständnis zentral ist.
-
-Erstelle anschließend fünf Ausgaben:
-
-1) **answer_llm**  
-   - Antworte wie in einem Gespräch oder Prüfungskontext.
-   - Gehe kurz auf richtige Aspekte der Studentenantwort ein.
-   - Weise vorsichtig auf die zentrale inhaltliche Lücke hin.
-   - Integriere fließend die neue Folgefrage.
-
-2) **llm_feedback**  
-   - Gib ein kurzes, sachliches Feedback zur Studentenantwort.
-   - Benenne sowohl korrekte Aspekte als auch die wichtigste Schwäche.
-   - Maximal 2–3 Sätze.
-
-3) **llm_rating**  
-   - Vergib eine Gesamtbewertung zwischen **0 und 5 Punkten**.
-   - Die Bewertung soll dem inhaltlichen Stand der Antwort entsprechen (typischerweise **1,0–3,9 Punkte**).
-   - Gib nur die Zahl aus (z. B. `2.5`).
-
-4) **next_question**  
-   - Formuliere **eine** gezielte Folgefrage, die auf die identifizierte Lücke abzielt.
-
-5) **correct_answer**  
-   - Gib die fachlich korrekte und vollständige Musterantwort auf diese Folgefrage an.
-
-Wichtige Regeln:
-- Stelle genau **eine** Folgefrage.
-- Gib keine Meta-Erklärungen oder Hinweise auf dein Vorgehen aus.
-- Die gesamte Ausgabe muss ausschließlich im unten definierten JSON-Format erfolgen.
-- Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
-
----
-
-Frage:
-{question}
-
-Studentenantwort:
-{student_answer}
-
-Musterlösung:
-{correct_answer}
-
----
-
-<Antwortformat>
-```json
-{{
-  "answer_llm": "<Dialogische Antwort mit Überleitung zur Folgefrage>",
-  "llm_feedback": "<Kurzes Feedback zur Studentenantwort>",
-  "llm_rating": "<Gesamtbewertung (0–5 Punkte)>",
-  "next_question": "<Gezielte Folgefrage zur identifizierten Lücke>",
-  "correct_answer": "<Fachlich korrekte Musterantwort auf die Folgefrage>"
-}}```
-"""
-
-prompt_case_three_student_does_not_understand_question = """
+rephrase_question = """
 Deine einzige Aufgabe ist es, den folgenden Text sprachlich umzuschreiben.
 
 - Beantworte die Frage NICHT.
@@ -241,6 +85,83 @@ Antwortformat:
 ```json
 {{
   "answer_llm": "<Die vereinfachte, allgemeinverständliche Version der Frage>"
+}}
+```
+"""
+
+next_question = """
+Die Antwort des Studenten ist inhaltlich korrekt und vollständig.
+
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und anschließend genau **eine neue Prüfungsfrage** zu stellen. Dabei darfst du entscheiden, ob:
+- eine vertiefende Frage zum gleichen Themengebiet gestellt wird, oder
+- eine weiterführende Frage zu einem neuen, aber fachlich angrenzenden Themengebiet gestellt wird.
+- eine **Musterlösung zu der neuen Frage** in maximal 3 Sätzen anzugeben.
+
+**Interne Schritte (nicht ausgeben):**
+- Berücksichtige die ursprüngliche Frage und die Musterlösung.
+- Wähle eine sinnvolle nächste Prüfungsfrage, die das fachliche Verständnis weiter überprüft, für die du genau 5 Punkte vergeben würdest.
+- Gebe eine Musterlösung zu dieser neuen Prüfungsfrage an, welche maximal 3 Sätze lang sein darf.
+
+**Wichtige Regeln:**
+1. Gib nur die JSON-Antwort zurück, **keine zusätzlichen Kommentare oder Erklärungen**.
+2. Verwende das exakte JSON-Format unten.
+3. Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+Antwortformat:
+```json
+{{
+  "question": "<string: Generierte Vertiefungsfrage>",
+  "answer": "<string: Musterlösung zur generierten Vertiefungsfrage>"
+}}
+```
+"""
+
+clarify = """
+Die Antwort des Studenten ist teilweise korrekt (ca. 50-80%).
+
+Deine Aufgabe ist es, im Stil eines echten Prüfungsgesprächs zu reagieren und **nur einen minimalen Hinweis** zu geben, **welche Aspekte in der Antwort noch fehlen**, sodass der Student die Chance hat, den fehlenden Teil selbst zu ergänzen. Gib keine Musterlösungen, keine vollständigen Erklärungen und keine neuen Fragen.
+
+**Interne Schritte (nicht ausgeben):**
+- Analysiere die Studentenantwort im Hinblick auf die ursprüngliche Frage und Musterlösung.
+- Gib **nur einen kurzen Hinweis**, der den Studenten auf die fehlenden oder unvollständigen Punkte aufmerksam macht.
+- Ignoriere alles, was korrekt ist, außer um zu betonen, dass es korrekt ist.
+- Gib keine Musterlösungen oder weiterführende Fragen.
+
+**Wichtige Regeln:**
+1. Gib nur die JSON-Antwort zurück, **keine zusätzlichen Kommentare oder Erklärungen**.
+2. Verwende das exakte JSON-Format unten.
+3. Die gesamte Ausgabe muss in deutscher Sprache erfolgen.
+
+---
+
+Frage:
+{question}
+
+Studentenantwort:
+{student_answer}
+
+Musterlösung:
+{correct_answer}
+
+---
+
+Antwortformat:
+```json
+{{
+  "hint": "<string: Minimaler Hinweis, welcher Teil der Antwort noch fehlt>"
 }}
 ```
 """

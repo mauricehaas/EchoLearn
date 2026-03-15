@@ -1,6 +1,6 @@
 <template>
   <div class="table-container">
-    <h2>Questions</h2>
+    <h2>Fragen</h2>
 
     <!-- Action Buttons -->
     <div class="actions-top">
@@ -13,7 +13,7 @@
     <!-- Modal -->
     <div v-if="editing" class="modal-backdrop">
       <div class="modal-content">
-        <h3>{{ editForm.id ? 'Edit Question #' + editForm.id : 'Create Question' }}</h3>
+        <h3>{{ editForm.id ? 'Frage #' + editForm.id + ' bearbeiten' : 'Frage erstellen' }}</h3>
 
         <label>Frage:</label>
         <input v-model="editForm.question" />
@@ -21,9 +21,12 @@
         <label>Antwort:</label>
         <input v-model="editForm.answer" />
 
+        <label>Maximale Punkte:</label>
+        <input v-model="editForm.max_points" />
+
         <div class="modal-buttons">
-          <button class="primary" @click="saveEdit" type="button">Save</button>
-          <button class="cancel" @click="cancelEdit" type="button">Cancel</button>
+          <button class="primary" @click="saveEdit" type="button">Speichern</button>
+          <button class="cancel" @click="cancelEdit" type="button">Zurück</button>
         </div>
       </div>
     </div>
@@ -35,6 +38,7 @@
           <th>ID</th>
           <th>Frage</th>
           <th>Antwort</th>
+          <th>Maximale Punkte</th>
           <th>Aktionen</th>
         </tr>
       </thead>
@@ -43,6 +47,7 @@
           <td>{{ q.id }}</td>
           <td>{{ q.question }}</td>
           <td>{{ q.answer }}</td>
+          <td>{{ q.max_points }}</td>
           <td class="actions">
             <button @click="startEdit(q)" class="edit" type="button">Bearbeiten</button>
             <button @click="deleteQuestion(q.id)" class="delete" type="button">Löschen</button>
@@ -107,7 +112,7 @@
       // CREATE
       const startCreate = () => {
         editing.value = true
-        editForm.value = { id: null, question: '', answer: '' }
+        editForm.value = { id: null, question: '', answer: '', max_points: '' }
       }
 
       const cancelEdit = () => {
@@ -122,7 +127,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               question: editForm.value.question,
-              answer: editForm.value.answer
+              answer: editForm.value.answer,
+              max_points: editForm.value.max_points
             })
           })
         } else {
@@ -132,7 +138,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               question: editForm.value.question,
-              answer: editForm.value.answer
+              answer: editForm.value.answer,
+              max_points: editForm.value.max_points
             })
           })
         }

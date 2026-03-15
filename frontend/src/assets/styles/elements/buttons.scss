@@ -1,6 +1,15 @@
+/*
+--------------------------------------------------
+EchoLearn – Button Styling
+--------------------------------------------------
+Autor: Maurice Haas
+Beschreibung: Basis-Styles und Zustände für UI-Buttons
+Stand: 2026-02
+--------------------------------------------------
+*/
+
 button {
-  padding: 6px 12px;
-  margin-right: 6px;
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -8,6 +17,17 @@ button {
   font-size: 0.9rem;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 5px 5px 5px 0;
+
+  &:disabled {
+    color: #888;
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -15,7 +35,7 @@ button {
   }
 
   &.edit {
-    background-color: #10b981; // grün
+    background-color: #10b981;
     color: #fff;
 
     &:hover {
@@ -24,7 +44,7 @@ button {
   }
 
   &.delete {
-    background-color: #ef4444; // rot
+    background-color: #ef4444;
     color: #fff;
 
     &:hover {
@@ -33,7 +53,7 @@ button {
   }
 
   &.primary {
-    background-color: #2196f3; // blau
+    background-color: #2196f3;
     color: #fff;
 
     &:hover {
@@ -42,7 +62,7 @@ button {
   }
 
   &.cancel {
-    background-color: #9e9e9e; // grau
+    background-color: #9e9e9e;
     color: #fff;
 
     &:hover {

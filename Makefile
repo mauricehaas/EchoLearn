@@ -2,6 +2,7 @@
 build:
 	docker compose build
 
+# Installiert Frontend
 build-frontend:
 	docker compose run --rm frontend sh -c "npm install && npm install axios"
 
@@ -9,7 +10,7 @@ build-frontend:
 up:
 	docker compose up -d
 
-# Stoppt alle Services
+# Stoppt alle Services (Container herunterfahren)
 down:
 	docker compose down
 
@@ -31,9 +32,6 @@ seed:
 
 # Datenbank leeren
 clear-tables:
-	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE users RESTART IDENTITY CASCADE;"
+	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE exam_evaluation_final RESTART IDENTITY CASCADE;"
 	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE questions RESTART IDENTITY CASCADE;"
 	docker compose exec db psql -U echolearn -d echolearn -c "TRUNCATE TABLE exam_evaluation_single_answer RESTART IDENTITY CASCADE;"
-
-data-questions:
-	docker compose run --rm backend python app/data_processing/questions.py

@@ -1,7 +1,6 @@
 <template>
   <header class="header">
     <h1 class="logo">EchoLearn</h1>
-
     <nav class="nav">
       <router-link to="/" class="link">Home</router-link>
       <router-link to="/pruefung" class="link">Prüfung</router-link>
@@ -21,7 +20,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background: #ffffff;
+    background: #fff;
     border-bottom: 1px solid #e5e7eb;
   }
 
@@ -45,12 +44,10 @@
     transition: color 0.2s ease;
   }
 
-  /* Hover */
   .link:hover {
     color: #2563eb;
   }
 
-  /* Aktiver Router-Link */
   .router-link-active {
     color: #2563eb;
   }
@@ -66,7 +63,6 @@
     border-radius: 2px;
   }
 
-  /* Verwaltung leicht abgesetzt */
   .admin {
     font-weight: 600;
   }

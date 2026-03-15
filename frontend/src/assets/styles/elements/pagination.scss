@@ -1,3 +1,13 @@
+/*
+--------------------------------------------------
+EchoLearn – Pagination Styling
+--------------------------------------------------
+Autor: Maurice Haas
+Beschreibung: Globale Styles für Pagination
+Stand: 2026-02
+--------------------------------------------------
+*/
+
 .pagination {
   margin-top: 1rem;
   display: flex;
@@ -6,18 +16,11 @@
   gap: 0.5rem;
 
   button {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: none;
-    background-color: #3b82f6; // Blau
+    background-color: #3b82f6;
     color: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
 
     &:disabled {
-      background-color: #9ca3af; // Grau für deaktiviert
-      cursor: not-allowed;
+      background-color: #9ca3af;
     }
 
     &:hover:not(:disabled) {

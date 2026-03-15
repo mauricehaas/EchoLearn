@@ -1,40 +1,106 @@
-# EchoLearn
+## Einleitung
 
-EchoLearn ist eine interaktive Lernplattform, die eine mündliche Prüfung simuliert, diese bewertet und an erwarteten Stellen Rückfragen stellt.
+EchoLearn ist ein interaktiver Prototyp zur Simulation mündlicher Prüfungssituationen.  
+Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rück- oder Vertiefungsfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
 
----
-
-## Technologien
-
-- Frontend: Vue 3 (Vite)
-- Backend: FastAPI (Python)
-- Datenbank: PostgreSQL (Docker)
-- Containerisierung: Docker + Docker Compose
+Das Projekt wurde im universitären Kontext als experimentelle Lernplattform entwickelt und dient der konzeptionellen Untersuchung KI-gestützter Bewertung freier mündlicher Antworten.
 
 ---
 
-## Local Development (Docker-only)
+## Installation & Nutzung
 
-### Schnellstart
+### Voraussetzungen
 
-- make build-frontend # Frontend wird installiert
-- make build # Backend wird installiert
-- make up # startet alle Services
+Für die lokale Ausführung werden benötigt:
 
-- make down # stoppt alle Services
-
-- Backend: http://localhost:8000
-- Frontend: http://localhost:5173
+- Docker
+- Docker Compose
+- make
+- Browser muss Speech-to-Text (STT) unterstützen (z.B. Edge)
 
 ---
 
-## Features (für den Prototyp)
+### Lokale Ausführung
 
-- Flashcards erstellen / verwalten
-- Text to Speech um Fragen vorzulesen
-- Speech to text um Antworten aufzunehmen
-- Bewertung der Antworten durch LLM
-- Stellen von Rückfragen an erwarteten Stellen
-- Lernstatistiken anzeigen
+Repository klonen:
+
+```
+git clone https://github.com/mauricehaas/EchoLearn
+cd EchoLearn
+```
+
+Services bauen und starten:
+
+```
+make build-frontend
+make build
+make up
+```
+
+Datenbank aufbauen:
+
+```
+make seed
+```
 
 ---
+
+### Zugriff auf Services
+
+Frontend  
+http://localhost:5173
+
+Backend API  
+http://localhost:8000
+
+API Dokumentation  
+http://localhost:8000/docs
+
+### Services stoppen
+
+```
+make down
+```
+
+### Tabellen zurücksetzen
+
+```
+make clear-tables
+```
+
+## Projektstatus
+
+Lokaler Forschungs- und Entwicklungsprototyp.
+
+- ausschließlich für lokale Ausführung vorgesehen
+- kein Produktionssystem
+- kein Deployment-Setup
+- keine Sicherheits- oder Skalierungsoptimierung
+- Fokus auf Konzeptvalidierung
+
+---
+
+## Funktionsumfang
+
+- Erstellung und Verwaltung von Prüfungsfragen
+- Vorlesen von Fragen durch Text-to-Speech (TTS)
+- Aufnahme gesprochener Antworten durch STT
+- Automatisierte Bewertung durch ein Sprachmodell
+- Generierung kontextabhängiger Rückfragen und Vertiefungsfragen
+- Anzeige von Lernstatistiken
+
+## Technologieauswahl
+
+Frontend: Vue 3 (Vite)  
+Backend: FastAPI (Python)  
+Datenbank: PostgreSQL  
+Containerisierung: Docker + Docker Compose  
+CI: Github Actions
+
+---
+
+## Dokumentation
+
+Weitere konzeptionelle Details befinden sich hier:
+
+- [Projektdokumentation](docs/documentation.md)

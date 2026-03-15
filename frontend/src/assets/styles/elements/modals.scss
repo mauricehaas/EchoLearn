@@ -1,3 +1,13 @@
+/*
+--------------------------------------------------
+EchoLearn – Modal Styling
+--------------------------------------------------
+Autor: Maurice Haas
+Beschreibung: Globale Styles für Modals
+Stand: 2026-02
+--------------------------------------------------
+*/
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -13,7 +23,7 @@
 }
 
 .modal-content {
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 24px;
   border-radius: 12px;
   width: 400px;

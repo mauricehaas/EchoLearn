@@ -11,5 +11,10 @@ Base = declarative_base()
 
 
 async def get_session():
+    """Function to yield an asynchronous sqlalchemy database session
+
+    Yields:
+        session: sqlalchemy database session
+    """
     async with async_session() as session:
         yield session

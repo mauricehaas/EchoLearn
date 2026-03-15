@@ -1,15 +1,24 @@
+/*
+--------------------------------------------------
+EchoLearn – Exam Styling
+--------------------------------------------------
+Autor: Maurice Haas
+Beschreibung: Globale Styles für Exam Komponente
+Stand: 2026-02
+--------------------------------------------------
+*/
+
 .speech-input {
   max-width: 600px;
   margin: 30px auto;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
 
   h2 {
     text-align: center;
-    color: #4f46e5; // dein gewünschtes Hauptblau
+    color: #4f46e5;
     margin-bottom: 20px;
   }
 
@@ -17,25 +26,6 @@
     font-size: 1rem;
     margin: 10px 0;
     color: #333;
-  }
-
-  button {
-    padding: 8px 16px;
-    margin: 5px 5px 5px 0;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:disabled {
-      background-color: #cbd5e1;
-      cursor: not-allowed;
-    }
-
-    &:not(:disabled):hover {
-      transform: translateY(-1px);
-    }
   }
 
   .feedback {
