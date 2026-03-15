@@ -15,7 +15,6 @@
 - [Evaluation](#evaluation)
 - [Limitationen](#limitationen)
 - [Einordnung](#einordnung)
-- [Ausblick](#ausblick)
 - [Fazit](#fazit)
 - [Verantwortlichkeiten im Projekt](#verantwortungsbereiche)
 
@@ -191,7 +190,6 @@ Alle Services sind anschließend über die jeweiligen Ports erreichbar und bilde
 
 ## Dokumentation des Backends
 
----
 
 ### Backend-Überblick
 
@@ -941,7 +939,7 @@ Um den Prototypen zu beenden, kann der Browser, in dem das Frontend geöffnet wu
 
 ### Zielsetzung der Evaluation
 
-Um die in der Einleitung aufgestellten Fragen beantworten zu können, wurde die Evaluation in vier Bereiche unterglieder:
+Um die in der Einleitung aufgestellten Fragen beantworten zu können, wurde die Evaluation in vier Bereiche untergliedert:
 
 1. `Evaluation der Datenanreicherung`
 2. `Evaluation des STT-Modells`
@@ -1137,7 +1135,7 @@ Die vierstufige Evaluation im Projekt **Echolearn** erlaubt eine ganzheitliche B
 
 Zur Analyse der Datenanreicherung mit Hilfe von Systemprompting durch Aufruf des LLM "phi4-latest" wurden sowohl die Übersetzungsqualität, die Bewertung der maximal erreichbaren Punkte für eine Beantwortung einer Frage als auch die Generierung von Schlüsselbegriffen betrachtet.
 
-Die Analyse der semantische Ähnlichkeit der ins Deutsche übersetzten Antworten und Fragen weisen im Vergleich zum englischen Originaldatensatz eine hohe semantische Ähnlichkeite auf.
+Die Analyse der semantische Ähnlichkeit der ins Deutsche übersetzten Antworten und Fragen weisen im Vergleich zum englischen Originaldatensatz eine hohe semantische Ähnlichkeit auf.
 
 ![analyse_answer_generation](screenshots_and_graphs/analyse_answer_generation.png)
 
@@ -1151,7 +1149,7 @@ Wie in den nachfolgenden beiden Grafiken abgebildet, zeigten sich bei der Analys
 
 Auch im Systemtest selbst konnten manuell trotz der hohen Konzentration an Fachbegriffen und Abkürzungen kaum Abweichungen oder Unklarheiten erkannt werden.
 
-Im Vergleich zur Qualität der Übersetzung ließ sich die Extraktion der Schlüsselbegriffe mit Hilfe von exaktem Vergleich zur Antwort nur bedingt analysieren, da bereits geringe Abwandlungen wie zum Beispiel die Verwendung von Einzahl oder Mehrzahl einen exakten Abgleich erschwerte. Hier wurden daher Stichprobenhaft manuelle Kontrolle durchgeführt, welche grundsätzlich eine gute Übereinstimmung erkennen ließ.
+Im Vergleich zur Qualität der Übersetzung ließ sich die Extraktion der Schlüsselbegriffe mit Hilfe von exaktem Vergleich zur Antwort nur bedingt analysieren, da bereits geringe Abwandlungen, wie zum Beispiel die Verwendung von Einzahl oder Mehrzahl, einen exakten Abgleich erschwerte. Hier wurden daher Stichprobenhaft manuelle Kontrolle durchgeführt, welche grundsätzlich eine gute Übereinstimmung erkennen ließ.
 
 Die nachfolgende Grafik zeigt auf der y-Achse die Verteilung der maximal erreichbaren Punkte, sowie auf der x-Achse die Anzahl der Zeichen der Antwort mit farblicher Aufschlüsselung der Klassifizierung des Fragetyps:
 
@@ -1288,7 +1286,7 @@ Auf Grund der zu Beginn genannten Abgrenzungen sowie der zeitlichen Rahmenlinien
 
 Quantitativ muss auf den eingeschränkten Testdatensatz hingewiesen werden. Für die Projektlaufzeit wurde bewusst ein Rohdatensatz mit lediglich 200 Einträgen gewählt, wovon wiederum 75 genauerer untersucht, annotiert und in die Evaluation der LLM einbezogen wurden. Dies stellt somit keine repräsentativen Ergebnisse dar, sondern lediglich eine erste Machbarkeitsanalyse mit Hilfe eines Prototyps.
 
-Wie bereits aus in der Evaluation ersichtlich wird, muss darauf hingewiesen werden, dass eine Bewertung von Menschen oftmals sehr subjektiv ausfällt, sodass Mittelwerte und Abweichungen auf Grund der geringen Testdatensätze kaum eine Aussagekraft generieren können und somit lediglich Vermutungen zulassen, welche es zu überprüfen gilt.
+Wie bereits in der Evaluation ersichtlich wird, muss darauf hingewiesen werden, dass eine Bewertung von Menschen oftmals sehr subjektiv ausfällt, sodass Mittelwerte und Abweichungen auf Grund der geringen Testdatensätze kaum eine Aussagekraft generieren können und somit lediglich Vermutungen zulassen, welche es zu überprüfen gilt.
 
 Qualitativ muss darauf hingewiesen werden, dass die Bewertung der gegebenen Antworten im Prototyp auf probabilistischen Sprachmodellen beruht. Das heißt, es erfolgt keine pädagogische Validierung der Bewertungsqualität, weshalb eine Überprüfung und eigene Bewertung der Antwortqualität durch den Lernenden oder aber direkt durch Dozenten und Betreuer weiterhin als unabdingbar angesehen wird, um keine Inhalte zu vernachlässigen oder falsch zu verinnerlichen.
 
