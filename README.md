@@ -1,5 +1,5 @@
 EchoLearn ist ein interaktiver Prototyp zur Simulation mündlicher Prüfungssituationen.  
-Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rückfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
+Das System stellt Fragen, verarbeitet gesprochene Antworten, bewertet diese automatisiert und generiert adaptive Rückfragen und Vertiefungsfragen, um einen prüfungsähnlichen Dialog zu erzeugen.
 
 Das Projekt wurde im universitären Kontext als experimentelle Lernplattform entwickelt und dient der konzeptionellen Untersuchung KI-gestützter Bewertung freier mündlicher Antworten.
 
@@ -59,6 +59,12 @@ http://localhost:8000/docs
 make down
 ```
 
+### Tabellen zurücksetzen
+
+```
+make clear-tables
+```
+
 ## Projektstatus
 
 Lokaler Forschungs- und Entwicklungsprototyp.
@@ -77,7 +83,7 @@ Lokaler Forschungs- und Entwicklungsprototyp.
 - Vorlesen von Fragen durch Text-to-Speech (TTS)
 - Aufnahme gesprochener Antworten durch Speech-to-Text (STT)
 - Automatisierte Bewertung durch ein Sprachmodell
-- Generierung kontextabhängiger Rückfragen
+- Generierung kontextabhängiger Rückfragen und Vertiefungsfragen
 - Anzeige von Lernstatistiken
 
 ## Technologieauswahl
@@ -90,35 +96,8 @@ CI: Github Actions
 
 ---
 
-## Weitere Dokumentation
+## Dokumentation
 
 Weitere konzeptionelle Details befinden sich hier:
 
-- [Allgemeine Projektdokumentation](docs/documentation_allgemein.md)
-- [Frontend Dokumentation](docs/documentation_frontend.md)
-- [Backend Dokumentation](docs/documentation_backend.md)
-- [Architektur Dokumentation](docs/documentation_architecture.md)
-- [Evaluation Dokumentation](docs/evaluation.md)
-
-## Verantwortungsbereiche
-
-**Sandra Fischer**
-
-- Dokumentation (Screenshots and Graphs, Draft)
-- Testen
-- Daten (Generation, Cleaning, Evaluationsdatensätze)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze)
-
-**Aleksandar Trifonov**
-
-- Backend (funktionale und inhaltliche Anbindung der LLMs in die App, Bereitstellung der Daten für die LLMs, Testen der Funktionalitäten)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze, Notebooks zur LLM Evaluation)
-- Dokumentation (Evaluation, Backend)
-
-**Maurice Haas**
-
-- Projektarchitektur (Docker, CI Pipelines, Linter, Formatter, Make-Befehle)
-- Frontend (STT, TTS, Design, Vue Komponenten & Templates, Frontend Routen)
-- Backend (CRUD Routen, CSV-Export/Import Routen), Datenbankverbindung, Skript für automatische Datenbankerstellung und Löschung
-- Dokumentation (Readme, Allgemein, Frontend, Architektur)
-- Evaluation (menschliche Bewertung der Evaluationsdatensätze)
+- [Projektdokumentation](docs/documentation.md)
